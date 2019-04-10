@@ -48,13 +48,21 @@ for row in d2r:
         d2 = np.vstack((d2, hlp)) if d2.size else hlp
 
 for row in dsr:
-	print(row)
 
+	setpoint = ','.join(row).split(',')[0]
+	if setpoint != '':
+		ds = np.append(ds,float(setpoint))
+
+print(ds)
 #d1 = np.array(d1, dtype = np.float)
 
 #plt.figure()
 #plt.plot(d1)
 #plt.plot(d2)
+ch1_scale = .05
+ch2_scale = 2
+d1 = d1*ch1_scale
+d2 = d2*ch2_scale
 
 
 plt.figure()
