@@ -13,7 +13,7 @@ main_path = '/home/molecules/skynet/Data/K_Tests/'
 
 my_today = datetime.datetime.today().strftime('%Y-%m-%d')
 
-my_time = '16-28-15'
+my_time = '15-36-18'
 
 f1 = main_path + my_today + '-' + my_time + '_1.csv'
 f2 = main_path + my_today + '-' + my_time + '_2.csv'
@@ -39,13 +39,14 @@ for row in d1r:
     if len(hlp)>0:
         d1 = np.vstack((d1, hlp)) if d1.size else hlp
 
-for row in d2r:
-
-    hlp_row = ",".join(row).split(',')[:-1]
-    hlp = np.array(hlp_row, dtype = np.float)
-
-    if len(hlp)>0:
-        d2 = np.vstack((d2, hlp)) if d2.size else hlp
+#for row in d2r:
+#
+#    hlp_row = ",".join(row).split(',')[:-1]
+#    hlp = np.array(hlp_row, dtype = np.float)
+#
+#    if len(hlp)>0:
+#        print(len(hlp))
+#        d2 = np.vstack((d2, hlp)) if d2.size else hlp
 
 for row in dsr:
 
@@ -53,27 +54,51 @@ for row in dsr:
 	if setpoint != '':
 		ds = np.append(ds,float(setpoint))
 
-print(ds)
+
+ds = ds - 391.0160
+
+ds = ds * 1e12/1e6
+
 #d1 = np.array(d1, dtype = np.float)
 
 #plt.figure()
 #plt.plot(d1)
 #plt.plot(d2)
-ch1_scale = .05
-ch2_scale = 2
-d1 = d1*ch1_scale
-d2 = d2*ch2_scale
+#ch2_scale = 2
+#d2 = d2*ch2_scale
 
+ch1_scale = .05
+d1 = d1*ch1_scale
+
+
+
+dt = np.linspace(0, 2.5, d1.shape[1]) * 10.0
+
+print(dt)
 
 plt.figure()
 
-a1 = np.mean(d1[10:20, :], axis = 1)
-a2 = np.mean(d2[10:20, :], axis = 1)
+plt.plot(dt, d1[4, :])
 
-print(a1)
+plt.figure()
 
-plt.plot(a1)
-plt.plot(a2)
+minx = 510
+maxx = 520
+
+a1 = np.mean(d1[:, minx:maxx], axis = 1)
+
+plt.plot(ds, a1)
+
+plt.xlabel('Frequency (MHz)')
+
+plt.figure()
+
+#plt.imshow(d1, aspect = 'auto')
+plt.pcolor(dt, ds, d1)
+
+plt.xlabel('Time (ms)')
+plt.ylabel('Frequency (MHz)')
+
 
 plt.show()
 
