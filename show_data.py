@@ -13,7 +13,7 @@ main_path = '/home/molecules/skynet/Data/K_Tests/'
 
 my_today = datetime.datetime.today().strftime('%Y-%m-%d')
 
-my_time = '15-36-18'
+my_time = '17-27-52'
 
 f1 = main_path + my_today + '-' + my_time + '_1.csv'
 f2 = main_path + my_today + '-' + my_time + '_2.csv'
