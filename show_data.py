@@ -1,3 +1,4 @@
+
 import numpy as np
 import matplotlib
 
@@ -8,18 +9,25 @@ import csv
 import datetime
 
 
-main_path = '/home/molecules/skynet/Data/K_Tests/'
+#main_path = '/home/molecules/skynet/Data/K_Tests/'
 #main_path = '/home/lab-42/data_folder/K_Tests/'
+main_path = '/home/molecules/software/Prehistoric-Data-Acquisition/'
 
 my_today = datetime.datetime.today().strftime('%Y-%m-%d')
 
-my_time = '17-27-52'
+#my_time = '16-32-17'
+#my_time = '16-50-54'
+#my_time = '17-20-45'
 
-f1 = main_path + my_today + '-' + my_time + '_1.csv'
-f2 = main_path + my_today + '-' + my_time + '_2.csv'
-fs = main_path + my_today + '-' + my_time + '_set.csv'
+# file names
+#f1 = main_path + my_today + '-' + my_time + '_1.csv'
+#f2 = main_path + my_today + '-' + my_time + '_2.csv'
+#fs = main_path + my_today + '-' + my_time + '_s.csv'
+f1 = main_path + 'ch1.txt'
+f2 = main_path + 'ch2.txt'
+fs = main_path + 'setpts.txt'
 
-
+# open and read the files
 d1f = open(f1,'r')
 d2f = open(f2,'r')
 dsf = open(fs,'r')
@@ -31,14 +39,21 @@ dsr = csv.reader(dsf)
 d1 = np.array([])
 d2 = np.array([])
 ds = np.array([])
-for row in d1r:
 
+for row in d1r:
+    # puts data into an array from csv
     hlp_row = ",".join(row).split(',')[:-1]
     hlp = np.array(hlp_row, dtype = np.float)
 
+    # offset correction
+    hlp = hlp - hlp[0]
+
+
+    # vstack -- stack arrays in sequence vertically (row wise)
     if len(hlp)>0:
         d1 = np.vstack((d1, hlp)) if d1.size else hlp
-
+print('d1 after for loop')
+print(d1)
 #for row in d2r:
 #
 #    hlp_row = ",".join(row).split(',')[:-1]
@@ -55,7 +70,7 @@ for row in dsr:
 		ds = np.append(ds,float(setpoint))
 
 
-ds = ds - 391.0160
+ds = ds - 391.01617
 
 ds = ds * 1e12/1e6
 
@@ -69,21 +84,22 @@ ds = ds * 1e12/1e6
 
 ch1_scale = .05
 d1 = d1*ch1_scale
-
-
-
+print(d1)
+print('d1 shape')
+print(d1.shape)
 dt = np.linspace(0, 2.5, d1.shape[1]) * 10.0
-
+print('dt')
 print(dt)
 
 plt.figure()
-
-plt.plot(dt, d1[4, :])
+print('d1[4,:]')
+print(d1[4, :])
+plt.plot(dt, d1[25, :])
 
 plt.figure()
 
-minx = 510
-maxx = 520
+minx = 610
+maxx = 620
 
 a1 = np.mean(d1[:, minx:maxx], axis = 1)
 
