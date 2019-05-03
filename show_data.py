@@ -12,6 +12,7 @@ import datetime
 #main_path = '/home/molecules/skynet/Data/K_Tests/'
 #main_path = '/home/lab-42/data_folder/K_Tests/'
 main_path = '/home/molecules/software/Prehistoric-Data-Acquisition/'
+main_path = '/Users/johnr/Documents/Github/Prehistoric-Data-Acquisition/'
 
 my_today = datetime.datetime.today().strftime('%Y-%m-%d')
 
@@ -52,8 +53,8 @@ for row in d1r:
     # vstack -- stack arrays in sequence vertically (row wise)
     if len(hlp)>0:
         d1 = np.vstack((d1, hlp)) if d1.size else hlp
-print('d1 after for loop')
-print(d1)
+#print('d1 after for loop')
+#print(d1)
 #for row in d2r:
 #
 #    hlp_row = ",".join(row).split(',')[:-1]
@@ -69,8 +70,8 @@ for row in dsr:
 	if setpoint != '':
 		ds = np.append(ds,float(setpoint))
 
-
-ds = ds - 391.01617
+line_act = 391.01617
+ds = ds - line_act
 
 ds = ds * 1e12/1e6
 
@@ -84,16 +85,16 @@ ds = ds * 1e12/1e6
 
 ch1_scale = .05
 d1 = d1*ch1_scale
-print(d1)
-print('d1 shape')
-print(d1.shape)
+#print(d1)
+#print('d1 shape')
+#print(d1.shape)
 dt = np.linspace(0, 2.5, d1.shape[1]) * 10.0
-print('dt')
-print(dt)
+#print('dt')
+#print(dt)
 
 plt.figure()
-print('d1[4,:]')
-print(d1[4, :])
+#print('d1[4,:]')
+#print(d1[4, :])
 plt.plot(dt, d1[25, :])
 
 plt.figure()
@@ -105,7 +106,19 @@ a1 = np.mean(d1[:, minx:maxx], axis = 1)
 
 plt.plot(ds, a1)
 
-plt.xlabel('Frequency (MHz)')
+non_hyper39 = 766.701
+pf3sf2_39 = 14.4-173.1
+pf2sf1_39 = 288.6-6.7
+freq_diff = abs(pf3sf2_39-pf2sf1_39)
+print('Frequency Difference: {}'.format(freq_diff))
+
+
+lines = [pf3sf2_39,pf2sf1_39]
+for line in lines:
+	plt.axvline(x=line)
+
+
+plt.xlabel('Frequency Difference (MHz) from from {} GHs'.format(line_act))
 
 plt.figure()
 
