@@ -53,7 +53,12 @@ for row in d1r:
     # vstack -- stack arrays in sequence vertically (row wise)
     if len(hlp)>0:
         d1 = np.vstack((d1, hlp)) if d1.size else hlp
+<<<<<<< HEAD
 
+=======
+#print('d1 after for loop')
+#print(d1)
+>>>>>>> refs/remotes/origin/master
 #for row in d2r:
 #
 #    hlp_row = ",".join(row).split(',')[:-1]
@@ -84,10 +89,23 @@ ds = ds * 1e12/1e6
 
 ch1_scale = .05
 d1 = d1*ch1_scale
+<<<<<<< HEAD
 dt = np.linspace(0, 2.5, d1.shape[1]) * 10.0
 
 plt.figure()
 
+=======
+#print(d1)
+#print('d1 shape')
+#print(d1.shape)
+dt = np.linspace(0, 2.5, d1.shape[1]) * 10.0
+#print('dt')
+#print(dt)
+
+plt.figure()
+#print('d1[4,:]')
+#print(d1[4, :])
+>>>>>>> refs/remotes/origin/master
 plt.plot(dt, d1[25, :])
 
 # figure 2 spectrum stuff
