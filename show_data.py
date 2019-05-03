@@ -12,7 +12,7 @@ import datetime
 #main_path = '/home/molecules/skynet/Data/K_Tests/'
 #main_path = '/home/lab-42/data_folder/K_Tests/'
 main_path = '/home/molecules/software/Prehistoric-Data-Acquisition/'
-main_path = '/Users/johnr/Documents/Github/Prehistoric-Data-Acquisition/'
+#main_path = '/Users/johnr/Documents/Github/Prehistoric-Data-Acquisition/'
 
 my_today = datetime.datetime.today().strftime('%Y-%m-%d')
 
@@ -98,19 +98,21 @@ maxx = 620
 
 a1 = np.mean(d1[:, minx:maxx], axis = 1)
 
-plt.plot(ds, a1)
+plt.plot(ds, a1*-1)
+
+# plot the natural line width against plot we have here
 
 non_hyper39 = 766.701
 pf3sf2_39 = 14.4-173.1
 pf2sf1_39 = 288.6-6.7
 freq_diff = abs(pf3sf2_39-pf2sf1_39)
-print('Frequency Difference: {}'.format(freq_diff))
+print('Frequency Difference MHz: {}'.format(freq_diff))
 
-
-lines = [pf3sf2_39,pf2sf1_39]
-for line in lines:
-	plt.axvline(x=line)
-
+#
+#lines = [pf3sf2_39,pf2sf1_39]
+#for line in lines:
+#	plt.axvline(x=line)
+#
 
 plt.xlabel('Frequency Difference (MHz) from from {} GHs'.format(line_act))
 
