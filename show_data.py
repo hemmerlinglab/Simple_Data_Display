@@ -1,3 +1,6 @@
+""" Original version which saves the csv files
+Uses the calculation of finding the frequency spacing between the lines
+New modifications: fits the data, and finds params such as temperature, wavemeter offset. Numbers might be off and still needs to be double checked """
 
 import numpy as np
 import matplotlib
@@ -7,12 +10,17 @@ matplotlib.use('Qt5Agg')
 import matplotlib.pyplot as plt
 import csv
 import datetime
+from scipy.optimize import curve_fit
+from scipy import asarray as ar,exp
+import pylab as plb
 
+from fit_spectrum import *
 
 #main_path = '/home/molecules/skynet/Data/K_Tests/'
 #main_path = '/home/lab-42/data_folder/K_Tests/'
+#main_path = '/home/lab-42/software/github/Prehistoric-Data-Acquisition/'
 main_path = '/home/molecules/software/Prehistoric-Data-Acquisition/'
-main_path = '/Users/johnr/Documents/Github/Prehistoric-Data-Acquisition/'
+#main_path = '/Users/johnr/Documents/Github/Prehistoric-Data-Acquisition/'
 
 my_today = datetime.datetime.today().strftime('%Y-%m-%d')
 
@@ -78,40 +86,76 @@ ds = ds * 1e12/1e6
 
 #plt.figure()
 #plt.plot(d1)
-#plt.plot(d2)
-#ch2_scale = 2
-#d2 = d2*ch2_scale
+##plt.plot(d2)
+##ch2_scale = 2
+##d2 = d2*ch2_scale
+#
+#ch1_scale = .05
+#d1 = d1*ch1_scale
+#dt = np.linspace(0, 2.5, d1.shape[1]) * 10.0
+#
+#plt.figure()
+#
+#plt.plot(dt, d1[25, :])
+#
+## figure 2 spectrum stuff
+#plt.figure()
+#
 
-ch1_scale = .05
-d1 = d1*ch1_scale
-dt = np.linspace(0, 2.5, d1.shape[1]) * 10.0
+def get_time_slot(arr, minx, delta = 20):
+
+    return -np.mean(arr[:, minx:(minx+delta)], axis = 1)
+
+
+res_t = []
+res_T = []
+res_shift = []
+
+# fitting
+
+for k in range(10,100):
+
+    print(k)
+    fit_x = ds * 1e6 + line_act * 1e12
+    
+    my_t = 100 + k * 10
+    fit_y = get_time_slot(d1, my_t)
+
+    result = my_fit(fit_x, fit_y)
+
+    (mod_x, mod_y) = fcn2min(result.params, fit_x, [], return_plot = True)
+
+    res_t.append(my_t)
+    res_T.append(result.params['T'].value)
+    res_shift.append(result.params['shift'].value)
+
+    print('Wavemeter shift = ' + str(result.params['shift'].value/1e6) + 'MHz')
+    print('Temperature = ' + str(result.params['T'].value)  + 'K')
+
+    if k == 60:
+        plt.figure()
+        plt.plot( (fit_x - line_act*1e12)/1e6, fit_y, 'ko')
+        plt.plot( (mod_x - line_act*1e12)/1e6, mod_y, 'r-')
 
 plt.figure()
+plt.plot( res_t, res_T, 'o-')
 
-plt.plot(dt, d1[25, :])
-
-# figure 2 spectrum stuff
 plt.figure()
+plt.plot( res_t, res_shift, 'o-')
 
-minx = 610
-maxx = 620
 
-a1 = np.mean(d1[:, minx:maxx], axis = 1)
 
-plt.plot(ds, a1)
+plt.show()
 
+
+# based on level structure from the paper
 non_hyper39 = 766.701
 pf3sf2_39 = 14.4-173.1
 pf2sf1_39 = 288.6-6.7
 
 #non_hyper41 = 
 freq_diff = abs(pf3sf2_39-pf2sf1_39)
-print('Frequency Difference: {}'.format(freq_diff))
-
-
-lines = [pf3sf2_39,pf2sf1_39]
-for line in lines:
-	plt.axvline(x=line)
+print('Frequency Difference MHz: {}'.format(freq_diff))
 
 
 plt.xlabel('Frequency Difference (MHz) from from {} GHs'.format(line_act))
