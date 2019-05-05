@@ -103,6 +103,8 @@ plt.plot(ds, a1)
 non_hyper39 = 766.701
 pf3sf2_39 = 14.4-173.1
 pf2sf1_39 = 288.6-6.7
+
+#non_hyper41 = 
 freq_diff = abs(pf3sf2_39-pf2sf1_39)
 print('Frequency Difference: {}'.format(freq_diff))
 
