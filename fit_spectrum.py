@@ -46,18 +46,18 @@ def fcn2min(params, x, data, return_plot = False):
     k41_22 = k39d2line + 236.2e6 - 95.3e6 - 5.0e6
     k41_23 = k39d2line + 236.2e6 - 95.3e6 + 8.4e6
 
-    model  = a1 * np.exp( -m39 * c**2 * (x + shift - k39_23)**2/(2*kB*T* k39_23**2) )
-    model += a2 * np.exp( -m39 * c**2 * (x + shift - k39_12)**2/(2*kB*T* k39_12**2) )
-    model += a3 * np.exp( -m39 * c**2 * (x + shift - k39_11)**2/(2*kB*T* k39_11**2) )
-    model += a4 * np.exp( -m39 * c**2 * (x + shift - k39_10)**2/(2*kB*T* k39_10**2) )
-    model += a5 * np.exp( -m41 * c**2 * (x + shift - k41_12)**2/(2*kB*T* k41_12**2) )
-    model += a6 * np.exp( -m39 * c**2 * (x + shift - k39_21)**2/(2*kB*T* k39_21**2) )
-    model += a7 * np.exp( -m39 * c**2 * (x + shift - k39_22)**2/(2*kB*T* k39_22**2) )
-    model += a8 * np.exp( -m41 * c**2 * (x + shift - k41_11)**2/(2*kB*T* k41_11**2) )
-    model += a9 * np.exp( -m41 * c**2 * (x + shift - k41_10)**2/(2*kB*T* k41_10**2) )
-    model += a10 * np.exp( -m41 * c**2 * (x + shift - k41_21)**2/(2*kB*T* k41_21**2) )
-    model += a11 * np.exp( -m41 * c**2 * (x + shift - k41_22)**2/(2*kB*T* k41_22**2) )
-    model += a12 * np.exp( -m41 * c**2 * (x + shift - k41_23)**2/(2*kB*T* k41_23**2) )
+    model  = a1 * (c/(k39_23*np.sqrt(2*kB*T/m39))) * np.exp( -m39 * c**2 * (x + shift - k39_23)**2/(2*kB*T* k39_23**2) )
+    model += a2 * (c/(k39_12*np.sqrt(2*kB*T/m39))) * np.exp( -m39 * c**2 * (x + shift - k39_12)**2/(2*kB*T* k39_12**2) )
+    model += a3 * (c/(k39_11*np.sqrt(2*kB*T/m39))) * np.exp( -m39 * c**2 * (x + shift - k39_11)**2/(2*kB*T* k39_11**2) )
+    model += a4 * (c/(k39_10*np.sqrt(2*kB*T/m39))) * np.exp( -m39 * c**2 * (x + shift - k39_10)**2/(2*kB*T* k39_10**2) )
+    model += a5 * (c/(k41_12*np.sqrt(2*kB*T/m41))) * np.exp( -m41 * c**2 * (x + shift - k41_12)**2/(2*kB*T* k41_12**2) )
+    model += a6 * (c/(k39_21*np.sqrt(2*kB*T/m39))) * np.exp( -m39 * c**2 * (x + shift - k39_21)**2/(2*kB*T* k39_21**2) )
+    model += a7 * (c/(k39_22*np.sqrt(2*kB*T/m39))) * np.exp( -m39 * c**2 * (x + shift - k39_22)**2/(2*kB*T* k39_22**2) )
+    model += a8 * (c/(k41_11*np.sqrt(2*kB*T/m41))) * np.exp( -m41 * c**2 * (x + shift - k41_11)**2/(2*kB*T* k41_11**2) )
+    model += a9 * (c/(k41_10*np.sqrt(2*kB*T/m41))) * np.exp( -m41 * c**2 * (x + shift - k41_10)**2/(2*kB*T* k41_10**2) )
+    model += a10 * (c/(k41_21*np.sqrt(2*kB*T/m41))) * np.exp( -m41 * c**2 * (x + shift - k41_21)**2/(2*kB*T* k41_21**2) )
+    model += a11 * (c/(k41_22*np.sqrt(2*kB*T/m41))) * np.exp( -m41 * c**2 * (x + shift - k41_22)**2/(2*kB*T* k41_22**2) )
+    model += a12 * (c/(k41_23*np.sqrt(2*kB*T/m41))) * np.exp( -m41 * c**2 * (x + shift - k41_23)**2/(2*kB*T* k41_23**2) )
 
     if return_plot == False:
         return model - data
