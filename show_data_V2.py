@@ -1,7 +1,7 @@
 """ Original version which saves the csv files
 Uses the calculation of finding the frequency spacing between the lines
 New modifications: fits the data, and finds params such as temperature, wavemeter offset. Numbers might be off and still needs to be double checked """
-
+"""This version is the current working code, it fits two lines of potassium, the updated fit to include the multiple lines are in the code labeled John, but the fitting is quite off currently """
 import numpy as np
 import matplotlib
 
