@@ -18,8 +18,8 @@ from fit_spectrum import *
 
 #main_path = '/home/molecules/skynet/Data/K_Tests/'
 #main_path = '/home/lab-42/data_folder/K_Tests/'
-#main_path = '/home/lab-42/software/github/Prehistoric-Data-Acquisition/'
-main_path = '/home/molecules/software/Prehistoric-Data-Acquisition/'
+main_path = '/home/lab-42/software/github/Prehistoric-Data-Acquisition/'
+#main_path = '/home/molecules/software/Prehistoric-Data-Acquisition/'
 #main_path = '/Users/johnr/Documents/Github/Prehistoric-Data-Acquisition/'
 
 my_today = datetime.datetime.today().strftime('%Y-%m-%d')
@@ -136,6 +136,8 @@ for k in range(10,100):
         plt.figure()
         plt.plot( (fit_x - line_act*1e12)/1e6, fit_y, 'ko')
         plt.plot( (mod_x - line_act*1e12)/1e6, mod_y, 'r-')
+        plt.xlabel('Frequency MHz',fontsize=16)
+        plt.ylabel('Strength of the line (arb)',fontsize=16)
 
 plt.figure()
 plt.plot( res_t, res_T, 'o-')
