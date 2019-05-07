@@ -156,14 +156,13 @@ for k in range(10,100):
         plt.figure()
         plt.plot( (fit_x - line_act*1e12)/1e6, fit_y, 'ko')
         plt.plot( (mod_x - line_act*1e12)/1e6, mod_y, 'r-')
-
+        plt.xlabel('Frequency MHz')
+        plt.ylabel('Strength of line (arb)')
 plt.figure()
 plt.plot( res_t, res_T, 'o-')
 
 plt.figure()
 plt.plot( res_t, res_shift, 'o-')
-
-
 
 plt.show()
 
