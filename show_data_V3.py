@@ -5,6 +5,16 @@ New modifications: fits the data, and finds params such as temperature, wavemete
 
 
 """ Plan: Plot the fit with the natural line width of the lines"""
+
+""" Current problems:
+    color plot no longer works
+    
+    Questions: 
+       1. How does this line work?
+       mod_x and mod_y is not passed in, this is the first time they are mentioned
+       (mod_x,mod_y) = fcn2min(result.params, fit_x, [], return_plot = True)
+       2. What unit is the time in? not sure how that works 
+       3. How does the delta in the get_time_slot function come into play? only called inside the function and never passed in or called elsewhere """
 import numpy as np
 import matplotlib
 
@@ -65,36 +75,33 @@ for row in d1r:
     if len(hlp)>0:
         d1 = np.vstack((d1, hlp)) if d1.size else hlp
 
-#for row in d2r:
-#
-#    hlp_row = ",".join(row).split(',')[:-1]
-#    hlp = np.array(hlp_row, dtype = np.float)
-#
-#    if len(hlp)>0:
-#        print(len(hlp))
-#        d2 = np.vstack((d2, hlp)) if d2.size else hlp
-
 for row in dsr:
 
 	setpoint = ','.join(row).split(',')[0]
 	if setpoint != '':
 		ds = np.append(ds,float(setpoint))
 
-line_act = 391.01617
-ds = ds - line_act
+# ds is the frequency in THz of the wavemeter at the time of any given data point
 
-ds = ds * 1e12/1e6
+line_act = 391.01617 #actual frequency of K39 D2 line
+ds = ds - line_act # subtract by the actual line
+
+ds = ds * 1e12/1e6 # conversion to MHz
 
 def get_time_slot(arr, minx, delta = 20):
 
     return -np.mean(arr[:, minx:(minx+delta)], axis = 1)
 
-
+#initialization
 res_t = []
 res_T = []
 res_shift = []
 
-# fitting
+
+# Time to range over
+start_t = 10
+end_t   = 100
+
 for k in range(10,100):
 
     print(k)
@@ -104,7 +111,8 @@ for k in range(10,100):
     fit_y = get_time_slot(d1, my_t)
 
     result = my_fit(fit_x, fit_y)
-
+    
+    # uses mod_x and mod_y parameters for function to minimize (comes from fit_spectrum)
     (mod_x, mod_y) = fcn2min(result.params, fit_x, [], return_plot = True)
 
     res_t.append(my_t)
@@ -119,21 +127,40 @@ for k in range(10,100):
         plt.plot( (fit_x - line_act*1e12)/1e6, fit_y, 'ko',label='data')
         plt.plot( (mod_x - line_act*1e12)/1e6, mod_y, 'r-',label='fitting')
         plt.xlabel('Frequency MHz',fontsize=16)
-        plt.ylabel('Strength of line (arb)',fontsize=16)
+        plt.ylabel('Strength of line (abs)',fontsize=16)
         plt.tick_params(labelsize=16) #tick size
         plt.tick_params(direction='in') #tick direction
         plt.legend(fontsize=14)
 plt.figure()
 plt.plot( res_t, res_T, 'mo-') # o is the circle marker
-
 plt.xlabel('Time',fontsize=16)
 plt.ylabel('Temperature (K)',fontsize=16)
 plt.tick_params(labelsize=16) #tick size
 plt.tick_params(direction='in') #tick direction
-plt.legend(fontsize=14)
+
 plt.figure()
-plt.plot( res_t, res_shift, 'o-')
+plt.plot( res_t, res_shift, 'mo-')
+plt.xlabel('Time',fontsize=16)
+plt.ylabel('Temperature (K)',fontsize=16)
+plt.tick_params(labelsize=16) #tick size
+plt.tick_params(direction='in') #tick direction
+plt.show()
+
+#plt.xlabel('Frequency Difference (MHz) from from {} GHs'.format(line_act))
+
+plt.figure()
+
+#plt.imshow(d1, aspect = 'auto')
+plt.pcolor(dt, ds, d1)
+
+plt.xlabel('Time (ms)')
+plt.ylabel('Frequency (MHz)')
+
 
 plt.show()
 
 
+
+d1f.close()
+d2f.close()
+dsf.close()
