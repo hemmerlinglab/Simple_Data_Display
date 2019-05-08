@@ -31,9 +31,9 @@ from fit_spectrum import *
 #main_path = '/home/molecules/skynet/Data/K_Tests/'
 #main_path = '/home/lab-42/data_folder/K_Tests/'
 #main_path = '/home/lab-42/software/github/Prehistoric-Data-Acquisition/'
-#main_path = '/home/molecules/software/Prehistoric-Data-Acquisition/'
+main_path = '/home/molecules/software/Prehistoric-Data-Acquisition/'
 #main_path = '/Users/johnr/Documents/Github/Prehistoric-Data-Acquisition/'
-main_path = '/Users/kaylajane/software/Prehistoric-Data-Acquisition/'
+#main_path = '/Users/kaylajane/software/Prehistoric-Data-Acquisition/'
 
 my_today = datetime.datetime.today().strftime('%Y-%m-%d')
 
@@ -92,6 +92,26 @@ ds = ds * 1e12/1e6 # conversion to MHz
 def get_time_slot(arr, minx, delta = 20):
 
     return -np.mean(arr[:, minx:(minx+delta)], axis = 1)
+
+d1 = np.array(d1, dtype = np.float)
+
+plt.figure()
+plt.plot(d1)
+plt.plot(d2)
+ch2_scale = 2
+d2 = d2*ch2_scale
+#
+ch1_scale = .05
+d1 = d1*ch1_scale
+dt = np.linspace(0, 2.5, d1.shape[1]) * 10.0
+#
+plt.figure()
+#
+plt.plot(dt, d1[25, :])
+#
+## figure 2 spectrum stuff
+plt.figure()
+#
 
 #initialization
 res_t = []
@@ -154,9 +174,10 @@ plt.figure()
 #plt.imshow(d1, aspect = 'auto')
 plt.pcolor(dt, ds, d1)
 
-plt.xlabel('Time (ms)')
-plt.ylabel('Frequency (MHz)')
-
+plt.xlabel('Time (ms)',fontsize=16)
+plt.ylabel('Frequency (MHz)',fontsize=16)
+plt.tick_params(labelsize=16) #tick size
+plt.tight_layout()
 
 plt.show()
 
