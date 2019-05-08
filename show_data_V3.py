@@ -85,26 +85,6 @@ ds = ds - line_act
 
 ds = ds * 1e12/1e6
 
-#d1 = np.array(d1, dtype = np.float)
-
-#plt.figure()
-#plt.plot(d1)
-##plt.plot(d2)
-##ch2_scale = 2
-##d2 = d2*ch2_scale
-#
-#ch1_scale = .05
-#d1 = d1*ch1_scale
-#dt = np.linspace(0, 2.5, d1.shape[1]) * 10.0
-#
-#plt.figure()
-#
-#plt.plot(dt, d1[25, :])
-#
-## figure 2 spectrum stuff
-#plt.figure()
-#
-
 def get_time_slot(arr, minx, delta = 20):
 
     return -np.mean(arr[:, minx:(minx+delta)], axis = 1)
@@ -144,8 +124,13 @@ for k in range(10,100):
         plt.tick_params(direction='in') #tick direction
         plt.legend(fontsize=14)
 plt.figure()
-plt.plot( res_t, res_T, 'o-')
+plt.plot( res_t, res_T, 'mo-') # o is the circle marker
 
+plt.xlabel('Time',fontsize=16)
+plt.ylabel('Temperature (K)',fontsize=16)
+plt.tick_params(labelsize=16) #tick size
+plt.tick_params(direction='in') #tick direction
+plt.legend(fontsize=14)
 plt.figure()
 plt.plot( res_t, res_shift, 'o-')
 
