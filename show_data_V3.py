@@ -115,27 +115,6 @@ res_T = []
 res_shift = []
 
 # fitting
-
-
-#params = Parameters()
-#params.add('a1', value=1.0, min = 0)
-#params.add('a2', value=1.0, min = 0)
-#params.add('a3', value=1.0, min = 0)
-#params.add('a4', value=1.0, min = 0)
-#params.add('a5', value=1.0, min = 0)
-#params.add('shift', value=-5.0e6, min = -500.0e6, max = 500.0e6)
-#params.add('T', value=2.0, min = 0.1, max = 50.0)
-#
-#fit_x = ds * 1e6 + line_act * 1e12
-#
-#fit_x = line_act * 1e12 + np.linspace(-200, 600, 100) * 1e6
-#(mod_x, mod_y) = fcn2min(params, fit_x, [], return_plot = True)
-#
-#plt.figure()
-#plt.plot((mod_x - line_act*1e12)/1e6, mod_y)
-#plt.show()
-#asd
-
 for k in range(10,100):
 
     print(k)
@@ -172,47 +151,4 @@ plt.plot( res_t, res_shift, 'o-')
 
 plt.show()
 
-asd
 
-
-# plot the natural line width against plot we have here
-
-peak1x = int((len(ds)/2))
-""" Fit to a gaussian """
-def gaus(x,a,x0,sigma):
-    return a*exp(-(x-x0)**2/(2*sigma**2))
-
-popt,pcov = curve_fit(gaus,ds[0:peak1x],arb[0:peak1x])
-
-plt.plot(ds[0:peak1x], gaus(ds[0:peak1x],*popt),'r')
-
-non_hyper39 = 766.701
-pf3sf2_39 = 14.4-173.1
-pf2sf1_39 = 288.6-6.7
-freq_diff = abs(pf3sf2_39-pf2sf1_39)
-print('Frequency Difference MHz: {}'.format(freq_diff))
-
-#
-#lines = [pf3sf2_39,pf2sf1_39]
-#for line in lines:
-#	plt.axvline(x=line)
-#
-
-plt.xlabel('Frequency Difference (MHz) from from {} GHs'.format(line_act))
-
-plt.figure()
-
-#plt.imshow(d1, aspect = 'auto')
-plt.pcolor(dt, ds, d1)
-
-plt.xlabel('Time (ms)')
-plt.ylabel('Frequency (MHz)')
-
-
-plt.show()
-
-
-
-d1f.close()
-d2f.close()
-dsf.close()
