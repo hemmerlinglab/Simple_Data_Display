@@ -1,4 +1,4 @@
-# Simple_Data_Display
+# Simple Data Display
 
 This branch contains all the previous versions of the simple data display as well as the current master one
 
