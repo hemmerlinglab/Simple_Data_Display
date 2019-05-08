@@ -19,8 +19,9 @@ from fit_spectrum import *
 #main_path = '/home/molecules/skynet/Data/K_Tests/'
 #main_path = '/home/lab-42/data_folder/K_Tests/'
 #main_path = '/home/lab-42/software/github/Prehistoric-Data-Acquisition/'
-main_path = '/home/molecules/software/Prehistoric-Data-Acquisition/'
+#main_path = '/home/molecules/software/Prehistoric-Data-Acquisition/'
 #main_path = '/Users/johnr/Documents/Github/Prehistoric-Data-Acquisition/'
+main_path = '/Users/kaylajane/software/Prehistoric-Data-Acquisition/'
 
 my_today = datetime.datetime.today().strftime('%Y-%m-%d')
 
