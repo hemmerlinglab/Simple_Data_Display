@@ -102,12 +102,12 @@ res_shift = []
 start_t = 10
 end_t   = 100
 
-for k in range(10,100):
+for k in range(start_t,end_t):
 
     print(k)
     fit_x = ds * 1e6 + line_act * 1e12
     
-    my_t = 100 + k * 10
+    my_t = end_t + k * start_t
     fit_y = get_time_slot(d1, my_t)
 
     result = my_fit(fit_x, fit_y)
