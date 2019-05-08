@@ -13,8 +13,7 @@ New modifications: fits the data, and finds params such as temperature, wavemete
        1. How does this line work?
        mod_x and mod_y is not passed in, this is the first time they are mentioned
        (mod_x,mod_y) = fcn2min(result.params, fit_x, [], return_plot = True)
-       2. What unit is the time in? not sure how that works 
-       3. How does the delta in the get_time_slot function come into play? only called inside the function and never passed in or called elsewhere """
+       2. What unit is the time in? not sure how that works """
 import numpy as np
 import matplotlib
 
@@ -88,6 +87,7 @@ ds = ds - line_act # subtract by the actual line
 
 ds = ds * 1e12/1e6 # conversion to MHz
 
+# each slice is delta time units wide, avergaing over the delta time units for each point
 def get_time_slot(arr, minx, delta = 20):
 
     return -np.mean(arr[:, minx:(minx+delta)], axis = 1)
