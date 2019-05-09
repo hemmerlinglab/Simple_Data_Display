@@ -1,11 +1,13 @@
 """ Modification to the plots to look much nicer for the presentation """
 
 """ Plan: 
-1. Make the current fit be the thoeretical model by replacing the amplitude by the free parameter multipled by the transistion probability transition amplitude
+1. Make the current fit be the thoeretical model by replacing the amplitude by the free parameter multipled by the transistion probability transition amplitude --> in the paper titled "potassium properties" it gives a reference for where these numbers can be found, but we do not have the book to access
 2. Figure out the time for sample to leave the cell plots for the presentation
 
 Questions:
 1. How do we account for the other spectral lines that we do not have the frequency resolution to see? Currently in John's code he adds them up in the model, but I feel like there must be a better way. It cannot fit to data that isnt there because of the lack of resolution
+
+
 """
 
 
