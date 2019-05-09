@@ -1,15 +1,14 @@
-""" Original version which saves the csv files
-Uses the calculation of finding the frequency spacing between the lines
-New modifications: fits the data, and finds params such as temperature, wavemeter offset. Numbers might be off and still needs to be double checked """
-"""This version is the current working code, it fits two lines of potassium, the updated fit to include the multiple lines are in the code labeled John, but the fitting is quite off currently """
+""" Modification to the plots to look much nicer for the presentation """
+
+""" Plan: 
+1. Make the current fit be the thoeretical model by replacing the amplitude by the free parameter multipled by the transistion probability transition amplitude
+2. Figure out the time for sample to leave the cell plots for the presentation
+
+Questions:
+1. How do we account for the other spectral lines that we do not have the frequency resolution to see? Currently in John's code he adds them up in the model, but I feel like there must be a better way. It cannot fit to data that isnt there because of the lack of resolution
+"""
 
 
-""" Plan: Plot the fit with the natural line width of the lines"""
-
-""" Current problems:
-    color plot no longer works
-    
-    Questions:""" 
 import numpy as np
 import matplotlib
 
