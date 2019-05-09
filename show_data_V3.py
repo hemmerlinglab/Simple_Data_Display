@@ -9,11 +9,7 @@ New modifications: fits the data, and finds params such as temperature, wavemete
 """ Current problems:
     color plot no longer works
     
-    Questions: 
-       1. How does this line work?
-       mod_x and mod_y is not passed in, this is the first time they are mentioned
-       (mod_x,mod_y) = fcn2min(result.params, fit_x, [], return_plot = True)
-       2. What unit is the time in? not sure how that works """
+    Questions:""" 
 import numpy as np
 import matplotlib
 
@@ -92,23 +88,29 @@ ds = ds * 1e12/1e6 # conversion to MHz
 def get_time_slot(arr, minx, delta = 20):
 
     return -np.mean(arr[:, minx:(minx+delta)], axis = 1)
-
-d1 = np.array(d1, dtype = np.float)
-
-plt.figure()
-plt.plot(d1)
-plt.plot(d2)
-ch2_scale = 2
-d2 = d2*ch2_scale
 #
-ch1_scale = .05
-d1 = d1*ch1_scale
+#d1 = np.array(d1, dtype = np.float)
+#
+#plt.figure()
+#plt.plot(d1)
+#plt.plot(d2)
+#ch2_scale = 2
+#d2 = d2*ch2_scale
+##
+#ch1_scale = .05
+#d1 = d1*ch1_scale
 dt = np.linspace(0, 2.5, d1.shape[1]) * 10.0
 #
+# Oscilloscope Figure
 plt.figure()
 #
 plt.plot(dt, d1[25, :])
-#
+
+plt.xlabel('Time (ms)',fontsize=16)
+plt.ylabel('Voltage',fontsize=16)
+plt.tick_params(labelsize=16) #tick size
+plt.tick_params(direction='in') #tick direction
+plt.tight_layout()
 ## figure 2 spectrum stuff
 plt.figure()
 #
@@ -128,6 +130,7 @@ for k in range(start_t,end_t):
     print(k)
     fit_x = ds * 1e6 + line_act * 1e12
     
+    # time in ms
     my_t = end_t + k * start_t
     fit_y = get_time_slot(d1, my_t)
 
@@ -178,6 +181,7 @@ plt.pcolor(dt, ds, d1)
 plt.xlabel('Time (ms)',fontsize=16)
 plt.ylabel('Frequency (MHz)',fontsize=16)
 plt.tick_params(labelsize=16) #tick size
+plt.tick_params(direction='in') #tick direction
 plt.tight_layout()
 
 plt.show()
