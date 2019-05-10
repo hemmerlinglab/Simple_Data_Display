@@ -127,10 +127,13 @@ res_shift = []
 def conv_t(ti):
     return [t6*25.0/d1.shape[1] for t6 in ti]
 
+def conv_A(ab):
+    return [a6*.2 for a6 in ab]
 
 # Time to range over
 start_t = 10
 end_t   = 100
+tick_array = np.linspace(-600,600,num=7)
 
 for k in range(start_t,end_t):
 
@@ -154,14 +157,20 @@ for k in range(start_t,end_t):
     print('Wavemeter shift = ' + str(result.params['shift'].value/1e6) + 'MHz')
     print('Temperature = ' + str(result.params['T'].value)  + 'K')
 
+
     if k == 60:
         plt.figure()
+
+        fit_y = conv_A(fit_y)
+        mod_y = conv_A(mod_y)
         plt.plot( (fit_x - line_act*1e12)/1e6, fit_y, 'ko',label='data')
         plt.plot( (mod_x - line_act*1e12)/1e6, mod_y, 'r-',label='fitting')
         plt.xlabel('Frequency MHz',fontsize=16)
         plt.ylabel('Precent of Signal Absorbed (abs)',fontsize=16)
         plt.tick_params(labelsize=16) #tick size
         plt.tick_params(direction='in') #tick direction
+        plt.xlim(-700,700)
+        plt.xticks(tick_array)
         plt.legend(fontsize=14)
 
 print(len(res_t))
@@ -199,6 +208,7 @@ plt.xlabel('Time (ms)',fontsize=16)
 plt.ylabel('Frequency (MHz)',fontsize=16)
 plt.tick_params(labelsize=16) #tick size
 plt.tick_params(direction='in') #tick direction
+plt.yticks(tick_array)
 
 plt.tight_layout()
 
