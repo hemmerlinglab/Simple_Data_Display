@@ -156,8 +156,13 @@ for k in range(start_t,end_t):
         plt.tick_params(labelsize=16) #tick size
         plt.tick_params(direction='in') #tick direction
         plt.legend(fontsize=14)
+
+print(len(res_t))
+print(len(res_T))
+
+
 plt.figure()
-plt.plot( res_t, res_T, 'mo-') # o is the circle marker
+plt.plot( res_t[12:50], res_T[12:50], 'mo-') # o is the circle marker
 plt.xlabel('Time (ms)',fontsize=16)
 plt.ylabel('Temperature (K)',fontsize=16)
 plt.tick_params(labelsize=16) #tick size
