@@ -4,7 +4,7 @@
 *Abandon transition probability amplitude, too many things we would need to account for
 
 Questions:
-	1. does each iteration of k mean 1 ms?
+	1. does each iteration of k mean 1 ms? Nope
 
 Problems:
 	1. cant fix the axes limits without getting indentation errors
@@ -32,7 +32,8 @@ from fit_spectrum import *
 #main_path = '/home/lab-42/software/github/Prehistoric-Data-Acquisition/'
 #main_path = '/home/molecules/software/Prehistoric-Data-Acquisition/'
 #main_path = '/Users/johnr/Documents/Github/Prehistoric-Data-Acquisition/'
-main_path = '/Users/kaylajane/software/Prehistoric-Data-Acquisition/'
+#main_path = '/Users/kaylajane/software/Prehistoric-Data-Acquisition/'
+main_path = 'C:\\Users\\John\\Documents\\Github\\Prehistoric-Data-Acquisition\\'
 
 my_today = datetime.datetime.today().strftime('%Y-%m-%d')
 
@@ -123,6 +124,9 @@ res_t = []
 res_T = []
 res_shift = []
 
+def conv_t(ti):
+    return [t6*25.0/d1.shape[1] for t6 in ti]
+
 
 # Time to range over
 start_t = 10
@@ -167,10 +171,10 @@ print(len(res_T))
 # after a certain amount of time, we are off target so does not make sense to plot that temperature
 strt_cut = 12
 end_cut  = 50
-
+res_t = conv_t(res_t)
 
 plt.figure()
-plt.plot( res_t[strt_cut:end_cut], res_T[strt_cut:end_cut], 'mo-') # o is the circle marker
+plt.plot(res_t[strt_cut:end_cut], res_T[strt_cut:end_cut], 'mo-') # o is the circle marker
 plt.xlabel('Time (ms)',fontsize=16)
 plt.ylabel('Temperature (K)',fontsize=16)
 plt.tick_params(labelsize=16) #tick size
