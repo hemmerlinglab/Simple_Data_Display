@@ -120,10 +120,10 @@ dt = np.linspace(0, 2.5, d1.shape[1]) * 10.0
 # Oscilloscope Figure
 plt.figure()
 #
-plt.plot(dt, conv_A(d1[25, :]))
+plt.plot(dt, conv_A(d1[25, :])-offset[0])
 
 plt.xlabel('Time (ms)',fontsize=16)
-plt.ylabel('Voltage',fontsize=16)
+plt.ylabel('Voltage (V)',fontsize=16)
 plt.tick_params(labelsize=16) #tick size
 plt.tick_params(direction='in') #tick direction
 plt.tight_layout()
@@ -174,7 +174,7 @@ for k in range(start_t,end_t):
         plt.plot( (fit_x - line_act*1e12)/1e6, fit_y_1, 'ko',label='data')
         plt.plot( (mod_x - line_act*1e12)/1e6, mod_y_1, 'r-',label='fitting')
         plt.xlabel('Frequency MHz',fontsize=16)
-        plt.ylabel('Precent of Signal Absorbed (abs)',fontsize=16)
+        plt.ylabel('Voltage (V)',fontsize=16)
         plt.tick_params(labelsize=16) #tick size
         plt.tick_params(direction='in') #tick direction
         plt.xlim(-700,700)
