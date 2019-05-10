@@ -32,11 +32,11 @@ def fcn2min(params, x, data, return_plot = False):
     
     k41_12 = k39d2line + 236.2e6 + 158.8e6 - 5.0e6
 
-    model  = a1 * np.exp( -m39 * c**2 * (x + shift - k39_23)**2/(2*kB*T* k39_23**2) )
-    model += a2 * np.exp( -m39 * c**2 * (x + shift - k39_12)**2/(2*kB*T* k39_12**2) )
-    model += a3 * np.exp( -m39 * c**2 * (x + shift - k39_11)**2/(2*kB*T* k39_11**2) )
-    model += a4 * np.exp( -m39 * c**2 * (x + shift - k39_10)**2/(2*kB*T* k39_10**2) )
-    model += a5 * np.exp( -m41 * c**2 * (x + shift - k41_12)**2/(2*kB*T* k41_12**2) )
+    model  = -a1 * np.exp( -m39 * c**2 * (x + shift - k39_23)**2/(2*kB*T* k39_23**2) )
+    model += -a2 * np.exp( -m39 * c**2 * (x + shift - k39_12)**2/(2*kB*T* k39_12**2) )
+    model += -a3 * np.exp( -m39 * c**2 * (x + shift - k39_11)**2/(2*kB*T* k39_11**2) )
+    model += -a4 * np.exp( -m39 * c**2 * (x + shift - k39_10)**2/(2*kB*T* k39_10**2) )
+    model += -a5 * np.exp( -m41 * c**2 * (x + shift - k41_12)**2/(2*kB*T* k41_12**2) )
 
     if return_plot == False:
         return model - data

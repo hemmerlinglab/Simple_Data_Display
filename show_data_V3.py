@@ -88,7 +88,7 @@ ds = ds * 1e12/1e6 # conversion to MHz
 # each slice is delta time units wide, avergaing over the delta time units for each point
 def get_time_slot(arr, minx, delta = 20):
 
-    return -np.mean(arr[:, minx:(minx+delta)], axis = 1)
+    return np.mean(arr[:, minx:(minx+delta)], axis = 1)
 #
 #d1 = np.array(d1, dtype = np.float)
 #
@@ -153,20 +153,20 @@ for k in range(start_t,end_t):
         plt.plot( (fit_x - line_act*1e12)/1e6, fit_y, 'ko',label='data')
         plt.plot( (mod_x - line_act*1e12)/1e6, mod_y, 'r-',label='fitting')
         plt.xlabel('Frequency MHz',fontsize=16)
-        plt.ylabel('Strength of line (abs)',fontsize=16)
+        plt.ylabel('Precent of Signal Absorbed (abs)',fontsize=16)
         plt.tick_params(labelsize=16) #tick size
         plt.tick_params(direction='in') #tick direction
         plt.legend(fontsize=14)
 plt.figure()
 plt.plot( res_t, res_T, 'mo-') # o is the circle marker
-plt.xlabel('Time',fontsize=16)
+plt.xlabel('Time (ms)',fontsize=16)
 plt.ylabel('Temperature (K)',fontsize=16)
 plt.tick_params(labelsize=16) #tick size
 plt.tick_params(direction='in') #tick direction
 
 plt.figure()
 plt.plot( res_t, res_shift, 'mo-')
-plt.xlabel('Time',fontsize=16)
+plt.xlabel('Time (ms)',fontsize=16)
 plt.ylabel('Temperature (K)',fontsize=16)
 plt.tick_params(labelsize=16) #tick size
 plt.tick_params(direction='in') #tick direction
