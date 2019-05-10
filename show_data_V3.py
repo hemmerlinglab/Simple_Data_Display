@@ -5,7 +5,6 @@
 2. Figure out the time for sample to leave the cell plots for the presentation
 
 Questions:
-1. How do we account for the other spectral lines that we do not have the frequency resolution to see? Currently in John's code he adds them up in the model, but I feel like there must be a better way. It cannot fit to data that isnt there because of the lack of resolution
 
 
 """
