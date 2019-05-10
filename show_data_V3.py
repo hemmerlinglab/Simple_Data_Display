@@ -88,10 +88,22 @@ ds = ds - line_act # subtract by the actual line
 
 ds = ds * 1e12/1e6 # conversion to MHz
 
+min_volt_ascii = d1.min()
+
 # each slice is delta time units wide, avergaing over the delta time units for each point
 def get_time_slot(arr, minx, delta = 20):
 
     return np.mean(arr[:, minx:(minx+delta)], axis = 1)
+
+def conv_t(ti):
+    return np.array([t6*25.0/1500 for t6 in ti])
+
+def conv_A(ab):
+    return np.array([(a6+127)*.2*8/256 for a6 in ab])
+
+offset = conv_A([min_volt_ascii])
+
+
 #
 #d1 = np.array(d1, dtype = np.float)
 #
@@ -108,7 +120,7 @@ dt = np.linspace(0, 2.5, d1.shape[1]) * 10.0
 # Oscilloscope Figure
 plt.figure()
 #
-plt.plot(dt, d1[25, :])
+plt.plot(dt, conv_A(d1[25, :]))
 
 plt.xlabel('Time (ms)',fontsize=16)
 plt.ylabel('Voltage',fontsize=16)
@@ -124,11 +136,7 @@ res_t = []
 res_T = []
 res_shift = []
 
-def conv_t(ti):
-    return [t6*25.0/d1.shape[1] for t6 in ti]
 
-def conv_A(ab):
-    return [a6*.2 for a6 in ab]
 
 # Time to range over
 start_t = 10
@@ -161,10 +169,10 @@ for k in range(start_t,end_t):
     if k == 60:
         plt.figure()
 
-        fit_y = conv_A(fit_y)
-        mod_y = conv_A(mod_y)
-        plt.plot( (fit_x - line_act*1e12)/1e6, fit_y, 'ko',label='data')
-        plt.plot( (mod_x - line_act*1e12)/1e6, mod_y, 'r-',label='fitting')
+        fit_y_1 = conv_A(fit_y) - offset[0]
+        mod_y_1 = conv_A(mod_y) - offset[0]
+        plt.plot( (fit_x - line_act*1e12)/1e6, fit_y_1, 'ko',label='data')
+        plt.plot( (mod_x - line_act*1e12)/1e6, mod_y_1, 'r-',label='fitting')
         plt.xlabel('Frequency MHz',fontsize=16)
         plt.ylabel('Precent of Signal Absorbed (abs)',fontsize=16)
         plt.tick_params(labelsize=16) #tick size
