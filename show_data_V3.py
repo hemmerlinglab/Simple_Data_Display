@@ -1,10 +1,13 @@
 """ Modification to the plots to look much nicer for the presentation """
 
 """ Plan: 
-1. Make the current fit be the thoeretical model by replacing the amplitude by the free parameter multipled by the transistion probability transition amplitude --> in the paper titled "potassium properties" it gives a reference for where these numbers can be found, but we do not have the book to access
-2. Figure out the time for sample to leave the cell plots for the presentation
+*Abandon transition probability amplitude, too many things we would need to account for
 
 Questions:
+	1. does each iteration of k mean 1 ms?
+
+Problems:
+	1. cant fix the axes limits without getting indentation errors
 
 
 """
@@ -160,9 +163,14 @@ for k in range(start_t,end_t):
 print(len(res_t))
 print(len(res_T))
 
+# only take reliable data
+# after a certain amount of time, we are off target so does not make sense to plot that temperature
+strt_cut = 12
+end_cut  = 50
+
 
 plt.figure()
-plt.plot( res_t[12:50], res_T[12:50], 'mo-') # o is the circle marker
+plt.plot( res_t[strt_cut:end_cut], res_T[strt_cut:end_cut], 'mo-') # o is the circle marker
 plt.xlabel('Time (ms)',fontsize=16)
 plt.ylabel('Temperature (K)',fontsize=16)
 plt.tick_params(labelsize=16) #tick size
@@ -187,6 +195,7 @@ plt.xlabel('Time (ms)',fontsize=16)
 plt.ylabel('Frequency (MHz)',fontsize=16)
 plt.tick_params(labelsize=16) #tick size
 plt.tick_params(direction='in') #tick direction
+
 plt.tight_layout()
 
 plt.show()
