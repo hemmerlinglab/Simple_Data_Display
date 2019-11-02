@@ -42,11 +42,11 @@ def av(arr, no_of_avg):
 
 my_today = datetime.datetime.today()
 
-#datafolder = '/Users/boerge/skynet/molecule_computer/'
-datafolder = '/home/molecules/software/data/'
+datafolder = '/Users/boerge/skynet/molecule_computer/'
+#datafolder = '/home/molecules/software/data/'
 
 
-basefolder = '20191023'
+basefolder = '20191031'
 #time_stamp = '123451'
 time_stamp = sys.argv[1]
 
@@ -58,16 +58,20 @@ time_stamp = sys.argv[1]
 basefilename = datafolder + basefolder + '/' + basefolder + '_'
 
 
-f_freqs = basefilename + time_stamp + '_freqs'
-f_ch1 = basefilename + time_stamp + '_ch1'
-f_ch2 = basefilename + time_stamp + '_ch2'
-f_ch3 = basefilename + time_stamp + '_ch3'
+f_freqs = basefilename + time_stamp + '_set_points'
+f_ch0 = basefilename + time_stamp + '_ch0_arr'
+f_ch1 = basefilename + time_stamp + '_ch1_arr'
+f_ch2 = basefilename + time_stamp + '_ch2_arr'
+f_ch3 = basefilename + time_stamp + '_ch3_arr'
+f_ch4 = basefilename + time_stamp + '_ch4_arr'
 
 
 freqs = np.genfromtxt(f_freqs, delimiter=",")
+ch0 = np.genfromtxt(f_ch0, delimiter=",")
 ch1 = np.genfromtxt(f_ch1, delimiter=",")
 ch2 = np.genfromtxt(f_ch2, delimiter=",")
 ch3 = np.genfromtxt(f_ch3, delimiter=",")
+ch4 = np.genfromtxt(f_ch4, delimiter=",")
 
 
 # get number of averages
@@ -76,9 +80,75 @@ no_of_avg = int(len(freqs)/len(np.unique(freqs)))
 print('Found ' + str(no_of_avg) + ' averages.')
 
 freqs = av(freqs, no_of_avg)
+ch0 = av(ch0, no_of_avg)
 ch1 = av(ch1, no_of_avg)
 ch2 = av(ch2, no_of_avg)
 ch3 = av(ch3, no_of_avg)
+ch4 = av(ch4, no_of_avg)
+
+
+
+avg_freq = np.mean(freqs)
+
+nus = 2.0*(freqs - yb_174_freq/2.0)*1e12/1e6
+
+nus = 2*freqs
+
+delay_in_for_loop = 60e-6
+no_of_time_points = ch1.shape[1]
+times = np.arange(0, no_of_time_points) * (delay_in_for_loop) / 1e-3
+
+
+
+
+def plot_sub(k, times, nus, ch, myfontsize = 8):
+
+    plt.subplot(2,3,k)
+
+    plt.pcolor(times, nus, ch)
+
+    plt.xlabel('Time (ms)', fontsize = myfontsize)
+    plt.ylabel('Frequencies (MHz)', fontsize = myfontsize)
+    plt.tick_params(labelsize=myfontsize,direction='in')
+
+    plt.gca().invert_yaxis()
+
+
+    plt.tight_layout()
+
+
+
+plt.figure(figsize=(10,6))
+
+plot_sub(1, times, nus, ch0)
+plot_sub(2, times, nus, ch1)
+plot_sub(3, times, nus, ch2)
+plot_sub(4, times, nus, ch3)
+plot_sub(5, times, nus, ch4)
+
+
+
+plt.figure(figsize=(10,6))
+
+plt.subplot(2,1,1)
+plt.plot(times, np.sum(ch2, axis = 0))
+plt.subplot(2,1,2)
+plt.plot(nus, np.sum(ch2, axis = 1))
+
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+asd
+
 
 
 #avg_freq = np.mean(freqs)
@@ -87,18 +157,8 @@ ch3 = av(ch3, no_of_avg)
 #nus = (freqs - yb_174_freq/2.0 )*1e12/1e6
 #nus = (freqs - yb_174_freq/2.0 )*1e12/1e6
 
-avg_freq = np.mean(freqs)
-
-nus = 2.0*(freqs - yb_174_freq/2.0)*1e12/1e6
 
 
-
-
-
-
-delay_in_for_loop = 60e-6
-no_of_time_points = ch1.shape[1]
-times = np.arange(0, no_of_time_points) * (delay_in_for_loop) / 1e-3
 
    
 
