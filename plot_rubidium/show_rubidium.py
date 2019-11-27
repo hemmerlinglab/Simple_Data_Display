@@ -39,16 +39,18 @@ def av(arr, no_of_avg):
 
 my_today = datetime.datetime.today()
 
-#datafolder = '/Users/boerge/skynet/molecule_computer/'
-datafolder = '/home/molecules/software/data/'
+#datafolder = '/Users/boerge/software/data/molecule_computer/'
+#datafolder = '/home/molecules/software/data/'
 
+datafolder = 'data/'
 
 basefolder = '20191126'
-time_stamp = sys.argv[1] #'145643'
 
 
+time_stamp = '152843' #sys.argv[1] #'145643'
 
-basefilename = datafolder + basefolder + '/' + basefolder + '_'
+#basefilename = datafolder + basefolder + '/' + basefolder + '_'
+basefilename = datafolder + '/' + basefolder + '_'
 
 
 f_freqs = basefilename + time_stamp + '_set_points'
@@ -102,6 +104,8 @@ v_abs.append(Rb_85_D2_abs_freqs + (+1.770843e9 - 20.435e6)/1e12)
 mytext.append('Rb-85, 2->3')
 v_abs.append(Rb_85_D2_abs_freqs + (+1.770843e9 - 83.835e6)/1e12)
 mytext.append('Rb-85, 2->2')
+v_abs.append(Rb_85_D2_abs_freqs + (+1.770843e9 - 113.208e6)/1e12)
+mytext.append('Rb-85, 2->1')
 
 v_abs.append(Rb_87_D2_abs_freqs + (-2.563005e9 + 193.7407e6)/1e12)
 mytext.append('Rb-87, 2->3')
@@ -133,13 +137,13 @@ plt.plot(freqs, ch2_mean)
 dv = 1.0/len(v_abs)
 for k in range(len(v_abs)):
     plt.axvline(ind[k], ls = '--', color = 'r')
-    plt.text(ind[k], dv * k, mytext[k])
+    plt.text(ind[k], -dv * k, mytext[k])
 
 plt.subplot(2,1,2)
 plt.plot(freqs, diff_sig)
 for k in range(len(v_abs)):
     plt.axvline(ind[k], ls = '--', color = 'r')
-    plt.text(ind[k], dv * k, mytext[k])
+    plt.text(ind[k], -dv * k, mytext[k])
 
 plt.xlabel('Freqs (MHz) + ' + str(setpoint_offset) + ' THz')
 
