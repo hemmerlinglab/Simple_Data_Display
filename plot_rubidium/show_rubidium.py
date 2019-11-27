@@ -40,17 +40,18 @@ def av(arr, no_of_avg):
 my_today = datetime.datetime.today()
 
 #datafolder = '/Users/boerge/software/data/molecule_computer/'
-#datafolder = '/home/molecules/software/data/'
+datafolder = '/home/molecules/software/data/'
 
-datafolder = 'data/'
+#datafolder = 'data/'
 
-basefolder = '20191126'
+#basefolder = '20191126'
+basefolder = '20191127'
 
 
-time_stamp = '152843' #sys.argv[1] #'145643'
+time_stamp = sys.argv[1] #'145643'
 
-#basefilename = datafolder + basefolder + '/' + basefolder + '_'
-basefilename = datafolder + '/' + basefolder + '_'
+basefilename = datafolder + basefolder + '/' + basefolder + '_'
+#basefilename = datafolder + '/' + basefolder + '_'
 
 
 f_freqs = basefilename + time_stamp + '_set_points'
@@ -74,8 +75,11 @@ ch0_mean -= ch0_mean[0]
 ch1_mean -= ch1_mean[0]
 ch2_mean -= ch2_mean[0]
 
-#ch0_mean -= ch2_mean
-#ch1_mean -= ch2_mean
+
+# switch 0 and 1
+ch0_mean = ch1_mean
+
+
 
 diff_sig = ch0_mean - ch1_mean
 
@@ -85,67 +89,170 @@ no_of_time_points = ch1.shape[1]
 times = np.arange(0, no_of_time_points) * (delay_in_for_loop) / 1e-3
 
    
-Rb_85_D2_abs_freqs = 384.230406373
-Rb_87_D2_abs_freqs = 384.230484468
+Rb87 = {
+        'atom' : 'Rb87',
+        'S1/2-P3/2' : 384.230484468e12,
+        'S1/2' : {
+            '2' : -2.563005e9,
+            '1' : 4.27167e9
+            },
+        'P3/2' : {
+            '3' : +193.7407e6,
+            '2' : -72.9112e6,
+            '1' : -229.8518e6,
+            '0' : -302.0738e6
+            }
+    }
 
-v_abs = []
-mytext = []
+Rb85 = {
+        'atom' : 'Rb85',
+        'S1/2-P3/2' : 384.230406373e12,
+        'S1/2' : {
+            '3' : -1.264888516e9,
+            '2' : 1.770843922e9
+            },
+        'P3/2' : {
+            '4' : +100.205e6,
+            '3' : -20.435e6,
+            '2' : -83.835e6,
+            '1' : -113.208e6
+            }
+    }
+
+
+def create_transition(atom, gs, es, Fg, Fe, Fe_co = '', crossover = False):
+
+    if not crossover:
+        freq = atom[gs + '-' + es] + atom[gs][str(Fg)] + atom[es][str(Fe)]
+        label = atom['atom'] + ' ' + Fg + '->' + Fe
+        ls = '-'
+    else:
+        freq = atom[gs + '-' + es] + atom[gs][str(Fg)] + (atom[es][str(Fe)] + atom[es][str(Fe_co)])/2.0
+        label = atom['atom'] + ' ' + Fg + '->' + Fe + '/' + Fe_co + ' (co)'
+        ls = '--'
+
+    return [freq, label, ls]
+
+
+setpoint_offset = 384.230 # should be read out from the config file
+
+
+# only keeping the lines that cycle photons
+
+my_lines = []
+my_lines.append(create_transition(Rb87, 'S1/2', 'P3/2', '2', '3'))
+#my_lines.append(create_transition(Rb87, 'S1/2', 'P3/2', '2', '2'))
+#my_lines.append(create_transition(Rb87, 'S1/2', 'P3/2', '2', '1'))
+
+#my_lines.append(create_transition(Rb87, 'S1/2', 'P3/2', '2', '1', Fe_co = '2', crossover = True))
+my_lines.append(create_transition(Rb87, 'S1/2', 'P3/2', '2', '2', Fe_co = '3', crossover = True))
+my_lines.append(create_transition(Rb87, 'S1/2', 'P3/2', '2', '1', Fe_co = '3', crossover = True))
+
+my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '3', '4'))
+#my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '3', '3'))
+#my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '3', '2'))
+
+#my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '3', '2', Fe_co = '3', crossover = True))
+my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '3', '3', Fe_co = '4', crossover = True))
+my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '3', '2', Fe_co = '4', crossover = True))
+
+
+#my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '2', '3'))
+##my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '2', '2'))
+##my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '2', '1'))
+
+#my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '2', '2', Fe_co = '3', crossover = True))
+##my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '2', '1', Fe_co = '2', crossover = True))
+#my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '2', '1', Fe_co = '3', crossover = True))
+
+
+
+# fit spectrum
+from fit_rb import *
+
+(xfit, yfit, fit_result) = fit_rb(freqs, ch0_mean, my_lines, setpoint_offset)
+#(xfit, yfit, fit_result) = fit_rb(freqs[0:200], ch0_mean[0:200], my_lines, setpoint_offset)
+
+wavemeter_offset = fit_result.params['x_offset'].value
+#wavemeter_offset = 0
+#xfit = 0
+#yfit = 0
+
+# peak finding
+from scipy.signal import find_peaks
+peaks,_ = find_peaks(ch0_mean, distance = 5, width = [2, 15])#, height = [0, 0.2])#, height = 0, width = 2)
+
+
+peaks = peaks[[0, 1, 3, 5, 6, 7]]
+
+
+myfontsize = 16
+
+
 ind = []
-
-# including hyperfine structure
-v_abs.append(Rb_85_D2_abs_freqs + (-1.264888e9 + 100.205e6)/1e12)
-mytext.append('Rb-85, 3->4')
-v_abs.append(Rb_85_D2_abs_freqs + (-1.264888e9 - 20.435e6)/1e12)
-mytext.append('Rb-85, 3->3')
-v_abs.append(Rb_85_D2_abs_freqs + (-1.264888e9 - 83.835e6)/1e12)
-mytext.append('Rb-85, 3->2')
-
-v_abs.append(Rb_85_D2_abs_freqs + (+1.770843e9 - 20.435e6)/1e12)
-mytext.append('Rb-85, 2->3')
-v_abs.append(Rb_85_D2_abs_freqs + (+1.770843e9 - 83.835e6)/1e12)
-mytext.append('Rb-85, 2->2')
-v_abs.append(Rb_85_D2_abs_freqs + (+1.770843e9 - 113.208e6)/1e12)
-mytext.append('Rb-85, 2->1')
-
-v_abs.append(Rb_87_D2_abs_freqs + (-2.563005e9 + 193.7407e6)/1e12)
-mytext.append('Rb-87, 2->3')
-v_abs.append(Rb_87_D2_abs_freqs + (-2.563005e9 - 72.9112e6)/1e12)
-mytext.append('Rb-87, 2->2')
-v_abs.append(Rb_87_D2_abs_freqs + (-2.563005e9 - 229.8518e6)/1e12)
-mytext.append('Rb-87, 2->1')
-
-v_abs.append(Rb_87_D2_abs_freqs + (+4.271676e9 - 72.911e6)/1e12)
-mytext.append('Rb-87, 1->2')
-v_abs.append(Rb_87_D2_abs_freqs + (+4.271676e9 - 229.8518e6)/1e12)
-mytext.append('Rb-87, 1->1')
-
-
-setpoint_offset = 384.230
-set_abs_freqs = freqs*1e6/1e12 + setpoint_offset
-
-for k in range(len(v_abs)):
-    ind.append( (v_abs[k] - setpoint_offset)*1.0e6 )
+for k in range(len(my_lines)):
+    ind.append( (my_lines[k][0]/1.0e12 - setpoint_offset )*1.0e6 - wavemeter_offset )
 
 mymax = np.max(diff_sig)
 
-plt.figure()
-plt.subplot(2,1,1)
-plt.plot(freqs, ch0_mean)
-plt.plot(freqs, ch1_mean)
-plt.plot(freqs, ch2_mean)
+plt.figure(figsize=(10,6))
+#plt.subplot(2,1,1)
+#plt.plot(freqs, ch1_mean)
+#plt.plot(freqs, ch2_mean)
 
-dv = 1.0/len(v_abs)
-for k in range(len(v_abs)):
-    plt.axvline(ind[k], ls = '--', color = 'r')
-    plt.text(ind[k], -dv * k, mytext[k])
+plt.xlim(np.min(freqs), np.max(freqs))
 
-plt.subplot(2,1,2)
-plt.plot(freqs, diff_sig)
-for k in range(len(v_abs)):
-    plt.axvline(ind[k], ls = '--', color = 'r')
-    plt.text(ind[k], -dv * k, mytext[k])
+plt.xlabel('Freqs (MHz) + ' + str(setpoint_offset) + ' THz', fontsize = myfontsize)
 
-plt.xlabel('Freqs (MHz) + ' + str(setpoint_offset) + ' THz')
+plt.ylabel('Absorption Signal (a.u)', fontsize = myfontsize)
+plt.tick_params(labelsize=14, direction='in')
+
+
+dv = 1.0/len(my_lines)
+for k in range(len(my_lines)):
+    plt.axvline(ind[k], ls = my_lines[k][2], color = 'r')
+    plt.text(ind[k] + 10, 0.0, my_lines[k][1], rotation = 90, fontsize = 8)
+
+plt.plot(freqs, ch0_mean, linewidth = 2)
+
+#plt.subplot(2,1,2)
+#plt.figure()
+#plt.plot(freqs, diff_sig)
+#
+#plt.xlabel('Freqs (MHz) + ' + str(setpoint_offset) + ' THz')
+#
+#plt.xlim(np.min(freqs), np.max(freqs))
+
+
+plt.plot(xfit, yfit, 'r')
+
+plt.plot(freqs[peaks], ch0_mean[peaks], 'rx')
+
+
+
+
+plt.figure(figsize=(10,6))
+
+true_freqs = np.sort(list(map( lambda arr : (arr[0] - setpoint_offset*1e12)/1e6, my_lines)))
+
+meas_freqs = np.sort(freqs[peaks])
+plt.scatter(true_freqs, true_freqs - meas_freqs, s = 150, facecolors = 'none', edgecolors = 'b', label = 'Peak fit')
+plt.axhline(0)
+
+peak_offset = np.mean(true_freqs - meas_freqs)
+plt.axhline(wavemeter_offset, ls = '--', color = 'r', label = 'from fit')
+plt.axhline(peak_offset, ls = '--', color = 'k', label = 'avg from peaks')
+
+plt.xlabel('True Frequency (MHz)', fontsize = myfontsize)
+plt.ylabel('True - Measured Frequency (MHz)', fontsize = myfontsize)
+
+plt.tick_params(labelsize=14, direction='in')
+
+plt.legend()
+
+
+plt.text(np.mean(true_freqs), 0.50*peak_offset, "Peak Offset: {0:5.2f} MHz".format(peak_offset), fontsize = myfontsize)
+plt.text(np.mean(true_freqs), 0.25*peak_offset, "Fit Offset: {0:5.2f} MHz".format(wavemeter_offset), fontsize = myfontsize)
 
 plt.show()
 
