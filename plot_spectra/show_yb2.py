@@ -13,8 +13,20 @@ yb_174_freq = 751.52653349 # in THz
 
 
 # hlp is helper variable
+def plot_sub(k, times, nus, ch, myfontsize = 8):
+
+    plt.subplot(3,2,k)
+
+    plt.pcolor(times, nus, ch)
+
+    plt.xlabel('Time (ms)', fontsize = myfontsize)
+    plt.ylabel('Frequencies (MHz)', fontsize = myfontsize)
+    plt.tick_params(labelsize=myfontsize,direction='in')
+
+    plt.gca().invert_yaxis()
 
 
+    plt.tight_layout()
 
 def av(arr, no_of_avg):
     # for 1D array
@@ -46,7 +58,7 @@ my_today = datetime.datetime.today()
 datafolder = '/home/molecules/software/data/'
 
 
-basefolder = '20191101'
+basefolder = '20191107'
 #time_stamp = '123451'
 time_stamp = sys.argv[1]
 
@@ -107,52 +119,69 @@ ch3s = av(ch3s, no_of_avg)
 ch4s = av(ch4s, no_of_avg)
 
 
+plt.figure()
+plt.plot(np.sum(ch0[:, 180:185], axis = 1))
+plt.show()
+asd
 
 avg_freq = np.mean(freqs)
 
 nus = 2.0*(freqs - yb_174_freq/2.0)*1e12/1e6
 
-nus = 2*freqs
+#nus = 2*freqs
 
-delay_in_for_loop = 60e-6
+delay_in_for_loop = 100e-6
 no_of_time_points = ch1.shape[1]
 times = np.arange(0, no_of_time_points) * (delay_in_for_loop) / 1e-3
 
 
 
+# change nus to vel
 
-def plot_sub(k, times, nus, ch, myfontsize = 8):
-
-    plt.subplot(3,2,k)
-
-    plt.pcolor(times, nus, ch)
-
-    plt.xlabel('Time (ms)', fontsize = myfontsize)
-    plt.ylabel('Frequencies (MHz)', fontsize = myfontsize)
-    plt.tick_params(labelsize=myfontsize,direction='in')
-
-    plt.gca().invert_yaxis()
+#vel = -(2.0*freqs*1e6 + 2.0*375.763216e12 - yb_174_freq*1e12) * 398e-9 / np.cos(np.pi/4.0)
+vel = -(freqs*2.0 - yb_174_freq)*1e12 * 398e-9 #/ np.cos(np.pi/4.0)
 
 
-    plt.tight_layout()
+plt.figure(figsize=(10,6))
+plt.pcolor(times, vel, ch0)
 
+plt.figure(figsize=(10,6))
+plt.pcolor(times, vel, ch2)
 
+dist = 31*25.4e-3
+
+yag_fire = 9.567e-3
+
+isotope_shifts = np.array([-508.89, 0, -250.78, (531.11 + 589.75)/2.0, 835.19, (1153.68 + 1190.36)/2.0, 1888.80])
+
+vel_shifts = -(isotope_shifts)*1e6 * 398e-9 #/ np.cos(np.pi/4.0)
+
+for k in range(len(vel_shifts)):
+    if k == 1:
+        plt.plot(times, vel_shifts[k] + dist/(times*1e-3 - yag_fire), 'k--')
+    else:
+        plt.plot(times, vel_shifts[k] + dist/(times*1e-3 - yag_fire), 'r--')
+
+plt.ylim(np.min(vel), np.max(vel))
+plt.xlim(yag_fire/1e-3, 20)
+plt.show()
+
+#asd
 
 plt.figure(figsize=(10,6))
 
 plot_sub(1, times, nus, ch0)
-plot_sub(2, times, nus, ch2)
-
-#plot_sub(2, times, nus, ch1)
-
-#plot_sub(4, times, nus, ch3)
-#plot_sub(5, times, nus, ch4)
-
-
-#plt.figure(figsize=(10,6))
-
 plot_sub(3, times, nus, ch0s)
+
+cmax = 1.5
+
+plot_sub(2, times, nus, ch2)
+plt.colorbar()
+#plt.clim(0,cmax)
+
 plot_sub(4, times, nus, ch2s)
+plt.colorbar()
+#plt.clim(0,cmax)
 
 #plot_sub(2, times, nus, ch1s)
 #plot_sub(4, times, nus, ch3s)
@@ -161,7 +190,7 @@ plot_sub(4, times, nus, ch2s)
 plot_sub(5, times, nus, ch0s - ch0)
 plot_sub(6, times, nus, ch2s - ch2)
 plt.colorbar()
-plt.clim(0,0.3)
+plt.clim(-0.25*cmax, 0.25*cmax)
 
 plt.figure(figsize=(10,6))
 
@@ -170,184 +199,7 @@ plt.plot(times, np.sum(ch2s - ch2, axis = 0))
 #plt.subplot(2,1,2)
 #plt.plot(nus, np.sum(ch2, axis = 1))
 
+
 plt.show()
 
-
-
-
-
-
-
-
-
-
-
-asd
-
-
-
-#avg_freq = np.mean(freqs)
-#avg_freq = 2*avg_freq
-
-#nus = (freqs - yb_174_freq/2.0 )*1e12/1e6
-#nus = (freqs - yb_174_freq/2.0 )*1e12/1e6
-
-
-
-
-   
-
-cut_time1 = 10.0
-cut_time2 = 12.0
-
-ch1_start = np.where( np.abs(times - cut_time1) < 0.5 )[0][0]
-ch1_end = np.where( np.abs(times - cut_time2) < 0.5 )[0][0]
-
-# subtracting the DC offset
-offset_avg_points = 5
-for k in range(ch1.shape[0]):
-    ch1[k, :] = ch1[k, :] - np.mean(ch1[k, -offset_avg_points:-1])
-    ch2[k, :] = ch2[k, :] - np.mean(ch2[k, -offset_avg_points:-1])
-    ch3[k, :] = ch3[k, :] - np.mean(ch3[k, -offset_avg_points:-1])
-
-
-# w = k*v * cos(theta)
-# v = nu * lambda/cos(theta)
-
-velocities = -398*10**-9 * (2.0*freqs - yb_174_freq)*1e12 / np.cos(np.pi/4.0)
-
-
-
-plt.figure(figsize=(10,6))
-
-plt.pcolor(times, nus, ch1)
-plt.colorbar()
-
-plt.xlabel('Time (ms)', fontsize = 16)
-plt.ylabel('Frequencies (MHz)', fontsize = 16)
-plt.tick_params(labelsize=14,direction='in')
-
-plt.gca().invert_yaxis()
-
-
-
-
-plt.figure(figsize=(10,6))
-
-plt.pcolor(times, nus, ch3)
-plt.colorbar()
-
-plt.xlabel('Time (ms)', fontsize = 16)
-plt.ylabel('Frequencies (MHz)', fontsize = 16)
-plt.tick_params(labelsize=14,direction='in')
-
-plt.gca().invert_yaxis()
-
-
-plt.xlim(0, 10)
-
-
-plt.tight_layout()
-
-
-
-
-
-plt.figure(figsize=(10,6))
-
-plt.pcolor(times, velocities, ch3)
-plt.colorbar()
-
-plt.xlabel('Time (ms)', fontsize = 16)
-plt.ylabel('Velocity (m/s)', fontsize = 16)
-plt.tick_params(labelsize=14,direction='in')
-
-#plt.gca().invert_yaxis()
-
-
-plt.xlim(0, 10)
-#plt.ylim(-200, 550)
-
-
-plt.tight_layout()
-
-
-
-
-
-
-plt.figure(figsize=(10,6))
-
-
-count_min = 0.35
-count_max = np.max(np.max(ch3))
-
-#count_min = 0.75
-#count_max = 3.75
-
-
-ch3_plot = np.copy(ch3)
-ind = np.where(ch3<count_min)
-
-#ch3_plot[ind] = np.nan
-
-
-#plt.pcolor(times, velocities, ch3_plot)
-plt.contour(times, velocities, ch3_plot, np.linspace(count_min, count_max, 15))
-
-plt.xlabel('Time (ms)', fontsize = 16)
-plt.ylabel('Velocity Yb-174 (m/s)', fontsize = 16)
-plt.tick_params(labelsize=14,direction='in')
-
-#plt.gca().invert_yaxis()
-
-
-
-vel_shift_172 = -(589.0+531.0)/2.0*1e6 * 398*10**-9 / np.cos(np.pi/4.0)
-vel_shift_171 = -835.0*1e6 * 398*10**-9 / np.cos(np.pi/4.0)
-
-yag_fire_time = 0.3
-
-time1 = np.where(times > 1.5)[0][0] #yag_fire_time)[0][0]
-
-plt.plot(times[time1:], 32 * 25.4e-3/(times[time1:] - yag_fire_time)/1e-3, 'r--', linewidth = 1)
-
-plt.plot(times[time1:], vel_shift_172 + 32 * 25.4e-3/(times[time1:] - yag_fire_time)/1e-3, 'r--', linewidth = 1)
-
-plt.plot(times[time1:], vel_shift_171 + 32 * 25.4e-3/(times[time1:] - yag_fire_time)/1e-3, 'r--', linewidth = 1)
-
-
-
-plt.xlim(0, 10)
-#plt.ylim(-200, 530)
-
-
-plt.tight_layout()
-
-
-plt.text(3.0, 450, 'Yb-174', fontsize = 16)
-plt.text(3.0, 120, 'Yb-172/173', fontsize = 16)
-plt.text(1.5, -75, 'Yb-171', fontsize = 16)
-
-
-
-plt.savefig('ytterbium_beam.png', dpi=600)
-
-
-
-#plt.figure(figsize=(10,6))
-#
-#time1 = np.where( np.abs(times - 1.75) < 0.5 )[0][0]
-#time2 = np.where( np.abs(times - 4.00) < 0.5 )[0][0]
-#
-#vel_sum = np.mean(ch3_plot[:, time1:time2], axis = 1)
-#
-#plt.plot(velocities, vel_sum)
-#
-#plt.xlabel('Velocities (m/s)')
-#plt.ylabel('Signal (a.u.)')
-
-
-
-plt.show()
 
