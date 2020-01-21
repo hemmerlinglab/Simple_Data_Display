@@ -42,24 +42,31 @@ def av(arr, no_of_avg):
 
 my_today = datetime.datetime.today()
 
-datafolder = '/Users/boerge/skynet/molecule_computer/'
+#datafolder = '/Users/boerge/skynet/molecule_computer/'
+datafolder = '/home/molecules/software/data/'
+
+basefolder = '20200119'
+#time_stamp = '173219'
 
 
-basefolder = '20190806'
-time_stamp = '173219'
+if len(sys.argv)>1:
+    time_stamp = sys.argv[1]
+else:
+    # get latest time stamp
+    all_files = np.sort(glob.glob(basefilename + "*"))
+    #print(all_files)
+    time_stamp = all_files[-1].split('_')[1]
 
-#basefolder = '20191004'
-#time_stamp = '171345'
 
 
 
 basefilename = datafolder + basefolder + '/' + basefolder + '_'
 
 
-f_freqs = basefilename + time_stamp + '_freqs'
-f_ch1 = basefilename + time_stamp + '_ch1'
-f_ch2 = basefilename + time_stamp + '_ch2'
-f_ch3 = basefilename + time_stamp + '_ch3'
+f_freqs = basefilename + time_stamp + '_set_points'
+f_ch1 = basefilename + time_stamp + '_ch0_arr'
+f_ch2 = basefilename + time_stamp + '_ch1_arr'
+f_ch3 = basefilename + time_stamp + '_ch2_arr'
 
 
 freqs = np.genfromtxt(f_freqs, delimiter=",")
@@ -94,7 +101,7 @@ nus = 2*(freqs - yb_174_freq/2.0)*1e12/1e6
 
 
 
-delay_in_for_loop = 60e-6
+delay_in_for_loop = 100e-6
 no_of_time_points = ch1.shape[1]
 times = np.arange(0, no_of_time_points) * (delay_in_for_loop) / 1e-3
 
@@ -121,7 +128,7 @@ velocities = -398*10**-9 * (2.0*freqs - yb_174_freq)*1e12 / np.cos(np.pi/4.0)
 
 plt.figure(figsize=(10,6))
 
-plt.pcolor(times, nus, ch3)
+plt.pcolor(times, nus, ch1)
 plt.colorbar()
 
 plt.xlabel('Time (ms)', fontsize = 16)
@@ -131,11 +138,10 @@ plt.tick_params(labelsize=14,direction='in')
 plt.gca().invert_yaxis()
 
 
-plt.xlim(0, 10)
+#plt.xlim(0, 10)
 
 
 plt.tight_layout()
-
 
 
 
@@ -152,8 +158,8 @@ plt.tick_params(labelsize=14,direction='in')
 #plt.gca().invert_yaxis()
 
 
-plt.xlim(0, 6)
-plt.ylim(-200, 550)
+#plt.xlim(0, 6)
+#plt.ylim(-200, 550)
 
 
 plt.tight_layout()
@@ -205,16 +211,11 @@ plt.plot(times[time1:], vel_shift_171 + 32 * 25.4e-3/(times[time1:] - yag_fire_t
 
 
 
-plt.xlim(0, 6)
-plt.ylim(-200, 530)
+#plt.xlim(0, 6)
+#plt.ylim(-200, 530)
 
 
 plt.tight_layout()
-
-
-plt.text(3.0, 450, 'Yb-174', fontsize = 16)
-plt.text(3.0, 120, 'Yb-172/173', fontsize = 16)
-plt.text(1.5, -75, 'Yb-171', fontsize = 16)
 
 
 
@@ -233,6 +234,15 @@ plt.savefig('ytterbium_beam.png', dpi=600)
 #
 #plt.xlabel('Velocities (m/s)')
 #plt.ylabel('Signal (a.u.)')
+
+
+plt.figure()
+
+plt.plot(freqs, np.mean(ch3, axis = 1))
+
+plt.figure()
+
+plt.plot(times, np.mean(ch3, axis = 0))
 
 
 
