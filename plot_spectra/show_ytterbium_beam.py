@@ -45,7 +45,7 @@ my_today = datetime.datetime.today()
 #datafolder = '/Users/boerge/skynet/molecule_computer/'
 datafolder = '/home/molecules/software/data/'
 
-basefolder = '20200119'
+basefolder = '20200124'
 #time_stamp = '173219'
 
 

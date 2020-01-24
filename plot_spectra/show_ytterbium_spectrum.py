@@ -45,8 +45,8 @@ my_today = datetime.datetime.today()
 #datafolder = '/Users/boerge/skynet/molecule_computer/'
 datafolder = '/home/molecules/software/data/'
 
-basefolder = str(my_today.strftime('%Y%m%d')) # 20190618
-#basefolder = '20200117'
+#basefolder = str(my_today.strftime('%Y%m%d')) # 20190618
+basefolder = '20200121'
 
 basefilename = datafolder + basefolder + '/' + basefolder + '_'
 
