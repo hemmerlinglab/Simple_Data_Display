@@ -6,16 +6,16 @@ c = 299792458
 
 def print_params(par, state = 'Yg'):
 
-    print("Te   = {0:12.6f} THz".format(100*c*par[state + '00'].value/1e12))
-    print("we   = {0:12.6f} THz".format(100*c*par[state + '10'].value/1e12))
+    print("Te   = {0:12.6f} THz / {1:11.5f} 1/cm".format(100*c*par[state + '00'].value/1e12, par[state + '00'].value))
+    print("we   = {0:12.6f} THz / {1:11.5f} 1/cm".format(100*c*par[state + '10'].value/1e12,par[state + '10'].value))
     print()
-    print("wexe = {0:12.4f} GHz".format(100*c*par[state + '20'].value/1e9))
-    print("weye = {0:12.4f} GHz".format(100*c*par[state + '30'].value/1e9))
-    print("weze = {0:12.4f} GHz".format(100*c*par[state + '40'].value/1e9))
+    print("wexe = {0:12.4f} GHz / {1:11.5f} 1/cm".format(-100*c*par[state + '20'].value/1e9, -par[state + '20'].value))
+    print("weye = {0:12.4f} GHz / {1:11.5f} 1/cm".format(100*c*par[state + '30'].value/1e9, par[state + '30'].value))
+    print("weze = {0:12.4f} GHz / {1:11.5f} 1/cm".format(100*c*par[state + '40'].value/1e9, par[state + '40'].value))
     
     print()
-    print("Be   = {0:12.4f} GHz".format(100*c*par[state + '01'].value/1e9))
-    print("ae   = {0:12.4f} GHz".format(100*c*par[state + '11'].value/1e9))
+    print("Be   = {0:12.4f} GHz / {1:11.5f} 1/cm".format(100*c*par[state + '01'].value/1e9, par[state + '01'].value))
+    print("ae   = {0:12.4f} GHz / {1:11.5f} 1/cm".format(100*c*par[state + '11'].value/1e9, par[state + '11'].value))
 
 
 
@@ -58,6 +58,8 @@ print()
 
 # print results
 
+print("(( v, J) -> ( v', J')) = <paper> / <prediction> diff: <difference>")
+
 total_err = 0
 
 for n in range(len(d)):
@@ -68,7 +70,7 @@ for n in range(len(d)):
 
     total_err += np.abs(err)
 
-    print('(' + "({0},{1}) -> ({2},{3})".format(d[n][0], d[n][1], d[n][2], d[n][3]) + ') = ' + "{0:8.2f} / {1:8.2f}   diff: {2:8.2f}".format(d[n][4], fit, err))
+    print('(' + "({0:2d},{1:2d}) -> ({2:2d},{3:2d})".format(d[n][0], d[n][1], d[n][2], d[n][3]) + ') = ' + "{0:8.2f} / {1:8.2f}   diff: {2:8.2f} 1/cm".format(d[n][4], fit, err))
 
 
 print("\nTotal error = {0:6.2f}\n".format(total_err))
@@ -98,5 +100,12 @@ print_params(result, 'Ye')
 
 
 print()
+
+
+Yg = make_dunham(result, state = 'Yg')
+Ye = make_dunham(result, state = 'Ye')
+
+print('Yg = ' + str(list(map(lambda x : list(map(lambda y : y.value, x)), Yg))))
+print('Ye = ' + str(list(map(lambda x : list(map(lambda y : y.value, x)), Ye))))
 
 

@@ -21,38 +21,30 @@ def energy(Y, v, J):
     return e
 
 
+def make_dunham(params, state = 'Yg'):
+
+    Y = []
+    hlp = []
+    for k in range(nvib):
+        l = 0
+        hlp.append(params[state + str(k) + str(l)])
+    Y.append(hlp)
+
+    hlp = []
+    for k in [0,1]:
+        l = 1
+        hlp.append(params[state + str(k) + str(l)])
+
+    Y.append(hlp)
+
+    return Y
+
 # define objective function: returns the array to be minimized
 # function to minimize
 def fcn2min(params, x, data, get_fit = False):
     
-    Yg = []
-    hlp = []
-    for k in range(nvib):
-        l = 0
-        hlp.append(params['Yg' + str(k) + str(l)])
-
-    Yg.append(hlp)    
-
-    hlp = []
-    for k in [0,1]:
-        l = 1
-        hlp.append(params['Yg' + str(k) + str(l)])
-
-    Yg.append(hlp)
-
-    Ye = []
-    hlp = []
-    for k in range(nvib):
-        l = 0
-        hlp.append(params['Ye' + str(k) + str(l)])
-    Ye.append(hlp)
-
-    hlp = []
-    for k in [0,1]:
-        l = 1
-        hlp.append(params['Ye' + str(k) + str(l)])
-
-    Ye.append(hlp)
+    Yg = make_dunham(params, 'Yg')
+    Ye = make_dunham(params, 'Ye')
 
     # data = [[v1, J1, v2, J2, freq], ...]
     model = []
