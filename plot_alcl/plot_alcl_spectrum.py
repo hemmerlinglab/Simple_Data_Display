@@ -120,12 +120,61 @@ plt.legend()
 
 
 plt.figure()
-plt.plot(f_P/1e9, 'o-')
-plt.plot(f_Q/1e9, 'x-')
-plt.plot(f_R/1e9, 'd-')
+plt.plot(f_P/1e9, 'ro-')
+plt.plot(f_Q/1e9, 'gx-')
+plt.plot(f_R/1e9, 'bd-')
 
 plt.xlabel('Rotational number J')
 plt.ylabel("Frequency (GHz) - {0:6.6f} THz".format(100*c*cnt_freq/1e12))
+
+
+
+
+plt.figure()
+
+
+cut = 5
+plt.plot(f_P[0:cut]/1e9, 'ro-')
+plt.plot(f_Q[0:cut]/1e9, 'gx-')
+plt.plot(f_R[0:cut]/1e9, 'bd-')
+
+
+exp_freqs = np.array([382.08140	 	 ,
+382.08615	,
+382.09095	,
+382.09340	,
+382.09575	,
+382.09810	
+])
+
+
+exp_freqs = 3*exp_freqs*1e12
+
+exp_freqs = (exp_freqs - 100*c*cnt_freq)
+
+exp_freqs = exp_freqs/1e9
+
+plt.plot(4, exp_freqs[0], 'kx', markersize = 10)
+plt.plot(3, exp_freqs[1], 'kx', markersize = 10)
+plt.plot(2, exp_freqs[2], 'kx', markersize = 10)
+plt.plot(1, exp_freqs[3], 'kx', markersize = 10)
+plt.plot(1, exp_freqs[4], 'kx', markersize = 10)
+plt.plot(0, exp_freqs[5], 'kx', markersize = 10)
+
+
+plt.xlabel('Rotational number J')
+plt.ylabel("Frequency (GHz) - {0:6.6f} THz".format(100*c*cnt_freq/1e12))
+
+
+
+
+
+
+
+
+
+
+
 
 plt.show()
 
