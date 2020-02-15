@@ -160,23 +160,31 @@ def scale_coeff(Y, mass1, mass2, scale = True):
 Yg = [[0.0, 482.0794801498224, -2.0285504669476797, 4.2244382524958823e-07, -1.4200906251997294e-05], [0.23086415576356475, -0.0015452837298277023]]
 Ye = [[38250.600844308836, 457.2272074915964, -7.519552217461303, 0.29489258632225485, -0.02723237768418022], [0.23713820022739715, -0.003944286505039427]]
 
+# from Bernath
+Yg = [[0.0, 481.774655, -2.101, 6.638e-3, -2.025e-5],[0.2439300, -1.611e-3]]
+Ye = [[38250.600844308836, 457.2272074915964, -7.519552217461303, 0.29489258632225485, -0.02723237768418022], [0.23713820022739715, -0.003944286505039427]]
 
-Ug = scale_coeff(Yg, 27, 35, scale = False)
-Ue = scale_coeff(Ye, 27, 35, scale = False)
+massAl = 26.98153841
+massCl_35 = 34.96885269
+massCl_37 = 36.96590258
 
-
-Yg37 = scale_coeff(Ug, 27, 37, scale = True)
-Ye37 = scale_coeff(Ue, 27, 37, scale = True)
-
-Yg35 = scale_coeff(Ug, 27, 35, scale = True)
-Ye35 = scale_coeff(Ue, 27, 35, scale = True)
-
-
+Ug = scale_coeff(Yg, massAl, massCl_35, scale = False)
+Ue = scale_coeff(Ye, massAl, massCl_35, scale = False)
 
 
 
+Yg35 = scale_coeff(Ug, massAl, massCl_35, scale = True)
+Ye35 = scale_coeff(Ue, massAl, massCl_35, scale = True)
 
-Jmax = 30
+Yg37 = scale_coeff(Ug, massAl, massCl_37, scale = True)
+Ye37 = scale_coeff(Ue, massAl, massCl_37, scale = True)
+
+
+
+
+
+
+Jmax = 11
 T = 50 # Kelvin
 cnt_freq = 38237.0 # 1/cm
 df = 100e9 # HZ
@@ -192,46 +200,78 @@ plot_spectrum(nus35, spectrum35, ve, vg, T, cnt_freq, style = '-', txt = ' Cl35'
 plot_spectrum(nus37, spectrum37, ve, vg, T, cnt_freq, style = '--', txt = ' Cl37', abundance = 0.24)
 
 plt.figure()
-plot_transitions(f_lines35, cut = 5, style = '-', txt = ' Cl35')
-plot_transitions(f_lines37, cut = 5, style = '--', txt = ' Cl37')
+plot_transitions(f_lines35, cut = 12, style = '-', txt = ' Cl35')
+plot_transitions(f_lines37, cut = 12, style = '--', txt = ' Cl37')
 
 
 
 exp_freqs = np.array([
-    382.08140	 	 ,
-382.08615	,
-382.09095	,
-382.09340	,
-382.09575	,
-382.09810	,
-382.10050   ,
-382.11035   ,
-382.11240   ,
-382.10285
+382.08140,
+382.08615,
+382.09095,
+382.09340,
+382.09575,
+382.09810,
+382.10050, 
+382.11035, 
+382.11240, 
+382.11510, 
+382.11710, 
+382.12000, 
+382.12185, 
+382.12500, 
+382.12665, 
+382.12990, 
+382.13145, 
+382.13480,
+382.13550,
+382.13630,
+382.13980,
+382.14115, 
+382.14480, 
+382.10285 
 ])
 
 
 exp_freqs = 3*exp_freqs*1e12
-
 exp_freqs = (exp_freqs - 100*c*cnt_freq)
+exp_freqs = exp_freqs
 
-exp_freqs = exp_freqs/1e9
 
-plt.plot(4, exp_freqs[0], 'kx', markersize = 10)
-plt.plot(3, exp_freqs[1], 'kx', markersize = 10)
-plt.plot(2, exp_freqs[2], 'kx', markersize = 10)
-plt.plot(1, exp_freqs[3], 'kx', markersize = 10)
-plt.plot(1, exp_freqs[4], 'kx', markersize = 10)
-plt.plot(0, exp_freqs[5], 'kx', markersize = 10)
-plt.plot(0, exp_freqs[6], 'kx', markersize = 10)
-plt.plot(0, exp_freqs[7], 'kx', markersize = 10)
-plt.plot(1, exp_freqs[8], 'kx', markersize = 10)
-plt.plot(0, exp_freqs[9], 'kx', markersize = 10)
+# search for closest lines
+Jassign = []
+theory_lines = []
+theory_lines.extend(f_lines35[0])
+theory_lines.extend(f_lines35[1])
+theory_lines.extend(f_lines35[2])
+theory_lines.extend(f_lines37[0])
+theory_lines.extend(f_lines37[1])
+theory_lines.extend(f_lines37[2])
 
+theory_J = []
+theory_J.extend(np.arange(0,Jmax))
+theory_J.extend(np.arange(0,Jmax+1))
+theory_J.extend(np.arange(0,Jmax))
+
+theory_J.extend(np.arange(0,Jmax))
+theory_J.extend(np.arange(0,Jmax+1))
+theory_J.extend(np.arange(0,Jmax))
+
+exp_J = []
+
+for k in range(len(exp_freqs)):
+
+    hlp = np.abs(exp_freqs[k] - theory_lines)
+
+    ind = np.where( np.min(hlp) == hlp )[0][0]
+
+    exp_J.append(theory_J[ind])
+
+
+plt.plot(exp_J, exp_freqs/1e9, 'kx', markersize = 15)
 
 plt.xlabel('Rotational number J')
 plt.ylabel("Frequency (GHz) - {0:6.6f} THz".format(100*c*cnt_freq/1e12))
-
 
 
 
