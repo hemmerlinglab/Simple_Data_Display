@@ -45,7 +45,7 @@ datafolder = '/home/molecules/software/data/'
 #datafolder = 'data/'
 
 #basefolder = '20191126'
-basefolder = '20191127'
+basefolder = '20191202'
 
 
 time_stamp = sys.argv[1] #'145643'
@@ -183,8 +183,7 @@ from scipy.signal import find_peaks
 peaks,_ = find_peaks(ch0_mean, distance = 5, width = [2, 15])#, height = [0, 0.2])#, height = 0, width = 2)
 
 
-peaks = peaks[[0, 1, 3, 5, 6, 7]]
-
+#peaks = peaks[[0, 1, 3, 5, 6, 7]]
 
 myfontsize = 16
 
@@ -235,24 +234,28 @@ plt.figure(figsize=(10,6))
 
 true_freqs = np.sort(list(map( lambda arr : (arr[0] - setpoint_offset*1e12)/1e6, my_lines)))
 
-meas_freqs = np.sort(freqs[peaks])
-plt.scatter(true_freqs, true_freqs - meas_freqs, s = 150, facecolors = 'none', edgecolors = 'b', label = 'Peak fit')
-plt.axhline(0)
-
-peak_offset = np.mean(true_freqs - meas_freqs)
 plt.axhline(wavemeter_offset, ls = '--', color = 'r', label = 'from fit')
-plt.axhline(peak_offset, ls = '--', color = 'k', label = 'avg from peaks')
 
-plt.xlabel('True Frequency (MHz)', fontsize = myfontsize)
-plt.ylabel('True - Measured Frequency (MHz)', fontsize = myfontsize)
-
-plt.tick_params(labelsize=14, direction='in')
-
-plt.legend()
-
-
-plt.text(np.mean(true_freqs), 0.50*peak_offset, "Peak Offset: {0:5.2f} MHz".format(peak_offset), fontsize = myfontsize)
-plt.text(np.mean(true_freqs), 0.25*peak_offset, "Fit Offset: {0:5.2f} MHz".format(wavemeter_offset), fontsize = myfontsize)
+meas_freqs = np.sort(freqs[peaks])
+try:
+    plt.scatter(true_freqs, true_freqs - meas_freqs, s = 150, facecolors = 'none', edgecolors = 'b', label = 'Peak fit')
+    plt.axhline(0)
+    
+    peak_offset = np.mean(true_freqs - meas_freqs)
+    plt.axhline(peak_offset, ls = '--', color = 'k', label = 'avg from peaks')
+    
+    plt.xlabel('True Frequency (MHz)', fontsize = myfontsize)
+    plt.ylabel('True - Measured Frequency (MHz)', fontsize = myfontsize)
+    
+    plt.tick_params(labelsize=14, direction='in')
+    
+    plt.legend()
+    
+    
+    plt.text(np.mean(true_freqs), 0.50*peak_offset, "Peak Offset: {0:5.2f} MHz".format(peak_offset), fontsize = myfontsize)
+    plt.text(np.mean(true_freqs), 0.25*peak_offset, "Fit Offset: {0:5.2f} MHz".format(wavemeter_offset), fontsize = myfontsize)
+except:
+    print('no plot')
 
 plt.show()
 

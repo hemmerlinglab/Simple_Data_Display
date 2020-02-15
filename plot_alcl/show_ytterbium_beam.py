@@ -45,9 +45,8 @@ my_today = datetime.datetime.today()
 #datafolder = '/Users/boerge/skynet/molecule_computer/'
 datafolder = '/home/molecules/software/data/'
 
-#basefolder = str(my_today.strftime('%Y%m%d')) # 20190618
-#basefolder = '20200121'
 basefolder = '20200211'
+#time_stamp = '173219'
 basefilename = datafolder + basefolder + '/' + basefolder + '_'
 
 if len(sys.argv)>1:
@@ -59,18 +58,21 @@ else:
     time_stamp = all_files[-1].split('_')[1]
 
 
-# molybdenum data
-#time_stamp = '122803'
+
+
+
 
 
 f_freqs = basefilename + time_stamp + '_set_points'
 f_ch1 = basefilename + time_stamp + '_ch0_arr'
 f_ch2 = basefilename + time_stamp + '_ch1_arr'
+f_ch3 = basefilename + time_stamp + '_ch2_arr'
 
 
 freqs = np.genfromtxt(f_freqs, delimiter=",")
 ch1 = np.genfromtxt(f_ch1, delimiter=",")
 ch2 = np.genfromtxt(f_ch2, delimiter=",")
+ch3 = np.genfromtxt(f_ch3, delimiter=",")
 
 
 # get number of averages
@@ -81,6 +83,7 @@ print('Found ' + str(no_of_avg) + ' averages.')
 freqs = av(freqs, no_of_avg)
 ch1 = av(ch1, no_of_avg)
 ch2 = av(ch2, no_of_avg)
+ch3 = av(ch3, no_of_avg)
 
 
 avg_freq = np.mean(freqs)
@@ -91,21 +94,17 @@ avg_freq = 2*avg_freq
 
 avg_freq = np.mean(freqs)
 
-nus = freqs - yb_174_freq*1e12/1e6*0
+nus = 2*(freqs - yb_174_freq/2.0)*1e12/1e6
+
+
+
+
 
 
 delay_in_for_loop = 100e-6
 no_of_time_points = ch1.shape[1]
 times = np.arange(0, no_of_time_points) * (delay_in_for_loop) / 1e-3
 
-
-# subtracting the DC offset
-offset_avg_points = 5
-for k in range(ch1.shape[0]):
-        ch1[k, :] = ch1[k, :] - np.mean(ch1[k, -offset_avg_points:-1])
-        ch2[k, :] = ch2[k, :] - np.mean(ch2[k, -offset_avg_points:-1])
-
-    
    
 
 cut_time1 = 10.0
@@ -119,79 +118,131 @@ offset_avg_points = 5
 for k in range(ch1.shape[0]):
     ch1[k, :] = ch1[k, :] - np.mean(ch1[k, -offset_avg_points:-1])
     ch2[k, :] = ch2[k, :] - np.mean(ch2[k, -offset_avg_points:-1])
+    ch3[k, :] = ch3[k, :] - np.mean(ch3[k, -offset_avg_points:-1])
 
 
-plt.figure()
-plt.pcolor(times, freqs, ch1)
+# w = k*v * cos(theta)
+
+velocities = -398*10**-9 * (2.0*freqs - yb_174_freq)*1e12 / np.cos(np.pi/4.0)
 
 
+plt.figure(figsize=(10,6))
 
+plt.pcolor(times, nus, ch1)
+plt.colorbar()
 
-spectrum = np.mean(ch1[:, ch1_start:ch1_end], axis = 1)
-
-
-x_fit = 0
-y_fit = 0
-(x_fit, y_fit, result) = fit_yb(nus, spectrum)
-
-
-
-
-# shifting the zero point in the plot to Mo-96
-my_shift = result.params['x_offset'].value # in MHz
-
-nus = nus + my_shift
-x_fit = x_fit + my_shift
-avg_freq = avg_freq - my_shift*1e6/1e12
-
-
-
-for k in result.params.keys():
-    print(str(k) + ' = ' + str(result.params[k].value))
-
-
-
-
-fig = plt.figure(figsize=(10,6))
-
-
-
-yb     = np.array([176    , 174,  173,    173,    172,    171,     171,     170]) # isotopes
-vshift = np.array([1.35   ,1.35,  1.2,    1.2,   1.35,   1.25,    1.35,    1.35]) # vertical shift of the text
-hshift = np.array([ 15  ,    50, -190,     15,   -200,     10,    -190,      15]) # horizontal shift of the text
-
-
-
-
-# moly isotope shifts
-text_freqs  = my_shift + np.array([-508.89, 0 , -250.78, 589.75, 531.11, 835.19, 1153.68, 1190.36, 1888.80])
-
-
-for k in range(len(yb)):
-    plt.axvline(text_freqs[k] - result.params['x_offset'], linestyle =  '--',linewidth=1.6,label='Yb'+str(yb[k]))
-    plt.text(text_freqs[k] - result.params['x_offset'] + hshift[k], vshift[k]   , 'Yb ' + str(yb[k]),fontsize=16)
-
-
-# plot data and fit
-
-plt.plot(x_fit, -1*y_fit, 'k-', linewidth = 3)
-plt.scatter(nus, -1*spectrum, color = 'r', edgecolor = 'k', s = 100)
-plt.plot(nus, -1*spectrum, color = 'r', linestyle = '-') 
-
-
-plt.xlabel('Frequency (MHz) + ' + "{0:2.6f}".format(avg_freq) + ' THz',fontsize=16)
-plt.ylabel('Signal (a.u)',fontsize=16)
+plt.xlabel('Time (ms)', fontsize = 16)
+plt.ylabel('Frequencies (MHz)', fontsize = 16)
 plt.tick_params(labelsize=14,direction='in')
-#plt.xlim(-760,760)
-plt.xlim(np.min(nus), np.max(nus))
+
+plt.gca().invert_yaxis()
+
+
+#plt.xlim(0, 10)
 
 
 plt.tight_layout()
-#plt.legend(fontsize=14)
 
 
-plt.savefig('ytterbium.png', dpi=600)
 
+
+plt.figure(figsize=(10,6))
+
+plt.pcolor(times, velocities, ch3)
+plt.colorbar()
+
+plt.xlabel('Time (ms)', fontsize = 16)
+plt.ylabel('Velocity (m/s)', fontsize = 16)
+plt.tick_params(labelsize=14,direction='in')
+
+#plt.gca().invert_yaxis()
+
+
+#plt.xlim(0, 6)
+#plt.ylim(-200, 550)
+
+
+plt.tight_layout()
+
+
+
+
+
+
+plt.figure(figsize=(10,6))
+
+
+count_min = 0.06
+count_max = 0.6
+
+#count_min = 0.75
+#count_max = 3.75
+
+
+ch3_plot = np.copy(ch3)
+ind = np.where(ch3<count_min)
+
+#ch3_plot[ind] = np.nan
+
+
+#plt.pcolor(times, velocities, ch3_plot)
+plt.contour(times, velocities, ch3_plot, np.linspace(count_min, count_max, 15))
+
+plt.xlabel('Time (ms)', fontsize = 16)
+plt.ylabel('Velocity Yb-174 (m/s)', fontsize = 16)
+plt.tick_params(labelsize=14,direction='in')
+
+#plt.gca().invert_yaxis()
+
+
+
+vel_shift_172 = -(589.0+531.0)/2.0*1e6 * 398*10**-9 / np.cos(np.pi/4.0)
+vel_shift_171 = -835.0*1e6 * 398*10**-9 / np.cos(np.pi/4.0)
+
+yag_fire_time = 0.3
+
+time1 = np.where(times > 1.5)[0][0] #yag_fire_time)[0][0]
+
+plt.plot(times[time1:], 32 * 25.4e-3/(times[time1:] - yag_fire_time)/1e-3, 'r--', linewidth = 1)
+
+plt.plot(times[time1:], vel_shift_172 + 32 * 25.4e-3/(times[time1:] - yag_fire_time)/1e-3, 'r--', linewidth = 1)
+
+plt.plot(times[time1:], vel_shift_171 + 32 * 25.4e-3/(times[time1:] - yag_fire_time)/1e-3, 'r--', linewidth = 1)
+
+
+
+#plt.xlim(0, 6)
+#plt.ylim(-200, 530)
+
+
+plt.tight_layout()
+
+
+
+plt.savefig('ytterbium_beam.png', dpi=600)
+
+
+
+#plt.figure(figsize=(10,6))
+#
+#time1 = np.where( np.abs(times - 1.75) < 0.5 )[0][0]
+#time2 = np.where( np.abs(times - 4.00) < 0.5 )[0][0]
+#
+#vel_sum = np.mean(ch3_plot[:, time1:time2], axis = 1)
+#
+#plt.plot(velocities, vel_sum)
+#
+#plt.xlabel('Velocities (m/s)')
+#plt.ylabel('Signal (a.u.)')
+
+
+plt.figure()
+
+plt.plot(freqs, np.mean(ch3, axis = 1))
+
+plt.figure()
+
+plt.plot(times, np.mean(ch3, axis = 0))
 
 
 

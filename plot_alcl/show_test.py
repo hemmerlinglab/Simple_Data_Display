@@ -15,19 +15,6 @@ yb_174_freq = 751.52653349 # in THz
 # hlp is helper variable
 
 
-def subtract_noise(data_array, noise_array):
-    scls = []
-    r = 80
-    for i in range(r):
-        scls.append(data_array[1,i]/noise_array[1,i])
-    scl = np.mean(scls)
-    noiseless = data_array - scl*noise_array
-    plt.figure()
-    plt.plot(np.mean(data_array[:, 1:r], axis = 1))
-    plt.plot(np.mean(scl*noise_array[:, 1:r], axis = 1))
-
-    return noiseless
-
 
 def av(arr, no_of_avg):
     # for 1D array
@@ -58,36 +45,29 @@ my_today = datetime.datetime.today()
 #datafolder = '/Users/boerge/skynet/molecule_computer/'
 datafolder = '/home/molecules/software/data/'
 
-basefolder = '20200211'
-#time_stamp = '173219'
+
+basefolder = '20191031'
+#time_stamp = '123451'
+time_stamp = sys.argv[1]
+
+#basefolder = '20191004'
+#time_stamp = '171345'
+
+
+
 basefilename = datafolder + basefolder + '/' + basefolder + '_'
-
-if len(sys.argv)>1:
-    time_stamp = sys.argv[1]
-else:
-    # get latest time stamp
-    all_files = np.sort(glob.glob(basefilename + "*"))
-    #print(all_files)
-    time_stamp = all_files[-1].split('_')[1]
-
-
-
-
-
 
 
 f_freqs = basefilename + time_stamp + '_set_points'
-f_ch1 = basefilename + time_stamp + '_ch0_arr'
-f_ch2 = basefilename + time_stamp + '_ch1_arr'
-f_ch3 = basefilename + time_stamp + '_ch2_arr'
-f_ch4 = basefilename + time_stamp + '_ch3_arr'
+f_ch1 = basefilename + time_stamp + '_ch1_arr'
+f_ch2 = basefilename + time_stamp + '_ch2_arr'
+f_ch3 = basefilename + time_stamp + '_ch3_arr'
 
 
 freqs = np.genfromtxt(f_freqs, delimiter=",")
 ch1 = np.genfromtxt(f_ch1, delimiter=",")
 ch2 = np.genfromtxt(f_ch2, delimiter=",")
 ch3 = np.genfromtxt(f_ch3, delimiter=",")
-ch4 = np.genfromtxt(f_ch4, delimiter=",")
 
 
 # get number of averages
@@ -99,25 +79,25 @@ freqs = av(freqs, no_of_avg)
 ch1 = av(ch1, no_of_avg)
 ch2 = av(ch2, no_of_avg)
 ch3 = av(ch3, no_of_avg)
-ch4 = av(ch4, no_of_avg)
 
 
-avg_freq = np.mean(freqs)
-avg_freq = 2*avg_freq
+#avg_freq = np.mean(freqs)
+#avg_freq = 2*avg_freq
 
 #nus = (freqs - yb_174_freq/2.0 )*1e12/1e6
 #nus = (freqs - yb_174_freq/2.0 )*1e12/1e6
 
 avg_freq = np.mean(freqs)
 
-nus = 2*(freqs - yb_174_freq/2.0)*1e12/1e6
-
-### reducing noise
-ch1 = subtract_noise(ch1,ch4)
-###
+nus = 2.0*(freqs - yb_174_freq/2.0)*1e12/1e6
 
 
-delay_in_for_loop = 100e-6
+plt.figure()
+plt.plot(ch1.transpose())
+
+
+
+delay_in_for_loop = 60e-6
 no_of_time_points = ch1.shape[1]
 times = np.arange(0, no_of_time_points) * (delay_in_for_loop) / 1e-3
 
@@ -135,20 +115,18 @@ for k in range(ch1.shape[0]):
     ch1[k, :] = ch1[k, :] - np.mean(ch1[k, -offset_avg_points:-1])
     ch2[k, :] = ch2[k, :] - np.mean(ch2[k, -offset_avg_points:-1])
     ch3[k, :] = ch3[k, :] - np.mean(ch3[k, -offset_avg_points:-1])
-    ch4[k, :] = ch4[k, :] - np.mean(ch4[k, -offset_avg_points:-1])
 
 
 # w = k*v * cos(theta)
+# v = nu * lambda/cos(theta)
 
 velocities = -398*10**-9 * (2.0*freqs - yb_174_freq)*1e12 / np.cos(np.pi/4.0)
 
 
+
 plt.figure(figsize=(10,6))
 
-data1 = subtract_noise(ch1,ch4)
-
-#plt.pcolor(times, nus, ch1)
-plt.pcolor(times,nus,data1)
+plt.pcolor(times, nus, ch1)
 plt.colorbar()
 
 plt.xlabel('Time (ms)', fontsize = 16)
@@ -158,10 +136,25 @@ plt.tick_params(labelsize=14,direction='in')
 plt.gca().invert_yaxis()
 
 
-#plt.xlim(0, 10)
+
+
+plt.figure(figsize=(10,6))
+
+plt.pcolor(times, nus, ch3)
+plt.colorbar()
+
+plt.xlabel('Time (ms)', fontsize = 16)
+plt.ylabel('Frequencies (MHz)', fontsize = 16)
+plt.tick_params(labelsize=14,direction='in')
+
+plt.gca().invert_yaxis()
+
+
+plt.xlim(0, 10)
 
 
 plt.tight_layout()
+
 
 
 
@@ -178,7 +171,7 @@ plt.tick_params(labelsize=14,direction='in')
 #plt.gca().invert_yaxis()
 
 
-#plt.xlim(0, 6)
+plt.xlim(0, 10)
 #plt.ylim(-200, 550)
 
 
@@ -192,8 +185,8 @@ plt.tight_layout()
 plt.figure(figsize=(10,6))
 
 
-count_min = 0.06
-count_max = 0.6
+count_min = 0.35
+count_max = np.max(np.max(ch3))
 
 #count_min = 0.75
 #count_max = 3.75
@@ -231,11 +224,16 @@ plt.plot(times[time1:], vel_shift_171 + 32 * 25.4e-3/(times[time1:] - yag_fire_t
 
 
 
-#plt.xlim(0, 6)
+plt.xlim(0, 10)
 #plt.ylim(-200, 530)
 
 
 plt.tight_layout()
+
+
+plt.text(3.0, 450, 'Yb-174', fontsize = 16)
+plt.text(3.0, 120, 'Yb-172/173', fontsize = 16)
+plt.text(1.5, -75, 'Yb-171', fontsize = 16)
 
 
 
@@ -254,15 +252,6 @@ plt.savefig('ytterbium_beam.png', dpi=600)
 #
 #plt.xlabel('Velocities (m/s)')
 #plt.ylabel('Signal (a.u.)')
-
-
-plt.figure()
-
-plt.plot(freqs, np.mean(ch3, axis = 1))
-
-plt.figure()
-
-plt.plot(times, np.mean(ch3, axis = 0))
 
 
 

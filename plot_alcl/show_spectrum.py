@@ -46,8 +46,8 @@ my_today = datetime.datetime.today()
 datafolder = '/home/molecules/software/data/'
 
 #basefolder = str(my_today.strftime('%Y%m%d')) # 20190618
-#basefolder = '20200121'
-basefolder = '20200211'
+basefolder = '20200117'
+
 basefilename = datafolder + basefolder + '/' + basefolder + '_'
 
 if len(sys.argv)>1:
@@ -121,79 +121,26 @@ for k in range(ch1.shape[0]):
     ch2[k, :] = ch2[k, :] - np.mean(ch2[k, -offset_avg_points:-1])
 
 
-plt.figure()
-plt.pcolor(times, freqs, ch1)
-
 
 
 
 spectrum = np.mean(ch1[:, ch1_start:ch1_end], axis = 1)
 
 
-x_fit = 0
-y_fit = 0
-(x_fit, y_fit, result) = fit_yb(nus, spectrum)
+plt.figure()
+#plt.plot(spectrum)
+plt.subplot(2,2,1)
+plt.pcolor(times, freqs, ch1)
+plt.subplot(2,2,3)
+plt.pcolor(times, freqs, ch2)
+
+plt.subplot(2,2,2)
+plt.plot(times, np.mean(ch1, axis = 0))
 
 
+plt.figure()
 
-
-# shifting the zero point in the plot to Mo-96
-my_shift = result.params['x_offset'].value # in MHz
-
-nus = nus + my_shift
-x_fit = x_fit + my_shift
-avg_freq = avg_freq - my_shift*1e6/1e12
-
-
-
-for k in result.params.keys():
-    print(str(k) + ' = ' + str(result.params[k].value))
-
-
-
-
-fig = plt.figure(figsize=(10,6))
-
-
-
-yb     = np.array([176    , 174,  173,    173,    172,    171,     171,     170]) # isotopes
-vshift = np.array([1.35   ,1.35,  1.2,    1.2,   1.35,   1.25,    1.35,    1.35]) # vertical shift of the text
-hshift = np.array([ 15  ,    50, -190,     15,   -200,     10,    -190,      15]) # horizontal shift of the text
-
-
-
-
-# moly isotope shifts
-text_freqs  = my_shift + np.array([-508.89, 0 , -250.78, 589.75, 531.11, 835.19, 1153.68, 1190.36, 1888.80])
-
-
-for k in range(len(yb)):
-    plt.axvline(text_freqs[k] - result.params['x_offset'], linestyle =  '--',linewidth=1.6,label='Yb'+str(yb[k]))
-    plt.text(text_freqs[k] - result.params['x_offset'] + hshift[k], vshift[k]   , 'Yb ' + str(yb[k]),fontsize=16)
-
-
-# plot data and fit
-
-plt.plot(x_fit, -1*y_fit, 'k-', linewidth = 3)
-plt.scatter(nus, -1*spectrum, color = 'r', edgecolor = 'k', s = 100)
-plt.plot(nus, -1*spectrum, color = 'r', linestyle = '-') 
-
-
-plt.xlabel('Frequency (MHz) + ' + "{0:2.6f}".format(avg_freq) + ' THz',fontsize=16)
-plt.ylabel('Signal (a.u)',fontsize=16)
-plt.tick_params(labelsize=14,direction='in')
-#plt.xlim(-760,760)
-plt.xlim(np.min(nus), np.max(nus))
-
-
-plt.tight_layout()
-#plt.legend(fontsize=14)
-
-
-plt.savefig('ytterbium.png', dpi=600)
-
-
-
+plt.plot(ch1)
 
 plt.show()
 
