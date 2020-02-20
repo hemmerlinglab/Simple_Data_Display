@@ -53,10 +53,13 @@ my_today = datetime.datetime.today()
 
 #datafolder = '/Users/boerge/skynet/molecule_computer/'
 #datafolder = '/home/molecules/software/data/'
-datafolder = '/Users/boerge/software/data/Data/molecule_computer/'
+
+#datafolder = '/Users/boerge/software/data/Data/molecule_computer/'
+
+datafolder = '/Users/johnr/Desktop/'
 
 
-basefolder = '20200211'
+basefolder = '20200213'
 time_stamp = sys.argv[1]
 
 
@@ -116,20 +119,23 @@ ch4s = av(ch4s, no_of_avg)
 
 
 
-offset_freq = 382.0959
+offset_freq = 382.08140
 
 #nus = 2*freqs
 
 delay_in_for_loop = 100e-6
+#delay_in_for_loop = 50e-6
 no_of_time_points = ch1.shape[1]
 times = np.arange(0, no_of_time_points) * (delay_in_for_loop) / 1e-3
 
 
 
 
-time_cut1 = 98
-time_cut2 = 98+20
+#time_cut1 = 182
+#time_cut2 = time_cut1+10
 
+time_cut1 = 98
+time_cut2 = time_cut1+10
 
 color_plot = ch0[:, time_cut1:time_cut2]
 
@@ -154,10 +160,15 @@ signal = signal/np.max(np.abs(signal))
 
 cnt_peak = result.params['x0'].value
 
+print('a: ',result.params['a'].value)
+print('w: ',result.params['w'].value)
+print('x0: ',result.params['x0'].value)
+print('y_offset',result.params['y_offset'].value)
+
 plt.plot(3*freqs, 1 - signal)
 plt.plot(3*xfit, 1 - yfit, 'r-')
 
-plt.ylim(0, 0.5)
+plt.ylim(0, 0.7)
 
 plt.ylabel('Absorption signal (a.u.)')
 plt.xlabel('Frequency (MHz)')

@@ -5,7 +5,7 @@ import os
 import glob
 import sys
 from fit_k import *
-
+from fit_line import *
 
 c = 299792458
 
@@ -53,6 +53,7 @@ my_today = datetime.datetime.today()
 
 datafolder = '/home/molecules/software/data/'
 
+datafolder = '/Users/johnr/Desktop/'
 
 # molybdenum data
 
@@ -95,8 +96,8 @@ ch4 = av(ch4, no_of_avg)
 nus = freqs*1.5
 
 
-delay_in_for_loop = 100e-6
-#delay_in_for_loop = 50e-6
+#delay_in_for_loop = 100e-6
+delay_in_for_loop = 50e-6
 
 no_of_time_points = ch1.shape[1]
 times = np.arange(0, no_of_time_points) * (delay_in_for_loop) / 1e-3
@@ -123,9 +124,9 @@ for k in range(ch1.shape[0]):
 
 plt.figure()
 #plt.pcolor(data1[:, 98:300])
-plt.pcolor(times[98:300],nus,ch1[:, 98:300])
+#plt.pcolor(times[98:300],nus,ch1[:, 98:300])
 
-#plt.pcolor(times[182:300],nus,ch1[:, 182:300])
+plt.pcolor(times[182:300],nus,ch1[:, 182:300])
 
 lines = {
 124050:382.08140,
@@ -141,10 +142,12 @@ plt.ylabel('Frequency - {} (THz)'.format(lines[int(time_stamp)]*3))
 
 plt.title('{} THz ({})'.format(lines[int(time_stamp)]*3,time_stamp))
 
-#plt.figure()
+plt.figure()
 
 #plt.plot(np.mean(ch1[:, 99:120], axis = 1))
-#plt.plot(np.mean(ch1[:, 182:200], axis = 1))
+plt.plot(np.mean(ch1[:, 182:200], axis = 1))
+
+
 #plt.plot(np.mean(data1[:, 99:120], axis = 1))
 
 #plt.figure()
