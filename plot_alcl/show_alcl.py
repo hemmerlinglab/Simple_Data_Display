@@ -7,7 +7,10 @@ import sys
 from fit_line import *
 from conf_reader import read_config
 
-c = 299792458
+c = 299792458 # m/s
+kb =  1.38064852e-23 # m^2 kg s^-2 K^-1 (Boltzmann)
+amu = 1.66053892e-27 # kg/amu
+m = (35+27)*amu # kg (AlCl)
 
 
 # hlp is helper variable
@@ -49,7 +52,7 @@ def av(arr, no_of_avg):
         return hlp/no_of_avg
 
 
-def do_the_thing(basefilename,time_stamp):
+def do_the_thing(basefilename,time_stamp,delta1,delta2):
 
     time_stamp = str(time_stamp)
 
@@ -128,9 +131,9 @@ def do_the_thing(basefilename,time_stamp):
     #time_cut1 = 98
     #time_cut2 = time_cut1+10
 
-    time_cut1 = int(8.4e-3/delay_in_for_loop) + 14
+    time_cut1 = int(8.4e-3/delay_in_for_loop) + 14 + delta1
     #print(time_cut1)
-    time_cut2 = time_cut1 + 5
+    time_cut2 = time_cut1 + delta2
 
     color_plot = ch0[:, time_cut1:time_cut2]
 
@@ -138,15 +141,15 @@ def do_the_thing(basefilename,time_stamp):
 
     color_plot /= np.max(np.max(color_plot))
 
+    if delta1 == 0 and delta2 == 5:
+        plt.figure()
+        plt.pcolor(times[time_cut1:time_cut2], 3*freqs, color_plot)
+        plt.xlabel('Time (us)')
+        plt.ylabel('Relative UV frequency (MHz)')
 
-    plt.figure()
-    plt.pcolor(times[time_cut1:time_cut2], 3*freqs, color_plot)
-    plt.xlabel('Time (us)')
-    plt.ylabel('Relative UV frequency (MHz)')
+        plt.colorbar()
 
-    plt.colorbar()
-
-    plt.figure()
+        plt.figure()
 
     signal = np.mean(ch0[:, time_cut1:time_cut2], axis = 1)
     signal = signal/np.max(np.abs(signal))
@@ -160,19 +163,26 @@ def do_the_thing(basefilename,time_stamp):
     #print('x0: ',result.params['x0'].value)
     #print('y_offset',result.params['y_offset'].value)
 
-    plt.plot(3*freqs, 1 - signal)
-    plt.plot(3*xfit, 1 - yfit, 'r-')
-
-    plt.ylim(0, .5)
-
-    plt.ylabel('Absorption signal (a.u.)')
-    plt.xlabel('Frequency (MHz)')
-
     abs_cnt_peak = 3 * ((offset_freq * 1e12 + cnt_peak * 1e6)/1e12) # in THz
 
     abs_cnt_peak_wavenumber = abs_cnt_peak * 1e12/100.0/c
 
-    plt.text(-400, 0.4, "Center peak frequency: \n\n     {0:9.6f} THz \n = {1:9.4f} 1/cm".format(abs_cnt_peak, abs_cnt_peak_wavenumber))
+    if delta1 == 0 and delta2 == 5:
+        plt.plot(3*freqs, 1 - signal)
+        plt.plot(3*xfit, 1 - yfit, 'r-')
+
+        plt.ylim(0, .8)
+
+        plt.ylabel('Absorption signal (a.u.)')
+        plt.xlabel('Frequency (MHz)')
+        plt.title(time_stamp)
+
+        plt.text(-400, 0.4, "Center peak frequency: \n\n     {0:9.6f} THz \n = {1:9.4f} 1/cm".format(abs_cnt_peak, abs_cnt_peak_wavenumber))
+
+
+    wid = result.params['w'].value
+
+    return abs_cnt_peak,wid
 
 
 
@@ -189,6 +199,9 @@ if __name__ == '__main__':
     #datafolder = '/Users/johnr/Desktop/'
 
     stamps = [124050,130453,132440,134013,135425,140938]
+    delta1s = np.linspace(0,40,21)
+    #print(delta1s)
+    delta2 = 5
 
     basefolder = '20200213'
 
@@ -200,12 +213,36 @@ if __name__ == '__main__':
     basefilename = datafolder + basefolder + '\\' + basefolder + '_'
 
     #do_the_thing(basefilename,time_stamp)
-
-
+ 
+    centers = np.zeros((len(stamps),len(delta1s)))
+    widths = np.zeros((len(stamps),len(delta1s)))
 
     for i in range(len(stamps)):
-        print('Loading data {}...'.format(stamps[i]),end='')
-        do_the_thing(basefilename,stamps[i])
+        for j in range(len(delta1s)):
+            print('Loading data {} from {} - {}...'.format(stamps[i],int(delta1s[j]),int(delta1s[j])+delta2),end='')
+            centers[i][j] , widths[i][j] = do_the_thing(basefilename,stamps[i],int(delta1s[j]),int(delta1s[j])+delta2)
+
+    #print(widths)
+
+    #print(np.mean(centers,axis=1))
+    #print(widths[:][0])
+
+    avg_cnts = np.mean(centers,axis=1)
+
+    Ts = np.zeros(np.shape(widths))
+
+    for n in range(len(stamps)):
+        Ts[n] = (m*c**2*(widths[n]*1e6/(avg_cnts[n]*1e12))**2)/(8*kb*np.log(2))
+
+
+
+    plt.figure()
+    for l in range(len(stamps)):
+        plt.subplot(3,2,l+1)
+        plt.plot(delta1s,Ts[l])
+        plt.title(avg_cnts[l])
+        plt.xlabel('Time Steps')
+        plt.ylabel('T (K)')
 
 
     plt.show()
