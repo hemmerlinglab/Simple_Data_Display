@@ -128,8 +128,8 @@ def do_the_thing(basefilename,time_stamp):
     #time_cut1 = 98
     #time_cut2 = time_cut1+10
 
-    time_cut1 = int(9.5e-3/delay_in_for_loop)
-    print(time_cut1)
+    time_cut1 = int(8.4e-3/delay_in_for_loop) + 14
+    #print(time_cut1)
     time_cut2 = time_cut1 + 5
 
     color_plot = ch0[:, time_cut1:time_cut2]
@@ -155,15 +155,15 @@ def do_the_thing(basefilename,time_stamp):
 
     cnt_peak = result.params['x0'].value
 
-    print('a: ',result.params['a'].value)
-    print('w: ',result.params['w'].value)
-    print('x0: ',result.params['x0'].value)
-    print('y_offset',result.params['y_offset'].value)
+    #print('a: ',result.params['a'].value)
+    #print('w: ',result.params['w'].value)
+    #print('x0: ',result.params['x0'].value)
+    #print('y_offset',result.params['y_offset'].value)
 
     plt.plot(3*freqs, 1 - signal)
     plt.plot(3*xfit, 1 - yfit, 'r-')
 
-    plt.ylim(0, 1)
+    plt.ylim(0, .5)
 
     plt.ylabel('Absorption signal (a.u.)')
     plt.xlabel('Frequency (MHz)')
@@ -180,7 +180,9 @@ if __name__ == '__main__':
     my_today = datetime.datetime.today()
 
     #datafolder = '/Users/boerge/skynet/molecule_computer/'
-    datafolder = '/home/molecules/software/data/'
+    #datafolder = '/home/molecules/software/data/'
+
+    datafolder = '\\Users\\John\\Desktop\\'
 
     #datafolder = '/Users/boerge/software/data/Data/molecule_computer/'
 
@@ -194,13 +196,15 @@ if __name__ == '__main__':
     #time_stamp = str(stamps[0])
 
 
-    basefilename = datafolder + basefolder + '/' + basefolder + '_'    
+    #basefilename = datafolder + basefolder + '/' + basefolder + '_'    
+    basefilename = datafolder + basefolder + '\\' + basefolder + '_'
 
     #do_the_thing(basefilename,time_stamp)
 
 
 
     for i in range(len(stamps)):
+        print('Loading data {}...'.format(stamps[i]),end='')
         do_the_thing(basefilename,stamps[i])
 
 
