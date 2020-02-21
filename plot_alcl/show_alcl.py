@@ -5,6 +5,7 @@ import os
 import glob
 import sys
 from fit_line import *
+from conf_reader import read_config
 
 c = 299792458
 
@@ -48,139 +49,159 @@ def av(arr, no_of_avg):
         return hlp/no_of_avg
 
 
+def do_the_thing(basefilename,time_stamp):
 
-my_today = datetime.datetime.today()
+    time_stamp = str(time_stamp)
 
-#datafolder = '/Users/boerge/skynet/molecule_computer/'
-#datafolder = '/home/molecules/software/data/'
+    conf_file = basefilename + time_stamp + '_conf'
+    conf_data = read_config(conf_file)
 
-#datafolder = '/Users/boerge/software/data/Data/molecule_computer/'
+    #print(conf_data['step_size']['val'])
 
-datafolder = '/Users/johnr/Desktop/'
+    f_freqs = basefilename + time_stamp + '_set_points'
+    f_ch0 = basefilename + time_stamp + '_ch0_arr'
+    f_ch1 = basefilename + time_stamp + '_ch1_arr'
+    f_ch2 = basefilename + time_stamp + '_ch2_arr'
+    f_ch3 = basefilename + time_stamp + '_ch3_arr'
+    f_ch4 = basefilename + time_stamp + '_ch4_arr'
 
-
-basefolder = '20200213'
-time_stamp = sys.argv[1]
-
-
-
-
-basefilename = datafolder + basefolder + '/' + basefolder + '_'
-
-
-f_freqs = basefilename + time_stamp + '_set_points'
-f_ch0 = basefilename + time_stamp + '_ch0_arr'
-f_ch1 = basefilename + time_stamp + '_ch1_arr'
-f_ch2 = basefilename + time_stamp + '_ch2_arr'
-f_ch3 = basefilename + time_stamp + '_ch3_arr'
-f_ch4 = basefilename + time_stamp + '_ch4_arr'
-
-f_ch0s = basefilename + time_stamp + '_ch0_arr_slow'
-f_ch1s = basefilename + time_stamp + '_ch1_arr_slow'
-f_ch2s = basefilename + time_stamp + '_ch2_arr_slow'
-f_ch3s = basefilename + time_stamp + '_ch3_arr_slow'
-f_ch4s = basefilename + time_stamp + '_ch4_arr_slow'
+    f_ch0s = basefilename + time_stamp + '_ch0_arr_slow'
+    f_ch1s = basefilename + time_stamp + '_ch1_arr_slow'
+    f_ch2s = basefilename + time_stamp + '_ch2_arr_slow'
+    f_ch3s = basefilename + time_stamp + '_ch3_arr_slow'
+    f_ch4s = basefilename + time_stamp + '_ch4_arr_slow'
 
 
 
-freqs = np.genfromtxt(f_freqs, delimiter=",")
-ch0 = np.genfromtxt(f_ch0, delimiter=",")
-ch1 = np.genfromtxt(f_ch1, delimiter=",")
-ch2 = np.genfromtxt(f_ch2, delimiter=",")
-ch3 = np.genfromtxt(f_ch3, delimiter=",")
-ch4 = np.genfromtxt(f_ch4, delimiter=",")
+    freqs = np.genfromtxt(f_freqs, delimiter=",")
+    ch0 = np.genfromtxt(f_ch0, delimiter=",")
+    ch1 = np.genfromtxt(f_ch1, delimiter=",")
+    ch2 = np.genfromtxt(f_ch2, delimiter=",")
+    ch3 = np.genfromtxt(f_ch3, delimiter=",")
+    ch4 = np.genfromtxt(f_ch4, delimiter=",")
 
-ch0s = np.genfromtxt(f_ch0s, delimiter=",")
-ch1s = np.genfromtxt(f_ch1s, delimiter=",")
-ch2s = np.genfromtxt(f_ch2s, delimiter=",")
-ch3s = np.genfromtxt(f_ch3s, delimiter=",")
-ch4s = np.genfromtxt(f_ch4s, delimiter=",")
-
-
-
-# get number of averages
-no_of_avg = int(len(freqs)/len(np.unique(freqs)))
-
-print('Found ' + str(no_of_avg) + ' averages.')
-
-freqs = av(freqs, no_of_avg)
-ch0 = av(ch0, no_of_avg)
-ch1 = av(ch1, no_of_avg)
-ch2 = av(ch2, no_of_avg)
-ch3 = av(ch3, no_of_avg)
-ch4 = av(ch4, no_of_avg)
-
-ch0s = av(ch0s, no_of_avg)
-ch1s = av(ch1s, no_of_avg)
-ch2s = av(ch2s, no_of_avg)
-ch3s = av(ch3s, no_of_avg)
-ch4s = av(ch4s, no_of_avg)
+    ch0s = np.genfromtxt(f_ch0s, delimiter=",")
+    ch1s = np.genfromtxt(f_ch1s, delimiter=",")
+    ch2s = np.genfromtxt(f_ch2s, delimiter=",")
+    ch3s = np.genfromtxt(f_ch3s, delimiter=",")
+    ch4s = np.genfromtxt(f_ch4s, delimiter=",")
 
 
 
+    # get number of averages
+    no_of_avg = int(len(freqs)/len(np.unique(freqs)))
 
-offset_freq = 382.08140
+    print('Found ' + str(no_of_avg) + ' averages.')
 
-#nus = 2*freqs
+    freqs = av(freqs, no_of_avg)
+    ch0 = av(ch0, no_of_avg)
+    ch1 = av(ch1, no_of_avg)
+    ch2 = av(ch2, no_of_avg)
+    ch3 = av(ch3, no_of_avg)
+    ch4 = av(ch4, no_of_avg)
 
-delay_in_for_loop = 100e-6
-#delay_in_for_loop = 50e-6
-no_of_time_points = ch1.shape[1]
-times = np.arange(0, no_of_time_points) * (delay_in_for_loop) / 1e-3
+    ch0s = av(ch0s, no_of_avg)
+    ch1s = av(ch1s, no_of_avg)
+    ch2s = av(ch2s, no_of_avg)
+    ch3s = av(ch3s, no_of_avg)
+    ch4s = av(ch4s, no_of_avg)
+
+
+
+    offset_freq = float(conf_data['cooling_offet']['val'])
+    #offset_freq = 382.08140
+
+    #nus = 2*freqs
+
+    delay_in_for_loop = float(conf_data['step_size']['val'])*1e-6
+    #delay_in_for_loop = 100e-6
+    #delay_in_for_loop = 50e-6
+    no_of_time_points = ch1.shape[1]
+    times = np.arange(0, no_of_time_points) * (delay_in_for_loop) / 1e-3
 
 
 
 
-#time_cut1 = 182
-#time_cut2 = time_cut1+10
+    #time_cut1 = 182
+    #time_cut2 = time_cut1+10
 
-time_cut1 = 98
-time_cut2 = time_cut1+10
+    #time_cut1 = 98
+    #time_cut2 = time_cut1+10
 
-color_plot = ch0[:, time_cut1:time_cut2]
+    time_cut1 = int(9.5e-3/delay_in_for_loop)
+    print(time_cut1)
+    time_cut2 = time_cut1 + 5
 
-color_plot -= np.min(np.min(color_plot))
+    color_plot = ch0[:, time_cut1:time_cut2]
 
-color_plot /= np.max(np.max(color_plot))
+    color_plot -= np.min(np.min(color_plot))
 
-
-plt.figure()
-plt.pcolor(times[time_cut1:time_cut2], 3*freqs, color_plot)
-plt.xlabel('Time (us)')
-plt.ylabel('Relative UV frequency (MHz)')
-
-plt.colorbar()
-
-plt.figure()
-
-signal = np.mean(ch0[:, time_cut1:time_cut2], axis = 1)
-signal = signal/np.max(np.abs(signal))
-
-(xfit, yfit, result) = fit_line(freqs, signal)
-
-cnt_peak = result.params['x0'].value
-
-print('a: ',result.params['a'].value)
-print('w: ',result.params['w'].value)
-print('x0: ',result.params['x0'].value)
-print('y_offset',result.params['y_offset'].value)
-
-plt.plot(3*freqs, 1 - signal)
-plt.plot(3*xfit, 1 - yfit, 'r-')
-
-plt.ylim(0, 0.7)
-
-plt.ylabel('Absorption signal (a.u.)')
-plt.xlabel('Frequency (MHz)')
-
-abs_cnt_peak = 3 * ((offset_freq * 1e12 + cnt_peak * 1e6)/1e12) # in THz
-
-abs_cnt_peak_wavenumber = abs_cnt_peak * 1e12/100.0/c
-
-plt.text(-400, 0.4, "Center peak frequency: \n\n     {0:9.6f} THz \n = {1:9.4f} 1/cm".format(abs_cnt_peak, abs_cnt_peak_wavenumber))
+    color_plot /= np.max(np.max(color_plot))
 
 
+    plt.figure()
+    plt.pcolor(times[time_cut1:time_cut2], 3*freqs, color_plot)
+    plt.xlabel('Time (us)')
+    plt.ylabel('Relative UV frequency (MHz)')
 
-plt.show()
+    plt.colorbar()
+
+    plt.figure()
+
+    signal = np.mean(ch0[:, time_cut1:time_cut2], axis = 1)
+    signal = signal/np.max(np.abs(signal))
+
+    (xfit, yfit, result) = fit_line(freqs, signal)
+
+    cnt_peak = result.params['x0'].value
+
+    print('a: ',result.params['a'].value)
+    print('w: ',result.params['w'].value)
+    print('x0: ',result.params['x0'].value)
+    print('y_offset',result.params['y_offset'].value)
+
+    plt.plot(3*freqs, 1 - signal)
+    plt.plot(3*xfit, 1 - yfit, 'r-')
+
+    plt.ylim(0, 1)
+
+    plt.ylabel('Absorption signal (a.u.)')
+    plt.xlabel('Frequency (MHz)')
+
+    abs_cnt_peak = 3 * ((offset_freq * 1e12 + cnt_peak * 1e6)/1e12) # in THz
+
+    abs_cnt_peak_wavenumber = abs_cnt_peak * 1e12/100.0/c
+
+    plt.text(-400, 0.4, "Center peak frequency: \n\n     {0:9.6f} THz \n = {1:9.4f} 1/cm".format(abs_cnt_peak, abs_cnt_peak_wavenumber))
 
 
+
+if __name__ == '__main__':
+    my_today = datetime.datetime.today()
+
+    #datafolder = '/Users/boerge/skynet/molecule_computer/'
+    datafolder = '/home/molecules/software/data/'
+
+    #datafolder = '/Users/boerge/software/data/Data/molecule_computer/'
+
+    #datafolder = '/Users/johnr/Desktop/'
+
+    stamps = [124050,130453,132440,134013,135425,140938]
+
+    basefolder = '20200213'
+
+
+    #time_stamp = str(stamps[0])
+
+
+    basefilename = datafolder + basefolder + '/' + basefolder + '_'    
+
+    #do_the_thing(basefilename,time_stamp)
+
+
+
+    for i in range(len(stamps)):
+        do_the_thing(basefilename,stamps[i])
+
+
+    plt.show()
