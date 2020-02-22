@@ -141,7 +141,7 @@ def do_the_thing(basefilename,time_stamp,delta1,delta2):
 
     color_plot /= np.max(np.max(color_plot))
 
-    if delta1 == 0 and delta2 == 5:
+    if delta1 == 0:
         plt.figure()
         plt.pcolor(times[time_cut1:time_cut2], 3*freqs, color_plot)
         plt.xlabel('Time (us)')
@@ -167,7 +167,7 @@ def do_the_thing(basefilename,time_stamp,delta1,delta2):
 
     abs_cnt_peak_wavenumber = abs_cnt_peak * 1e12/100.0/c
 
-    if delta1 == 0 and delta2 == 5:
+    if delta1 == 0:
         plt.plot(3*freqs, 1 - signal)
         plt.plot(3*xfit, 1 - yfit, 'r-')
 
@@ -201,7 +201,7 @@ if __name__ == '__main__':
     stamps = [124050,130453,132440,134013,135425,140938]
     delta1s = np.linspace(0,40,21)
     #print(delta1s)
-    delta2 = 5
+    delta2 = 10
 
     basefolder = '20200213'
 
