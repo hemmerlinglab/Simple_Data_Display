@@ -259,7 +259,8 @@ if __name__ == '__main__':
 
 
     plt.figure()
-    plt.scatter(all_freqs[0],all_signal[0])
+    plt.scatter(all_freqs[0],all_signal[0],marker='.',color='b')
+    plt.scatter(all_freqs[1],all_signal[1],marker='.',color='r')
     plt.title('Full Spectrum')
     plt.xlabel('Frequency (THz)')
     plt.ylabel('Abs (arb.)')
