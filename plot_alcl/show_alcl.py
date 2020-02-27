@@ -195,27 +195,32 @@ if __name__ == '__main__':
     my_today = datetime.datetime.today()
 
     #datafolder = '/Users/boerge/skynet/molecule_computer/'
-    #datafolder = '/home/molecules/software/data/'
+    datafolder = '/home/molecules/software/data/'
 
-    datafolder = '\\Users\\John\\Desktop\\'
+    #datafolder = '\\Users\\John\\Desktop\\'
 
     #datafolder = '/Users/boerge/software/data/Data/molecule_computer/'
 
     #datafolder = '/Users/johnr/Desktop/'
 
-    stamps = [124050,130453,132440,134013,135425,140938]
+    #basefolder = '20200213'
+    #stamps = [124050,130453,132440,134013,135425,140938]
+    
+    basefolder = '20200227'
+    stamps = [111627,121347]
+
     delta1s = np.linspace(0,10,2)
     #print(delta1s)
     delta2 = 10
 
-    basefolder = '20200213'
+    
 
 
     #time_stamp = str(stamps[0])
 
 
-    #basefilename = datafolder + basefolder + '/' + basefolder + '_'    
-    basefilename = datafolder + basefolder + '\\' + basefolder + '_'
+    basefilename = datafolder + basefolder + '/' + basefolder + '_'    
+    #basefilename = datafolder + basefolder + '\\' + basefolder + '_'
 
     #do_the_thing(basefilename,time_stamp)
  
@@ -260,7 +265,7 @@ if __name__ == '__main__':
 
     plt.figure()
     plt.scatter(all_freqs[0],all_signal[0],marker='.',color='b')
-    plt.scatter(all_freqs[1],all_signal[1],marker='.',color='r')
+    #plt.scatter(all_freqs[1],all_signal[1],marker='.',color='r')
     plt.title('Full Spectrum')
     plt.xlabel('Frequency (THz)')
     plt.ylabel('Abs (arb.)')
