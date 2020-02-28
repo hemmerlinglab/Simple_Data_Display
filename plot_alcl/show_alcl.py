@@ -194,7 +194,12 @@ def do_the_thing(basefilename,time_stamp,delta1,delta2):
 if __name__ == '__main__':
     my_today = datetime.datetime.today()
 
+<<<<<<< HEAD
     #datafolder = '/home/molecules/software/data/'
+=======
+    #datafolder = '/Users/boerge/skynet/molecule_computer/'
+    datafolder = '/home/molecules/software/data/'
+>>>>>>> 8e4ed8e85535dd1b24f06e8502372abf49fa493e
 
     #datafolder = '\\Users\\John\\Desktop\\'
 
@@ -202,12 +207,17 @@ if __name__ == '__main__':
 
     #datafolder = '/Users/johnr/Desktop/'
 
-    stamps = [124050,130453,132440,134013,135425,140938]
+    #basefolder = '20200213'
+    #stamps = [124050,130453,132440,134013,135425,140938]
+    
+    basefolder = '20200227'
+    stamps = [111627,121347]
+
     delta1s = np.linspace(0,10,2)
     #print(delta1s)
     delta2 = 10
 
-    basefolder = '20200213'
+    
 
 
     #time_stamp = str(stamps[0])
@@ -259,7 +269,7 @@ if __name__ == '__main__':
 
     plt.figure()
     plt.scatter(all_freqs[0],all_signal[0],marker='.',color='b')
-    plt.scatter(all_freqs[1],all_signal[1],marker='.',color='r')
+    #plt.scatter(all_freqs[1],all_signal[1],marker='.',color='r')
     plt.title('Full Spectrum')
     plt.xlabel('Frequency (THz)')
     plt.ylabel('Abs (arb.)')
