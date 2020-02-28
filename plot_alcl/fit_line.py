@@ -25,10 +25,10 @@ def fcn2min(params, x, data, plot_fit = False):
 def fit_line(x, y):
         params = Parameters()
  
-        params.add('a', value=-0.7, min=-10.0, max=0.0, vary = True)
+        params.add('a', value=-0.7, min=-2.0, max=0.0, vary = True)
         params.add('w', value=100.0, min=1.0, max=2000.0, vary = True)
         params.add('x0', value=0.0, min=-2e3, max=2e3, vary = True)
-        params.add('y_offset', value=0.0, min=-1.0, max=1.0, vary = True)
+        params.add('y_offset', value=1.0, min=-2.0, max=2.0, vary = True)
          
         # do fit, here with leastsq model
         minner = Minimizer(fcn2min, params, fcn_args=(x, y))

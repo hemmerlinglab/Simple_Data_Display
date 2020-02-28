@@ -194,12 +194,11 @@ def do_the_thing(basefilename,time_stamp,delta1,delta2):
 if __name__ == '__main__':
     my_today = datetime.datetime.today()
 
-    #datafolder = '/Users/boerge/skynet/molecule_computer/'
     #datafolder = '/home/molecules/software/data/'
 
-    datafolder = '\\Users\\John\\Desktop\\'
+    #datafolder = '\\Users\\John\\Desktop\\'
 
-    #datafolder = '/Users/boerge/software/data/Data/molecule_computer/'
+    datafolder = '/Users/boerge/software/data/molecule_computer/'
 
     #datafolder = '/Users/johnr/Desktop/'
 
@@ -214,8 +213,8 @@ if __name__ == '__main__':
     #time_stamp = str(stamps[0])
 
 
-    #basefilename = datafolder + basefolder + '/' + basefolder + '_'    
-    basefilename = datafolder + basefolder + '\\' + basefolder + '_'
+    basefilename = datafolder + basefolder + '/' + basefolder + '_'    
+    #basefilename = datafolder + basefolder + '\\' + basefolder + '_'
 
     #do_the_thing(basefilename,time_stamp)
  

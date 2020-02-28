@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import os
 import glob
 import sys
-from fit_k import *
 from fit_line import *
 
 c = 299792458
@@ -51,9 +50,9 @@ def av(arr, no_of_avg):
 my_today = datetime.datetime.today()
 
 
-datafolder = '/home/molecules/software/data/'
+datafolder = '/Users/boerge/software/data/molecule_computer/'
 
-datafolder = '/Users/johnr/Desktop/'
+#datafolder = '/Users/johnr/Desktop/'
 
 # molybdenum data
 
@@ -122,40 +121,56 @@ for k in range(ch1.shape[0]):
 
 
 
-plt.figure()
-#plt.pcolor(data1[:, 98:300])
-#plt.pcolor(times[98:300],nus,ch1[:, 98:300])
+signal = np.mean(ch1[:, 182:185], axis = 1)
+signal = 1-signal/np.min(signal)
 
-plt.pcolor(times[182:300],nus,ch1[:, 182:300])
 
-lines = {
-124050:382.08140,
-130453:382.08615,
-132440:382.09095,
-134013:382.09340,
-135425:382.09575,
-140938:382.09810
-}
+mycut = 150
+mycut2 = 300
 
-plt.xlabel('Time (ms)')
-plt.ylabel('Frequency - {} (THz)'.format(lines[int(time_stamp)]*3))
+abs_signal = np.mean(ch1[15:25, mycut:mycut2], axis = 0)
+abs_signal = np.mean(ch1[:, mycut:mycut2], axis = 0)
+abs_signal = 1.0 - abs_signal/np.min(abs_signal)
 
-plt.title('{} THz ({})'.format(lines[int(time_stamp)]*3,time_stamp))
+
+abs_times = times[mycut:mycut2]
+
+
+myfontsize = 15
 
 plt.figure()
 
-#plt.plot(np.mean(ch1[:, 99:120], axis = 1))
-plt.plot(np.mean(ch1[:, 182:200], axis = 1))
+(x, y, result) = fit_line(nus, signal) 
 
 
-#plt.plot(np.mean(data1[:, 99:120], axis = 1))
+plt.plot(nus, signal, 'o-', markersize = 7)
+plt.plot(x, y, 'r-', lw = 3)
 
-#plt.figure()
+plt.xlabel('Frequency (MHz)', fontsize = myfontsize)
+plt.ylabel('Absorption signal (a.u.)', fontsize = myfontsize)
 
-#plt.plot(np.mean(ch1[:, 90:150], axis = 0))
-#plt.plot(np.mean(ch1[:, 170:200], axis = 0))
-#plt.ylim([-0.005, 0.005])
+plt.xticks(fontsize = myfontsize)
+plt.yticks(fontsize = myfontsize)
 
+plt.tight_layout()
+
+plt.figure()
+
+
+
+plt.plot(abs_times, abs_signal * 100, '-', lw = 3)
+
+plt.xlabel('Times (ms)', fontsize = myfontsize)
+plt.ylabel('Absorption signal (a.u.)', fontsize = myfontsize)
+
+
+plt.ylim(-0.05 * 100,1.15 * 100)
+plt.xlim(min(abs_times), max(abs_times))
+
+plt.xticks(fontsize = myfontsize)
+plt.yticks(fontsize = myfontsize)
+
+plt.tight_layout()
 
 plt.show()
 
