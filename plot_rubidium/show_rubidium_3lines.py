@@ -5,6 +5,8 @@ import os
 import glob
 import sys
 
+from fit_rb_3lines import *
+from scipy.signal import find_peaks
 
 c = 299792458
 
@@ -77,7 +79,7 @@ ch2_mean -= ch2_mean[0]
 
 
 # switch 0 and 1
-ch0_mean = ch1_mean
+#ch0_mean = ch1_mean
 
 
 
@@ -157,18 +159,16 @@ my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '3', '3', Fe_co = '4', c
 my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '3', '2', Fe_co = '4', crossover = True))
 
 
-#my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '2', '3'))
+my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '2', '3'))
 ##my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '2', '2'))
 ##my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '2', '1'))
 
-#my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '2', '2', Fe_co = '3', crossover = True))
-##my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '2', '1', Fe_co = '2', crossover = True))
-#my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '2', '1', Fe_co = '3', crossover = True))
+#my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '2', '1', Fe_co = '2', crossover = True))
 
-
+my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '2', '2', Fe_co = '3', crossover = True))
+my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '2', '1', Fe_co = '3', crossover = True))
 
 # fit spectrum
-from fit_rb import *
 
 (xfit, yfit, fit_result) = fit_rb(freqs, ch0_mean, my_lines, setpoint_offset)
 #(xfit, yfit, fit_result) = fit_rb(freqs[0:200], ch0_mean[0:200], my_lines, setpoint_offset)
@@ -180,7 +180,6 @@ print('Wavemeter offset: {}'.format(wavemeter_offset))
 #yfit = 0
 
 # peak finding
-from scipy.signal import find_peaks
 peaks,_ = find_peaks(ch0_mean, distance = 5, width = [2, 15])#, height = [0, 0.2])#, height = 0, width = 2)
 
 

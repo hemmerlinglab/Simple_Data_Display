@@ -34,8 +34,8 @@ def fcn2min(params, x, data, my_lines, setpoint_offset, plot_fit = False):
     model += -a0 * np.exp( -(x_fit - cnt0)**2/(2.0*w0**2) )
     model += -a1 * np.exp( -(x_fit - cnt1)**2/(2.0*w0**2) )
     for k in range(len(my_lines)):            
-        #model += a * ampl[k] * np.exp( -(x_fit - freqs[k])**2/(2.0*w1**2) )
-        model += a * ampl[k] * w1**2 / ( (x_fit - freqs[k])**2 + (w1**2) )
+        model += a * ampl[k] * np.exp( -(x_fit - freqs[k])**2/(2.0*w1**2) )
+        #model += a * ampl[k] * w1**2 / ( (x_fit - freqs[k])**2 + (w1**2) )
 
     if plot_fit == False:
         return model - data
@@ -60,7 +60,7 @@ def fit_rb(x, y, my_lines, setpoint_offset):
 
          
         for k in range(len(my_lines)):
-            params.add('a' + str(k), value = 1.1, min = 0.0, max = 3.0, vary = True)
+            params.add('a' + str(k), value = 1.1, min = 0.0, max = 5.0, vary = True)
 
 
         # do fit, here with leastsq model
