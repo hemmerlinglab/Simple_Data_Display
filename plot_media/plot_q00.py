@@ -7,11 +7,33 @@ kB = 1.3806482e-23
 h_planck = 6.63607e-34
 amu = 1.66e-27
 
+def av(arr, no_of_avg):
+    # for 1D array
+    if len(arr.shape)==1:
+        hlp = np.zeros([int(arr.shape[0]/no_of_avg)])
+
+        for k in range(len(hlp)):
+            for m in range(no_of_avg):
+                hlp[k] += arr[no_of_avg*k + m]
+
+        return hlp/no_of_avg
+
+    if len(arr.shape)==2:     
+
+        # for 2D array
+        hlp = np.zeros([int(arr.shape[0]/no_of_avg), arr.shape[1]])
+
+        for k in range(len(hlp)):
+            for m in range(no_of_avg):
+                hlp[k] += arr[no_of_avg*k + m, :]
+
+        return hlp/no_of_avg
+
 def get_pop(J, B, T, N0 = 1):
 
-    pop = N0 * (2*J+1) * np.exp(-B * h_planck * J*(J+1)/(kB*T))
+    pop = N0 * (2*J+1) * np.exp(-B * h_planck * c * J*(J+1)/(kB*T))
 
-    return pop / (np.sqrt(kB*T/(2*h_planck*B)) - 1.0/2.0)
+    return pop / (np.sqrt(kB*T/(2*h_planck*c*B)) - 1/2)
 
 def get_doppler(T, f0):
 
@@ -47,7 +69,7 @@ def get_transitions(Yg, Ye, ve, vg, cnt_freqs, df = 100e6, T = 1, Jmax = 1):
             eng = 100*c*(energy(Ye, ve, Je) - energy(Yg, vg, Jg))
     
             # apply population of ground states
-            A = get_pop(Jg, 100*c*Yg[1][0], T)
+            A = get_pop(Jg, Yg[0][1], T)
     
             if Je - Jg == -1: 
                 spectrum_P += gauss(nus, eng, A, w)
@@ -76,9 +98,9 @@ def get_transitions(Yg, Ye, ve, vg, cnt_freqs, df = 100e6, T = 1, Jmax = 1):
 
 def plot_spectrum(nus, s, ve = 0, vg = 0, T = 0, cnt_freq = 0, style = '-', txt = '', abundance = 1.0):
     
-    plt.plot( nus / 1e9, abundance * s[0], 'r' + style, label = 'P' + txt)
+    #plt.plot( nus / 1e9, abundance * s[0], 'r' + style, label = 'P' + txt)
     plt.plot( nus / 1e9, abundance * s[1], 'g' + style, label = 'Q' + txt)
-    plt.plot( nus / 1e9, abundance * s[2], 'b' + style, label = 'R' + txt)
+    #plt.plot( nus / 1e9, abundance * s[2], 'b' + style, label = 'R' + txt)
 
     plt.xlabel("Frequency (GHz) - {0:6.6f} THz".format(100*c*cnt_freq/1e12))
 
@@ -171,8 +193,6 @@ massCl_37 = 36.96590258
 Ug = scale_coeff(Yg, massAl, massCl_35, scale = False)
 Ue = scale_coeff(Ye, massAl, massCl_35, scale = False)
 
-
-
 Yg35 = scale_coeff(Ug, massAl, massCl_35, scale = True)
 Ye35 = scale_coeff(Ue, massAl, massCl_35, scale = True)
 
@@ -184,10 +204,10 @@ Ye37 = scale_coeff(Ue, massAl, massCl_37, scale = True)
 
 
 
-Jmax = 30
-T = 10 # Kelvin
+Jmax = 11
+T = 40 # Kelvin
 cnt_freq = 38237.0 # 1/cm
-df = 100e9 # HZ
+df = 10e9 # HZ
 
 # vibrational states
 ve = 0
@@ -195,91 +215,180 @@ vg = 0
 (nus35, spectrum35, f_lines35) = get_transitions(Yg35, Ye35, ve, vg, cnt_freq, df, T, Jmax)
 (nus37, spectrum37, f_lines37) = get_transitions(Yg37, Ye37, ve, vg, cnt_freq, df, T, Jmax)
 
-plt.figure()
-plot_spectrum(nus35, spectrum35, ve, vg, T, cnt_freq, style = '-', txt = ' Cl35', abundance = 0.76)
-plot_spectrum(nus37, spectrum37, ve, vg, T, cnt_freq, style = '--', txt = ' Cl37', abundance = 0.24)
+#plt.figure()
+#plot_spectrum(nus35, spectrum35, ve, vg, T, cnt_freq, style = '-', txt = ' Cl35', abundance = 0.76)
+#plot_spectrum(nus37, spectrum37, ve, vg, T, cnt_freq, style = '--', txt = ' Cl37', abundance = 0.24)
+
+
+
+# fit q00 line
+
+
+
+datafolder = '/Users/boerge/software/data/molecule_computer/'
+
+basefolder = '20200227'
+
+time_stamp = '111627'
+
+basefilename = datafolder + basefolder + '/' + basefolder + '_'
+
+f_freqs = basefilename + time_stamp + '_set_points'
+f_ch1 = basefilename + time_stamp + '_ch0_arr'
+f_ch2 = basefilename + time_stamp + '_ch1_arr'
+f_ch4 = basefilename + time_stamp + '_ch3_arr'
+
+freqs = np.genfromtxt(f_freqs, delimiter=",")
+ch1 = np.genfromtxt(f_ch1, delimiter=",")
+ch2 = np.genfromtxt(f_ch2, delimiter=",")
+ch4 = np.genfromtxt(f_ch4, delimiter=",")
+
+
+# subtracting the DC offset
+offset_avg_points = 5
+for k in range(ch1.shape[0]):
+    ch1[k, :] = ch1[k, :] - np.mean(ch1[k, -offset_avg_points:-1])
+    ch2[k, :] = ch2[k, :] - np.mean(ch2[k, -offset_avg_points:-1])
+    ch4[k, :] = ch4[k, :] - np.mean(ch4[k, -offset_avg_points:-1])
+
+
+
+
+# get number of averages
+no_of_avg = int(len(freqs)/len(np.unique(freqs)))
+
+print('Found ' + str(no_of_avg) + ' averages.')
+
+freqs = av(freqs, no_of_avg)
+ch1 = av(ch1, no_of_avg)
+ch2 = av(ch2, no_of_avg)
+ch4 = av(ch4, no_of_avg)
+
+
+
+
+time_stamp = '121347'
+
+basefilename = datafolder + basefolder + '/' + basefolder + '_'
+
+f_freqs = basefilename + time_stamp + '_set_points'
+f_ch1 = basefilename + time_stamp + '_ch0_arr'
+f_ch2 = basefilename + time_stamp + '_ch1_arr'
+f_ch4 = basefilename + time_stamp + '_ch3_arr'
+
+freqs2 = np.genfromtxt(f_freqs, delimiter=",")
+ch12 = np.genfromtxt(f_ch1, delimiter=",")
+ch22 = np.genfromtxt(f_ch2, delimiter=",")
+ch42 = np.genfromtxt(f_ch4, delimiter=",")
+
+
+# subtracting the DC offset
+offset_avg_points = 5
+for k in range(ch12.shape[0]):
+    ch12[k, :] = ch12[k, :] - np.mean(ch12[k, -offset_avg_points:-1])
+    ch22[k, :] = ch22[k, :] - np.mean(ch22[k, -offset_avg_points:-1])
+    ch42[k, :] = ch42[k, :] - np.mean(ch42[k, -offset_avg_points:-1])
+
+
+
+# get number of averages
+no_of_avg = int(len(freqs2)/len(np.unique(freqs2)))
+
+print('Found ' + str(no_of_avg) + ' averages.')
+
+freqs2 = av(freqs2, no_of_avg)
+ch12 = av(ch12, no_of_avg)
+ch22 = av(ch22, no_of_avg)
+ch42 = av(ch42, no_of_avg)
+
+
+
+
+
+
+freqs = np.append(freqs, freqs2)
+sig = np.vstack((ch1, ch12))
+
+
+
+
+
+#plt.figure()
+#
+#plt.plot(ch12[:, 0])
+#plt.plot(ch22[:, 0])
+#plt.plot(ch42[:, 0])
+#
+#plt.figure()
+#
+#plt.plot(ch12[0, :])
+#plt.plot(ch22[0, :])
+#plt.plot(ch42[0, :])
+
+
+
+#nus = freqs*1.5
+
+
+#delay_in_for_loop = 100e-6
+delay_in_for_loop = 50e-6
+
+no_of_time_points = ch1.shape[1]
+times = np.arange(0, no_of_time_points) * (delay_in_for_loop) / 1e-3
+
+
+
+#a1 = 3
+#d1 = 20
+#
+#for d1 in range(1, 50, 10):
+#    plt.figure()
+#
+#    for a1 in range(0,10,1):
+#        plt.plot(freqs, np.mean(sig[:, 177+a1:177+a1+d1], axis = 1))
+#
+#plt.figure()
+
+
+a1 = 1
+d1 = 50
+mean_sig = np.mean(sig[:, 177+a1:177+a1+d1], axis = 1)
+mean_sig = mean_sig/np.min(mean_sig)
+
+
+
+
+# fit the line
+x_data = 3 * freqs
+y_data = mean_sig
+
+from fit_q00 import *
+from fit_dl import *
+
+(x_fit, y_fit, result) = fit_q00(x_data, y_data, Yg35, Ye35)
+
+(x_fit2, y_fit2, result2) = fit_dl(x_data, y_data)
+
+
+print(result.params)
+print(result2.params)
+
+
 
 plt.figure()
-plot_transitions(f_lines35, cut = 12, style = '-', txt = ' Cl35')
-plot_transitions(f_lines37, cut = 12, style = '--', txt = ' Cl37')
+plt.plot(x_data, y_data, 'o')
+
+# q lines
 
 
 
-exp_freqs = np.array([
-382.081350,
-382.086184,
-382.090879,
-382.093449,
-382.095838,
-382.098180,
-382.10050, 
-382.11035, 
-382.11240, 
-382.11510, 
-382.11710, 
-382.12000, 
-382.12185, 
-382.12500, 
-382.12665, 
-382.12990, 
-382.13145, 
-382.13480,
-382.13550,
-382.13630,
-382.13980,
-382.14115, 
-382.14480, 
-382.10285 
-])
+#plt.plot(x_fit, y_fit, 'r-')
 
-
-exp_freqs = 3*exp_freqs*1e12
-exp_freqs = (exp_freqs - 100*c*cnt_freq)
-exp_freqs = exp_freqs
-
-
-# search for closest lines
-Jassign = []
-theory_lines = []
-theory_lines.extend(f_lines35[0])
-theory_lines.extend(f_lines35[1])
-theory_lines.extend(f_lines35[2])
-theory_lines.extend(f_lines37[0])
-theory_lines.extend(f_lines37[1])
-theory_lines.extend(f_lines37[2])
-
-theory_J = []
-theory_J.extend(np.arange(0,Jmax))
-theory_J.extend(np.arange(0,Jmax+1))
-theory_J.extend(np.arange(0,Jmax))
-
-theory_J.extend(np.arange(0,Jmax))
-theory_J.extend(np.arange(0,Jmax+1))
-theory_J.extend(np.arange(0,Jmax))
-
-exp_J = []
-
-for k in range(len(exp_freqs)):
-
-    hlp = np.abs(exp_freqs[k] - theory_lines)
-
-    ind = np.where( np.min(hlp) == hlp )[0][0]
-
-    exp_J.append(theory_J[ind])
-
-
-plt.plot(exp_J, exp_freqs/1e9, 'kx', markersize = 15)
-
-plt.xlabel('Rotational number J')
-plt.ylabel("Frequency (GHz) - {0:6.6f} THz".format(100*c*cnt_freq/1e12))
+plt.plot(x_fit2, y_fit2, 'k-')
 
 
 
-
-
-
-
-
+#plt.xlim(-2500, 3500)
 
 
 

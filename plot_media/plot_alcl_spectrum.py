@@ -9,9 +9,9 @@ amu = 1.66e-27
 
 def get_pop(J, B, T, N0 = 1):
 
-    pop = N0 * (2*J+1) * np.exp(-B * h_planck * J*(J+1)/(kB*T))
+    pop = N0 * (2*J+1) * np.exp(-B * h_planck * c * J*(J+1)/(kB*T))
 
-    return pop / (np.sqrt(kB*T/(2*h_planck*B)) - 1.0/2.0)
+    return pop / (np.sqrt(kB*T/(2*h_planck*c*B)) - 1/2)
 
 def get_doppler(T, f0):
 
@@ -47,7 +47,7 @@ def get_transitions(Yg, Ye, ve, vg, cnt_freqs, df = 100e6, T = 1, Jmax = 1):
             eng = 100*c*(energy(Ye, ve, Je) - energy(Yg, vg, Jg))
     
             # apply population of ground states
-            A = get_pop(Jg, 100*c*Yg[1][0], T)
+            A = get_pop(Jg, Yg[0][1], T)
     
             if Je - Jg == -1: 
                 spectrum_P += gauss(nus, eng, A, w)
@@ -184,8 +184,8 @@ Ye37 = scale_coeff(Ue, massAl, massCl_37, scale = True)
 
 
 
-Jmax = 30
-T = 10 # Kelvin
+Jmax = 11
+T = 50 # Kelvin
 cnt_freq = 38237.0 # 1/cm
 df = 100e9 # HZ
 
