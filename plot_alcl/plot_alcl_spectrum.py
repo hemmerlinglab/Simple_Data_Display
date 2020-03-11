@@ -157,12 +157,11 @@ def scale_coeff(Y, mass1, mass2, scale = True):
 
 # AlCl constants
 
-Yg = [[0.0, 482.0794801498224, -2.0285504669476797, 4.2244382524958823e-07, -1.4200906251997294e-05], [0.23086415576356475, -0.0015452837298277023]]
+#Yg = [[0.0, 482.0794801498224, -2.0285504669476797, 4.2244382524958823e-07, -1.4200906251997294e-05], [0.23086415576356475, -0.0015452837298277023]]
 Ye = [[38250.600844308836, 457.2272074915964, -7.519552217461303, 0.29489258632225485, -0.02723237768418022], [0.23713820022739715, -0.003944286505039427]]
 
 # from Bernath
 Yg = [[0.0, 481.774655, -2.101, 6.638e-3, -2.025e-5],[0.2439300, -1.611e-3]]
-Ye = [[38250.600844308836, 457.2272074915964, -7.519552217461303, 0.29489258632225485, -0.02723237768418022], [0.23713820022739715, -0.003944286505039427]]
 
 massAl = 26.98153841
 massCl_35 = 34.96885269
@@ -189,11 +188,24 @@ T = 10 # Kelvin
 cnt_freq = 38237.0 # 1/cm
 df = 100e9 # HZ
 
+
+
+ve = 0
+vg = 1
+(nus10_35, spectrum10_35, f_lines_10_35) = get_transitions(Yg35, Ye35, ve, vg, cnt_freq, df, T, Jmax)
+print((f_lines_10_35[1] + 100*c*cnt_freq)/3e12) # Q transition
+
+
+plt.figure()
+plot_spectrum(nus10_35, spectrum10_35, ve, vg, T, 0*cnt_freq, style = '-', txt = ' Cl35', abundance = 0.76)
+
+
 # vibrational states
 ve = 0
 vg = 0
 (nus35, spectrum35, f_lines35) = get_transitions(Yg35, Ye35, ve, vg, cnt_freq, df, T, Jmax)
 (nus37, spectrum37, f_lines37) = get_transitions(Yg37, Ye37, ve, vg, cnt_freq, df, T, Jmax)
+
 
 plt.figure()
 plot_spectrum(nus35, spectrum35, ve, vg, T, cnt_freq, style = '-', txt = ' Cl35', abundance = 0.76)
@@ -211,7 +223,7 @@ exp_freqs = np.array([
 382.090879,
 382.093449,
 382.095838,
-382.098180,
+382.098180, # Q00
 382.10050, 
 382.11035, 
 382.11240, 
