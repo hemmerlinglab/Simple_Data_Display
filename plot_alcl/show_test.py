@@ -46,7 +46,7 @@ my_today = datetime.datetime.today()
 datafolder = '/home/molecules/software/data/'
 
 
-basefolder = '20191031'
+basefolder = '20200309'
 #time_stamp = '123451'
 time_stamp = sys.argv[1]
 
@@ -90,6 +90,11 @@ ch3 = av(ch3, no_of_avg)
 avg_freq = np.mean(freqs)
 
 nus = 2.0*(freqs - yb_174_freq/2.0)*1e12/1e6
+
+
+plt.figure()
+
+plt.pcolor(ch1)
 
 
 plt.figure()
