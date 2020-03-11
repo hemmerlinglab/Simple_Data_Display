@@ -109,3 +109,23 @@ print('Yg = ' + str(list(map(lambda x : list(map(lambda y : y.value, x)), Yg))))
 print('Ye = ' + str(list(map(lambda x : list(map(lambda y : y.value, x)), Ye))))
 
 
+
+
+# predict repumpers
+
+print()
+print()
+print()
+print()
+print("(( v, J) -> ( v', J')) = <prediction>")
+
+eng1 = energy(Ye, 1, 0) - energy(Yg, 0, 0)
+
+print("(( {0}, 0) -> ( {1}, 0)) = {2:8.2f} = {3:12.6f} THz = {4:12.6f} THz (IR)".format(0, 1, eng1, eng1 * 100.0 * c/1e12, eng1 * 100.0 * c / 3e12))
+
+eng2 = energy(Ye, 0, 0) - energy(Yg, 1, 0)
+print("(( {0}, 0) -> ( {1}, 0)) = {2:8.2f} = {3:12.6f} THz = {4:12.6f} THz (IR)".format(1, 0, eng2, eng2 * 100.0 * c/1e12, eng2 * 100.0 * c / 3e12))
+print()
+print()
+
+
