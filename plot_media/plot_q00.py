@@ -225,13 +225,16 @@ vg = 0
 
 
 
-datafolder = '/Users/boerge/software/data/molecule_computer/'
+#datafolder = '/Users/boerge/software/data/molecule_computer/'
+#datafolder = '/Users/boerge/Software/data/Molecules/Data/molecule_computer/'
+datafolder = '/Users/boerge/tmp/'
 
 basefolder = '20200227'
 
 time_stamp = '111627'
 
-basefilename = datafolder + basefolder + '/' + basefolder + '_'
+#basefilename = datafolder + basefolder + '/' + basefolder + '_'
+basefilename = datafolder + basefolder + '_'
 
 f_freqs = basefilename + time_stamp + '_set_points'
 f_ch1 = basefilename + time_stamp + '_ch0_arr'
@@ -269,7 +272,7 @@ ch4 = av(ch4, no_of_avg)
 
 time_stamp = '121347'
 
-basefilename = datafolder + basefolder + '/' + basefolder + '_'
+basefilename = datafolder + basefolder + '_'
 
 f_freqs = basefilename + time_stamp + '_set_points'
 f_ch1 = basefilename + time_stamp + '_ch0_arr'
@@ -350,8 +353,8 @@ times = np.arange(0, no_of_time_points) * (delay_in_for_loop) / 1e-3
 #plt.figure()
 
 
-a1 = 1
-d1 = 50
+a1 = 1 #1
+d1 = 10 #50
 mean_sig = np.mean(sig[:, 177+a1:177+a1+d1], axis = 1)
 mean_sig = mean_sig/np.min(mean_sig)
 
@@ -376,20 +379,17 @@ print(result2.params)
 
 
 plt.figure()
-plt.plot(x_data, y_data, 'o')
+plt.plot(x_data/1e3, y_data, 'o')
 
-# q lines
-
-
-
-#plt.plot(x_fit, y_fit, 'r-')
-
-plt.plot(x_fit2, y_fit2, 'k-')
+plt.plot(x_fit2/1e3, y_fit2, 'k-')
 
 
 
-#plt.xlim(-2500, 3500)
+plt.xlim(min(x_data/1e3), max(x_data/1e3))
 
+
+plt.xlabel('Frequency (GHz)')
+plt.ylabel('Absorption signal (a.u.)')
 
 
 plt.show()
