@@ -3,6 +3,7 @@ from configparser import ConfigParser
 import lmfit
 from lmfit import Minimizer, Parameters, report_fit
 
+
 def read_in_ram_config(filename = 'ram_config.ini'):
     config = ConfigParser()
     config.read(filename)
@@ -54,6 +55,7 @@ def read_in_ram_config(filename = 'ram_config.ini'):
 
     return line_ids,lines
 
+
 def read_data_file(filename):
     baseval = 0
     dat = []
@@ -91,6 +93,7 @@ def read_in_dunham_config(filename = 'dunham_config.ini'):
 
     return molecule_ids,molecules
 
+
 def get_E(Y,v,J):
     E = 0.0
     d = 5
@@ -100,18 +103,22 @@ def get_E(Y,v,J):
 
     return E
 
+
 def make_Dunham_mat(params):
-    molmatX = np.zeros((5,5))
+    molidsX, molXs = read_in_dunham_config()
+    molmatX = molXs['AlCl62X_Bernath']['matrix']
     molmatA = np.zeros((5,5))
     for p in params:
         plist = list(p)
         if plist[3] == 'X':
-            molmatX[int(plist[1]),int(plist[2])] = params[p]
+            pass
+            #molmatX[int(plist[1]),int(plist[2])] = params[p]
         elif plist[3] == 'A':
             molmatA[int(plist[1]),int(plist[2])] = params[p]
         else:
             print('OH NO!!!')
     return molmatX,molmatA
+
 
 def fcn2min(params, x, data, get_fit = False):
     YX,YA = make_Dunham_mat(params)
@@ -130,6 +137,7 @@ def fcn2min(params, x, data, get_fit = False):
 
         return np.array(model)
 
+
 def fit_dunham(q,d):
     print('Starting fit...')
     molids,mols = read_in_dunham_config()
@@ -138,7 +146,7 @@ def fit_dunham(q,d):
     params = Parameters()
     for p in Ys:
         if p != 'matrix':
-            params.add(p+'X', value = 0.0, min = -500, max = 500, vary = True)
+            #params.add(p+'X', value = 0.0, min = -500, max = 500, vary = True)
             params.add(p+'A', value = 0.0, min = -500, max = 500, vary = True)
         
     
@@ -170,6 +178,7 @@ def compile_data():
                 all_data.append(np.float(new_dat))
 
     return np.array(all_quant),np.array(all_data)
+
 
 
 if __name__ == '__main__':
