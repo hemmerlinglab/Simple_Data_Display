@@ -95,6 +95,7 @@ def read_in_dunham_config(filename = 'dunham_config.ini'):
 
 
 def get_E(Y,v,J):
+    #print(Y)
     E = 0.0
     d = 5
     for i in range(d):
@@ -114,7 +115,10 @@ def make_Dunham_mat(params):
             pass
             #molmatX[int(plist[1]),int(plist[2])] = params[p]
         elif plist[3] == 'A':
-            molmatA[int(plist[1]),int(plist[2])] = params[p]
+            try:
+                molmatA[int(plist[1]),int(plist[2])] = params[p]
+            except:
+                pass
         else:
             print('OH NO!!!')
     return molmatX,molmatA
@@ -127,13 +131,13 @@ def fcn2min(params, x, data, get_fit = False):
 
     if get_fit == False:
         for i in range(len(data)):
-            model.append(get_E(YX, x[0][i], x[1][i]) - get_E(YA, x[2][i], x[3][i]) - data)
+            model.append(get_E(YA, x[0][i], x[1][i]) - get_E(YX, x[2][i], x[3][i]) - data)
 
         return np.array(model)
 
     else:
         for i in range(len(data)):
-            model.append(get_E(YX, x[0][i], x[1][i]) - get_E(YA, x[2][i], x[3][i]))
+            model.append(get_E(YA, x[0][i], x[1][i]) - get_E(YX, x[2][i], x[3][i]))
 
         return np.array(model)
 
@@ -142,13 +146,18 @@ def fit_dunham(q,d):
     print('Starting fit...')
     molids,mols = read_in_dunham_config()
     Ys = mols['AlCl62X_Bernath'].keys()
-
+    #allowed_Ys = ['y00','y01','y10','y11','y20','y21','y22','y12','y02']
     params = Parameters()
     for p in Ys:
         if p != 'matrix':
+            #if p in allowed_Ys:
+                if p == 'y00':
+                    params.add(p+'A', value = 38237, min = 0, max = 41000, vary = True)
+                else:
+                    params.add(p+'A', value = 1.0, min = -1000, max = 1000, vary = True)
+
             #params.add(p+'X', value = 0.0, min = -500, max = 500, vary = True)
-            params.add(p+'A', value = 0.0, min = -500, max = 500, vary = True)
-        
+                
     
     # do fit, here with leastsq model
     minner = Minimizer(fcn2min, params, fcn_args=(q,d))
@@ -171,10 +180,10 @@ def compile_data():
         for i in range(len(trans[ln]['JX'])):
             new_dat = trans[ln]['data'][i]
             if new_dat != 'NAN':
-                all_quant[0].append(trans[ln]['vX'])
-                all_quant[1].append(trans[ln]['JX'][i])
-                all_quant[2].append(trans[ln]['vA'])
-                all_quant[3].append(trans[ln]['JA'][i])
+                all_quant[0].append(trans[ln]['vA'])
+                all_quant[1].append(trans[ln]['JA'][i])
+                all_quant[2].append(trans[ln]['vX'])
+                all_quant[3].append(trans[ln]['JX'][i])
                 all_data.append(np.float(new_dat))
 
     return np.array(all_quant),np.array(all_data)
