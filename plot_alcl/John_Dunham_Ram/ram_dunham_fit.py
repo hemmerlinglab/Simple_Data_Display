@@ -94,21 +94,21 @@ def read_in_dunham_config(filename = 'dunham_config.ini'):
     return molecule_ids,molecules
 
 
-def get_E(Y,v,J):
+def get_E(Y,v,J,mat_size):
     #print(Y)
     E = 0.0
-    d = 4
-    for i in range(d):
-        for j in range(d):
+    #d = 4
+    for i in range(mat_size[0]):
+        for j in range(mat_size[1]):
             E += Y[i][j] * (v+0.5)**i * (J*(J+1.0))**j
 
     return E
 
 
-def make_Dunham_mat(params):
+def make_Dunham_mat(params,mat_size):
     molidsX, molXs = read_in_dunham_config()
-    molmatX = molXs['AlCl62X_Bernath']['matrix'][:4,:4]
-    molmatA = np.zeros((4,4))
+    molmatX = molXs['AlCl62X_Bernath']['matrix'][:mat_size[0],:mat_size[1]]
+    molmatA = np.zeros((mat_size[0],mat_size[1]))
     for p in params:
         plist = list(p)
         if plist[3] == 'X':
@@ -125,19 +125,20 @@ def make_Dunham_mat(params):
 
 
 def fcn2min(params, x, data, get_fit = False):
-    YX,YA = make_Dunham_mat(params)
+    mat_size = [3,3]
+    YX,YA = make_Dunham_mat(params,mat_size)
     
     model = []
 
     if get_fit == False:
         for i in range(len(data)):
-            model.append(get_E(YA, x[0][i], x[1][i]) - get_E(YX, x[2][i], x[3][i]) - data)
+            model.append(get_E(YA, x[0][i], x[1][i], mat_size) - get_E(YX, x[2][i], x[3][i], mat_size) - data)
 
         return np.array(model)
 
     else:
         for i in range(len(data)):
-            model.append(get_E(YA, x[0][i], x[1][i]) - get_E(YX, x[2][i], x[3][i]))
+            model.append(get_E(YA, x[0][i], x[1][i], mat_size) - get_E(YX, x[2][i], x[3][i], mat_size))
 
         return np.array(model)
 
@@ -146,15 +147,19 @@ def fit_dunham(q,d):
     print('Starting fit...')
     molids,mols = read_in_dunham_config()
     Ys = mols['AlCl62X_Bernath'].keys()
-    #allowed_Ys = ['y00','y01','y10','y11','y20','y21','y22','y12','y02']
+    allowed_Ys = ['y00','y01','y10','y11','y20','y21','y22','y12','y02']
     params = Parameters()
     for p in Ys:
         if p != 'matrix':
-            #if p in allowed_Ys:
+            if p in allowed_Ys:
                 if p == 'y00':
                     params.add(p+'A', value = 38237, min = 34000, max = 41000, vary = True)
+                elif p == 'y10':
+                    params.add(p+'A', value = 300.0, min = 0, max = 600, vary = True)
+                elif p == 'y20':
+                    params.add(p+'A', value = 0.0, min = -10, max = 10, vary = True)
                 else:
-                    params.add(p+'A', value = 0.0, min = -1000, max = 1000, vary = True)
+                    params.add(p+'A', value = 0.0, min = -2, max = 2, vary = True)
 
             #params.add(p+'X', value = 0.0, min = -500, max = 500, vary = True)
                 
@@ -193,4 +198,4 @@ def compile_data():
 if __name__ == '__main__':
     q,data = compile_data()
     rps, ps, cr = fit_dunham(q,data)
-    print(rps, ps)
+    print(rps)
