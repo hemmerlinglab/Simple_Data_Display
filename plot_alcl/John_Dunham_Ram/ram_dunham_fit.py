@@ -107,7 +107,7 @@ def get_E(Y,v,J):
 
 def make_Dunham_mat(params):
     molidsX, molXs = read_in_dunham_config()
-        molmatX = molXs['AlCl62X_Bernath']['matrix'][:4,:4]
+    molmatX = molXs['AlCl62X_Bernath']['matrix'][:4,:4]
     molmatA = np.zeros((4,4))
     for p in params:
         plist = list(p)
