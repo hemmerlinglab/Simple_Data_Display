@@ -97,7 +97,7 @@ def read_in_dunham_config(filename = 'dunham_config.ini'):
 def get_E(Y,v,J):
     #print(Y)
     E = 0.0
-    d = 5
+    d = 4
     for i in range(d):
         for j in range(d):
             E += Y[i][j] * (v+0.5)**i * (J*(J+1.0))**j
@@ -154,7 +154,7 @@ def fit_dunham(q,d):
                 if p == 'y00':
                     params.add(p+'A', value = 38237, min = 34000, max = 41000, vary = True)
                 else:
-                    params.add(p+'A', value = 1.0, min = -1000, max = 1000, vary = True)
+                    params.add(p+'A', value = 0.0, min = -1000, max = 1000, vary = True)
 
             #params.add(p+'X', value = 0.0, min = -500, max = 500, vary = True)
                 
