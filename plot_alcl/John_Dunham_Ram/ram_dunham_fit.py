@@ -107,8 +107,8 @@ def get_E(Y,v,J):
 
 def make_Dunham_mat(params):
     molidsX, molXs = read_in_dunham_config()
-    molmatX = molXs['AlCl62X_Bernath']['matrix']
-    molmatA = np.zeros((5,5))
+        molmatX = molXs['AlCl62X_Bernath']['matrix'][:4,:4]
+    molmatA = np.zeros((4,4))
     for p in params:
         plist = list(p)
         if plist[3] == 'X':
@@ -152,7 +152,7 @@ def fit_dunham(q,d):
         if p != 'matrix':
             #if p in allowed_Ys:
                 if p == 'y00':
-                    params.add(p+'A', value = 38237, min = 0, max = 41000, vary = True)
+                    params.add(p+'A', value = 38237, min = 34000, max = 41000, vary = True)
                 else:
                     params.add(p+'A', value = 1.0, min = -1000, max = 1000, vary = True)
 
