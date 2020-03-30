@@ -147,11 +147,11 @@ def fit_dunham(q,d):
     print('Starting fit...')
     molids,mols = read_in_dunham_config()
     Ys = mols['AlCl62X_Bernath'].keys()
-    allowed_Ys = ['y00','y01','y10','y11','y20','y21','y22','y12','y02']
+    #allowed_Ys = ['y00','y01','y10','y11','y20','y21','y22','y12','y02']
     params = Parameters()
     for p in Ys:
         if p != 'matrix':
-            if p in allowed_Ys:
+            #if p in allowed_Ys:
                 if p == 'y00':
                     params.add(p+'A', value = 38237, min = 34000, max = 41000, vary = True)
                 elif p == 'y10':
