@@ -59,7 +59,23 @@ def getR(vx,va,n):
 	lines = []
 	for i in range(n):
 		lines.append((get_E(YA,va,i+1)-get_E(YX,vx,i)))
-	print lines
+	return lines
+
+
+def getPQR(vx,va):
+	Q = getQ(vx,va,5)
+	R = getR(vx,va,10)
+	P = getP(vx,va,10)
+
+	print('Q00:')
+	for q in range(len(Q)):
+		print('{} -> {}: {}'.format(q,q,Q[q]))
+	print('R00:')
+	for r in range(len(R)):
+		print('{} -> {}: {}'.format(r,r+1,R[r]))
+	print('P00:')
+	for p in range(len(P)):
+		print('{} -> {}: {}'.format(p,p+1,P[p]))
 
 
 def ftw(freq):
@@ -72,17 +88,5 @@ def wtf(wavenum):
 
 
 if __name__ == '__main__':
-	q00 = getQ(0,0,5)
-	r00 = getR(0,0,10)
-	p00 = getP(0,0,10)
-
-	print('Q00:')
-	for q in range(len(q00)):
-		print('{} -> {}: {}'.format(q,q,q00[q])
-	print('R00:')
-	for r in range(len(r00)):
-		print('{} -> {}: {}'.format(r,r+1,r00[r]))
-	print('P00:')
-	for p in range(len(p00)):
-		print('{} -> {}: {}'.format(p,p+1,p00[p]))
+	getPQR(0,0)
 
