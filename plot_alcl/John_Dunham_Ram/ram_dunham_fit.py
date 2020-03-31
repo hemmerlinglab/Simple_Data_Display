@@ -125,7 +125,7 @@ def make_Dunham_mat(params,mat_size):
 
 
 def fcn2min(params, x, data, get_fit = False):
-    mat_size = [4,4]
+    mat_size = [4,4] # max_dun_indx - 1  (USE THIS LINE TO CHANGE ORDER)
     YX,YA = make_Dunham_mat(params,mat_size)
     
     model = []
