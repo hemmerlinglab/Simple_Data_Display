@@ -59,7 +59,7 @@ def read_in_ram_config(filename = 'ram_config.ini'):
 def read_data_file(filename):
     baseval = 0
     dat = []
-    f = open(filename,'r')
+    f = open('ram/'+filename,'r')
     fl = f.readlines()
     for x in fl:
         newval = np.float(x)
@@ -125,7 +125,7 @@ def make_Dunham_mat(params,mat_size):
 
 
 def fcn2min(params, x, data, get_fit = False):
-    mat_size = [3,3]
+    mat_size = [4,4]
     YX,YA = make_Dunham_mat(params,mat_size)
     
     model = []
