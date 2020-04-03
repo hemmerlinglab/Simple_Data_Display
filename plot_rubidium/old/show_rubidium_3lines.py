@@ -5,6 +5,8 @@ import os
 import glob
 import sys
 
+from fit_rb_3lines import *
+from scipy.signal import find_peaks
 
 c = 299792458
 
@@ -40,18 +42,14 @@ def av(arr, no_of_avg):
 my_today = datetime.datetime.today()
 
 #datafolder = '/Users/boerge/software/data/molecule_computer/'
-datafolder = '/home/molecules/software/data/'
+#datafolder = '/home/molecules/software/data/'
+datafolder = '/Users/boerge/Software/offline_data/'
 
-#datafolder = 'data/'
-
-#basefolder = '20191126'
-#basefolder = '20191202'
 basefolder = '20200303'
 
 time_stamp = sys.argv[1] #'145643'
 
 basefilename = datafolder + basefolder + '/' + basefolder + '_'
-#basefilename = datafolder + '/' + basefolder + '_'
 
 
 f_freqs = basefilename + time_stamp + '_set_points'
@@ -77,7 +75,7 @@ ch2_mean -= ch2_mean[0]
 
 
 # switch 0 and 1
-ch0_mean = ch1_mean
+#ch0_mean = ch1_mean
 
 
 
@@ -157,34 +155,25 @@ my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '3', '3', Fe_co = '4', c
 my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '3', '2', Fe_co = '4', crossover = True))
 
 
-#my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '2', '3'))
+my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '2', '3'))
 ##my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '2', '2'))
 ##my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '2', '1'))
 
-#my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '2', '2', Fe_co = '3', crossover = True))
-##my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '2', '1', Fe_co = '2', crossover = True))
-#my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '2', '1', Fe_co = '3', crossover = True))
+#my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '2', '1', Fe_co = '2', crossover = True))
 
-
+my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '2', '2', Fe_co = '3', crossover = True))
+my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '2', '1', Fe_co = '3', crossover = True))
 
 # fit spectrum
-from fit_rb import *
 
 (xfit, yfit, fit_result) = fit_rb(freqs, ch0_mean, my_lines, setpoint_offset)
 #(xfit, yfit, fit_result) = fit_rb(freqs[0:200], ch0_mean[0:200], my_lines, setpoint_offset)
 
 wavemeter_offset = fit_result.params['x_offset'].value
 print('Wavemeter offset: {}'.format(wavemeter_offset))
-#wavemeter_offset = 0
-#xfit = 0
-#yfit = 0
-
-# peak finding
-from scipy.signal import find_peaks
-peaks,_ = find_peaks(ch0_mean, distance = 5, width = [2, 15])#, height = [0, 0.2])#, height = 0, width = 2)
 
 
-#peaks = peaks[[0, 1, 3, 5, 6, 7]]
+
 
 myfontsize = 16
 
@@ -226,37 +215,8 @@ plt.plot(freqs, ch0_mean, linewidth = 2)
 
 plt.plot(xfit, yfit, 'r')
 
-plt.plot(freqs[peaks], ch0_mean[peaks], 'rx')
 
 
-
-
-plt.figure(figsize=(10,6))
-
-true_freqs = np.sort(list(map( lambda arr : (arr[0] - setpoint_offset*1e12)/1e6, my_lines)))
-
-plt.axhline(wavemeter_offset, ls = '--', color = 'r', label = 'from fit')
-
-meas_freqs = np.sort(freqs[peaks])
-try:
-    plt.scatter(true_freqs, true_freqs - meas_freqs, s = 150, facecolors = 'none', edgecolors = 'b', label = 'Peak fit')
-    plt.axhline(0)
-    
-    peak_offset = np.mean(true_freqs - meas_freqs)
-    plt.axhline(peak_offset, ls = '--', color = 'k', label = 'avg from peaks')
-    
-    plt.xlabel('True Frequency (MHz)', fontsize = myfontsize)
-    plt.ylabel('True - Measured Frequency (MHz)', fontsize = myfontsize)
-    
-    plt.tick_params(labelsize=14, direction='in')
-    
-    plt.legend()
-    
-    
-    plt.text(np.mean(true_freqs), 0.50*peak_offset, "Peak Offset: {0:5.2f} MHz".format(peak_offset), fontsize = myfontsize)
-    plt.text(np.mean(true_freqs), 0.25*peak_offset, "Fit Offset: {0:5.2f} MHz".format(wavemeter_offset), fontsize = myfontsize)
-except:
-    print('no plot')
 
 plt.show()
 
