@@ -35,6 +35,7 @@ def P_lines(x, p):
     Ue[0][1] = p['p1'] # BeA
     Ue[1][1] = p['p2'] # 
     Ue[0][2] = p['p3'] # De 
+    Ue[1][0] = p['p4'] # we 
 
     (Yg35, Ye35, Yg37, Ye37) = get_dunham(Ug, Ue)
 
