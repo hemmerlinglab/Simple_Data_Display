@@ -2,7 +2,7 @@ import numpy as np
 from configparser import ConfigParser
 import lmfit
 from lmfit import Minimizer, Parameters, report_fit
-
+import matplotlib.pyplot as plt
 
 def read_in_ram_config(filename = 'ram_config.ini'):
     config = ConfigParser()
@@ -50,8 +50,8 @@ def read_in_ram_config(filename = 'ram_config.ini'):
                 va = int(lilist[2])
 
 
-        lines[li]['vX'] = vx
-        lines[li]['vA'] = va
+        lines[li]['vX'] = va
+        lines[li]['vA'] = vx
 
     return line_ids,lines
 
@@ -125,16 +125,16 @@ def make_Dunham_mat(params,mat_size):
 
 
 def fcn2min(params, x, data, get_fit = False):
-    mat_size = [4,4] # max_dun_indx - 1  (USE THIS LINE TO CHANGE ORDER)
+    mat_size = [5,5] # max_dun_indx - 1  (USE THIS LINE TO CHANGE ORDER)
     YX,YA = make_Dunham_mat(params,mat_size)
     
     model = []
 
     if get_fit == False:
         for i in range(len(data)):
-            model.append(get_E(YA, x[0][i], x[1][i], mat_size) - get_E(YX, x[2][i], x[3][i], mat_size) - data)
+            model.append(get_E(YA, x[0][i], x[1][i], mat_size) - get_E(YX, x[2][i], x[3][i], mat_size))
 
-        return np.array(model)
+        return np.array(model-data)
 
     else:
         for i in range(len(data)):
@@ -147,19 +147,19 @@ def fit_dunham(q,d):
     print('Starting fit...')
     molids,mols = read_in_dunham_config()
     Ys = mols['AlCl62X_Bernath'].keys()
-    #allowed_Ys = ['y00','y01','y10','y11','y20','y21','y22','y12','y02']
+    allowed_Ys = ['y00','y01','y10','y11','y20','y21','y22','y12','y02']
     params = Parameters()
     for p in Ys:
         if p != 'matrix':
             #if p in allowed_Ys:
                 if p == 'y00':
-                    params.add(p+'A', value = 38237, min = 34000, max = 41000, vary = True)
+                    params.add(p+'A', value = 0.0, vary = True)
                 elif p == 'y10':
-                    params.add(p+'A', value = 300.0, min = 0, max = 600, vary = True)
+                    params.add(p+'A', value = 0.0, max = 600.0, vary = True)
                 elif p == 'y20':
-                    params.add(p+'A', value = 0.0, min = -10, max = 10, vary = True)
+                    params.add(p+'A', value = 0.0, vary = True)
                 else:
-                    params.add(p+'A', value = 0.0, min = -2, max = 2, vary = True)
+                    params.add(p+'A', value = 0.0, vary = True)
 
             #params.add(p+'X', value = 0.0, min = -500, max = 500, vary = True)
                 
@@ -170,8 +170,9 @@ def fit_dunham(q,d):
     
     # Store the Confidence data from the fit
     con_report = lmfit.fit_report(result.params)
+    model = fcn2min(result.params,q,d,get_fit=True)
 
-    return (result.params, params, con_report)
+    return (result.params, params, con_report, model)
 
 
 
@@ -193,9 +194,26 @@ def compile_data():
 
     return np.array(all_quant),np.array(all_data)
 
+def update_config(result_params,dunham_config='dunham_config.ini'):
+    config_final = ConfigParser()
+    config_final.read(dunham_config)
+    rps = result_params
+    for par in rps:
+        config_final.set('AlCl62A_Ram_Fit',par[:3],str(rps[par].value))
 
+    with open('dunham_config.ini','w') as configfile:
+        config_final.write(configfile)
 
 if __name__ == '__main__':
     q,data = compile_data()
-    rps, ps, cr = fit_dunham(q,data)
+    qs = q[:,0::10]
+    dats = data[0::10]
+
+    rps, ps, cr, dplot = fit_dunham(q,data)
+    update_config(rps)
     print(rps)
+
+    plt.figure()
+    plt.plot(data)
+    plt.plot(dplot)
+    plt.show()
