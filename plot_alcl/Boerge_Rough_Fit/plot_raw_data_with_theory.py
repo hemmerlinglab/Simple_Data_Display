@@ -193,10 +193,11 @@ mu37 = (massAl * massCl_37)/(massAl + massCl_37)
 
 params = Parameters()
 
-params.add('p0', value = 38251.09, min = 38250.0, max = 38252.0, vary = True) # TeA
-params.add('p1', value = 3.7096, min = 0.2000, max = 5.000, vary = True) # BeA
-params.add('p2', value = 0.0, min = -1.0, max = 1.0, vary = True) # Y11
-params.add('p3', value = +0.0, min = -1.0, max = 1.0, vary = True) # Y02
+params.add('p0', value = 38251.078, min = 38251.06, max = 38251.09, vary = True) # TeA
+params.add('p1', value = 3.6596, min = 3.5000, max = 4.000, vary = True) # BeA
+params.add('p2', value = 0.50, min = 0.4, max = 0.7, vary = True) # Y11
+params.add('p3', value = -0.00, min = -0.05, max = 0.05, vary = True) # Y02
+params.add('p4', value = 1784.48, min = 1780.0, max = 1800.0, vary = True) # Y02
 
 
 #params.add('p0', value = 38477.8, min = 38470.0, max = 385002.0, vary = True) # TeA
