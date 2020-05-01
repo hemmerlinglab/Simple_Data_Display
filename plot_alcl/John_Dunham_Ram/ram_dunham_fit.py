@@ -39,17 +39,18 @@ def read_in_ram_config(filename = 'ram_config.ini'):
         if int(lilist[1]) == 1:
             vx = int(lilist[1])*10+int(lilist[2])
             if int(lilist[3]) == 1:
-                va = int(lilist[3])*10+int(lilist[4])
+                va = 10+int(lilist[4])
             else:
                 va = int(lilist[3])
         else:
             vx = int(lilist[1])
             if int(lilist[2]) == 1:
-                va = int(lilist[2])*10+int(lilist[3])
+                va = 10+int(lilist[3])
             else:
                 va = int(lilist[2])
 
-
+        lines[li]['JA'] += 3
+        lines[li]['JX'] += 3
         lines[li]['vX'] = va
         lines[li]['vA'] = vx
 
@@ -216,4 +217,6 @@ if __name__ == '__main__':
     plt.figure()
     plt.plot(data)
     plt.plot(dplot)
+    plt.ylabel('Line Energy (wavenumber)')
+    plt.xlabel('Data Index (arb)')
     plt.show()
