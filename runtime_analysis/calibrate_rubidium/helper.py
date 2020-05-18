@@ -163,7 +163,9 @@ def get_data(mydate, mytime, datafolder = '/home/molecules/software/data/'):
     ch_mean = []
 
     for k in range(3):
-        ch_mean.append(np.mean(ch[k], axis = 1))
+        hlp = np.mean(ch[k], axis = 1)
+
+        ch_mean.append(hlp / np.max(hlp)) 
 
 
     # subtract the offset signal
@@ -171,7 +173,7 @@ def get_data(mydate, mytime, datafolder = '/home/molecules/software/data/'):
 
     # normalize
     #ch_mean -= np.min(ch_mean)
-    ch_mean = ch_mean/np.max(ch_mean)
+    #ch_mean = ch_mean/np.max(ch_mean)
     #ch_mean = 1.0 - ch_mean
 
     

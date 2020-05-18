@@ -43,8 +43,7 @@ plt.ylabel('Absorption Signal (a.u)', fontsize = myfontsize)
 plt.tick_params(labelsize=14, direction='in')
 
 
-
-
+plt.plot((freqs - cnt_freq)/1e9, signal[0], 'g-')
 
 dv = 1.0/len(rb_transitions)
 for k in range(len(rb_transitions)):
