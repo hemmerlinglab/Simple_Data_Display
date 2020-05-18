@@ -8,10 +8,13 @@ from helper import *
 from fit_rb import *
 
 
-my_date = '20200303'
-my_time = '121749'
+my_date = '20200518'
+my_time = '145145'
 
-(freqs, signal) = get_data(my_date, my_time, datafolder = '/Users/boerge/Software/offline_data/')
+my_time = sys.argv[1]
+
+#(freqs, signal) = get_data(my_date, my_time, datafolder = '/Users/boerge/Software/offline_data/')
+(freqs, signal) = get_data(my_date, my_time, datafolder = '/home/molecules/software/data/')
 
 
 rb_transitions = calculate_Rb_transitions()

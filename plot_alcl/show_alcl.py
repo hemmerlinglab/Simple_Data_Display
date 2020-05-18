@@ -143,13 +143,13 @@ def do_the_thing(basefilename,time_stamp,delta1,delta2):
     color_plot /= np.max(np.max(color_plot))
 
     ### 2D PLOTS
-    # if delta1 == 0:
-    #     plt.figure()
-    #     plt.pcolor(times[time_cut1:time_cut2], 3*freqs, color_plot)
-    #     plt.xlabel('Time (us)')
-    #     plt.ylabel('Relative UV frequency (MHz)')
+    if delta1 == 0:
+        plt.figure()
+        plt.pcolor(times[time_cut1:time_cut2], 3*freqs, color_plot)
+        plt.xlabel('Time (us)')
+        plt.ylabel('Relative UV frequency (MHz)')
 
-    #     plt.colorbar()
+        plt.colorbar()
 
         
 
@@ -171,18 +171,18 @@ def do_the_thing(basefilename,time_stamp,delta1,delta2):
 
 
     ### FIT PLOTS
-    # if delta1 == 0:
-    #     plt.figure()
-    #     plt.plot(3*freqs, 1 - signal)
-    #     plt.plot(3*xfit, 1 - yfit, 'r-')
+    if delta1 == 0:
+        plt.figure()
+        plt.plot(3*freqs, 1 - signal)
+        plt.plot(3*xfit, 1 - yfit, 'r-')
 
-    #     plt.ylim(0, .8)
+        plt.ylim(0, .8)
 
-    #     plt.ylabel('Absorption signal (a.u.)')
-    #     plt.xlabel('Frequency (MHz)')
-    #     plt.title(time_stamp)
+        plt.ylabel('Absorption signal (a.u.)')
+        plt.xlabel('Frequency (MHz)')
+        plt.title(time_stamp)
 
-    #     plt.text(-400, 0.4, "Center peak frequency: \n\n     {0:9.6f} THz \n = {1:9.4f} 1/cm".format(abs_cnt_peak, abs_cnt_peak_wavenumber))
+        plt.text(-400, 0.4, "Center peak frequency: \n\n     {0:9.6f} THz \n = {1:9.4f} 1/cm".format(abs_cnt_peak, abs_cnt_peak_wavenumber))
 
 
     wid = result.params['w'].value
@@ -194,26 +194,26 @@ def do_the_thing(basefilename,time_stamp,delta1,delta2):
 if __name__ == '__main__':
     my_today = datetime.datetime.today()
 
-<<<<<<< HEAD
+#<<<<<<< HEAD
     #datafolder = '/home/molecules/software/data/'
-=======
+#=======
     #datafolder = '/Users/boerge/skynet/molecule_computer/'
     datafolder = '/home/molecules/software/data/'
->>>>>>> 8e4ed8e85535dd1b24f06e8502372abf49fa493e
+#>>>>>>> 8e4ed8e85535dd1b24f06e8502372abf49fa493e
 
     #datafolder = '\\Users\\John\\Desktop\\'
 
-    datafolder = '/Users/boerge/software/data/molecule_computer/'
+#    datafolder = '/Users/boerge/software/data/molecule_computer/'
 
     #datafolder = '/Users/johnr/Desktop/'
 
     #basefolder = '20200213'
     #stamps = [124050,130453,132440,134013,135425,140938]
     
-    basefolder = '20200227'
-    stamps = [111627,121347]
+    basefolder = '20200311'
+    stamps = [130625]
 
-    delta1s = np.linspace(0,10,2)
+    delta1s = np.linspace(0,10,1)
     #print(delta1s)
     delta2 = 10
 

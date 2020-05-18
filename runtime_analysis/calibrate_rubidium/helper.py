@@ -169,6 +169,11 @@ def get_data(mydate, mytime, datafolder = '/home/molecules/software/data/'):
     # subtract the offset signal
     # NOT IMPLEMENTED YET
 
+    # normalize
+    #ch_mean -= np.min(ch_mean)
+    ch_mean = ch_mean/np.max(ch_mean)
+    #ch_mean = 1.0 - ch_mean
+
     
     # get laser offset
     laser_offset = np.float(conf['setpoint_offset']['val'])
