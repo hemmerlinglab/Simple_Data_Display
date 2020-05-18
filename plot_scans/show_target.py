@@ -46,7 +46,7 @@ my_today = datetime.datetime.today()
 datafolder = '/home/molecules/software/data/'
 
 #basefolder = str(my_today.strftime('%Y%m%d')) # 20190618
-basefolder = '20200115'
+basefolder = '20200518'
 
 basefilename = datafolder + basefolder + '/' + basefolder + '_'
 
@@ -101,8 +101,8 @@ for k in range(ch1.shape[0]):
 
     
 
-cut_time1 = 10.0
-cut_time2 = 12.0
+cut_time1 = 10.5
+cut_time2 = 11.5
 
 ch1_start = np.where( np.abs(times - cut_time1) < 0.5 )[0][0]
 ch1_end = np.where( np.abs(times - cut_time2) < 0.5 )[0][0]
@@ -118,26 +118,26 @@ for nx in range(len(inter_x)):
 
 
 fig = plt.figure(figsize=(10,6))
+
 #plt.subplot(2,1,1)
-plt.pcolor(inter_x, inter_y, target_img)
+plt.pcolor(inter_x, inter_y, np.transpose(target_img))
 plt.colorbar()
 
 plt.xlabel('x pos')
 plt.ylabel('y pos')
 
-s_inter_x, s_inter_y = np.meshgrid(inter_x, inter_y) 
-
-plt.tight_layout()
-
-plt.figure()
+#s_inter_x, s_inter_y = np.meshgrid(inter_x, inter_y) 
+#
+#plt.tight_layout()
+#
 #plt.subplot(2,1,2)
-
-ax = plt.axes(projection='3d')
-
-ax.plot_surface(s_inter_x, s_inter_y, target_img)
-
-plt.xlabel('x pos')
-plt.ylabel('y pos')
+#
+#ax = plt.axes(projection='3d')
+#
+#ax.plot_surface(s_inter_y, s_inter_x, target_img)
+#
+#plt.xlabel('x pos')
+#plt.ylabel('y pos')
 
 
 
