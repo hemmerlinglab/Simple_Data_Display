@@ -8,8 +8,8 @@ from helper import *
 from fit_rb import *
 
 
-my_date = '20200518'
-my_time = '145145'
+my_date = '20200520'
+#my_time = '145145'
 
 my_time = sys.argv[1]
 

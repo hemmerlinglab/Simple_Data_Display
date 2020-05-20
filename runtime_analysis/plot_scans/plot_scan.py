@@ -58,7 +58,7 @@ datafolder = '/home/molecules/software/data/'
 
 
 
-basefolder = '20200518'
+basefolder = '20200520'
 
 basefilename = datafolder + basefolder + '/' + basefolder + '_'
 
@@ -92,7 +92,7 @@ ch4 = av(ch4, no_of_avg)
 
 
 
-nus = freqs*3.0/2.0
+nus = freqs*3.0
 
 print(nus)
 #delay_in_for_loop = 100e-6
@@ -103,8 +103,8 @@ times = np.arange(0, no_of_time_points) * (delay_in_for_loop) / 1e-3
 
 
 
-cut_time1 = 10.0
-cut_time2 = 11.0
+cut_time1 = 10.25
+cut_time2 = 11.00
 
 ch1_start = np.where( np.abs(times - cut_time1) < 0.5 )[0][0]
 ch1_end = np.where( np.abs(times - cut_time2) < 0.5 )[0][0]

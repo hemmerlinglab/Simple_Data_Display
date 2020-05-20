@@ -49,20 +49,20 @@ def fit_rb(x, y, my_lines):
  
         cnt_rb = 384.230115e12
 
-        params.add('a', value=+0.07, min=0.0, max=2.0, vary = True)
+        params.add('a', value=+0.3, min=0.0, max=2.0, vary = False)
         params.add('w0', value=295.0e6, min=1.0e6, max=300e6, vary = True)
-        params.add('w1', value=10.48e6, min=1.0e6, max=100e6, vary = True)
-        params.add('x_offset', value=+20.0e6, min=-50.0e6, max = 30.0e6, vary = True) # wavemeter offset
+        params.add('w1', value=10.48e6, min=1.0e6, max=100e6, vary = False)
+        params.add('x_offset', value=-15.0e6, min=-100.0e6, max = 100.0e6, vary = False) # wavemeter offset
         params.add('y_offset', value=0.0, min=-2.0, max=2.0, vary = True)
         
-        params.add('ab0', value=+0.43, min=0.0, max=2.0, vary = True)
-        params.add('ab1', value=+0.72, min=0.0, max=2.0, vary = True)
+        params.add('ab0', value=+0.23, min=0.0, max=2.0, vary = True)
+        params.add('ab1', value=+0.92, min=0.0, max=2.0, vary = True)
         params.add('cnt0', value=cnt_rb-1914.0e6, min=cnt_rb-3000.0e6, max=cnt_rb-1000e6, vary = True)
         params.add('cnt1', value=cnt_rb-785.0e6, min=cnt_rb-1000.0e6, max=cnt_rb+0e6, vary = True)
 
          
         for k in range(len(my_lines)):
-            params.add('a' + str(k), value = 1.1, min = 0.0, max = 5.0, vary = True)
+            params.add('a' + str(k), value = 0.2, min = 0.0, max = 5.0, vary = False)
 
         # do fit, here with leastsq model
         minner = Minimizer(fcn2min, params, fcn_args=(x, y, my_lines))
