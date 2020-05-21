@@ -8,7 +8,7 @@ from helper import *
 from fit_rb import *
 
 
-my_date = '20200520'
+my_date = '20200521'
 #my_time = '145145'
 
 my_time = sys.argv[1]
@@ -21,7 +21,7 @@ rb_transitions = calculate_Rb_transitions()
 
 # fit spectrum
 
-(xfit, yfit, fit_result) = fit_rb(freqs, signal[1], rb_transitions)
+(xfit, yfit, fit_result) = fit_rb(freqs, signal[0], rb_transitions)
 
 wavemeter_offset = fit_result.params['x_offset'].value
 print('Wavemeter offset: {0:2.6} MHz'.format(wavemeter_offset/1e6))
@@ -33,7 +33,7 @@ cnt_freq = 384.230484468e12 # S1/2 - P3/2
 myfontsize = 16
 
 plt.figure(figsize = (20,6))
-plt.plot((freqs - cnt_freq)/1e9, signal[1], 'r-')
+plt.plot((freqs - cnt_freq)/1e9, signal[0], 'r-')
 plt.plot((xfit - cnt_freq)/1e9, yfit, 'k-')
 
 plt.xlabel("Frequency (GHz) - {0:2.6f} THz".format(cnt_freq/1e12), fontsize = myfontsize)
@@ -43,7 +43,7 @@ plt.ylabel('Absorption Signal (a.u)', fontsize = myfontsize)
 plt.tick_params(labelsize=14, direction='in')
 
 
-plt.plot((freqs - cnt_freq)/1e9, signal[0], 'g-')
+plt.plot((freqs - cnt_freq)/1e9, signal[1], 'g-')
 
 dv = 1.0/len(rb_transitions)
 for k in range(len(rb_transitions)):
