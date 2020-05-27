@@ -80,7 +80,7 @@ plt.subplot(2,1,1)
 plot_data(x00, y00, cnt_freq00, ve = 0, vg = 0, T = 10)
 
 plt.subplot(2,1,2)
-plot_data(x11, y11, cnt_freq11, ve = 1, vg = 1, T = 10, Jmax = 3)
+plot_data(x11, y11, cnt_freq11, ve = 1, vg = 1, T = 10, Jmax = 5)
 
 
 
