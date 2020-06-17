@@ -186,6 +186,9 @@ Ug = scale_coeff(Yg, massAl, massCl_35, scale = False)
 Ue = scale_coeff(Ye, massAl, massCl_35, scale = False)
 
 
+print(Ug)
+print(Ue)
+
 
 Yg35 = scale_coeff(Ug, massAl, massCl_35, scale = True)
 Ye35 = scale_coeff(Ue, massAl, massCl_35, scale = True)

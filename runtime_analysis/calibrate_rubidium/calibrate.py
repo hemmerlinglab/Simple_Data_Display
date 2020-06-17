@@ -13,8 +13,8 @@ my_date = '20200521'
 
 my_time = sys.argv[1]
 
-#(freqs, signal) = get_data(my_date, my_time, datafolder = '/Users/boerge/Software/offline_data/')
-(freqs, signal) = get_data(my_date, my_time, datafolder = '/home/molecules/software/data/')
+(freqs, signal) = get_data(my_date, my_time, datafolder = '/Users/boerge/Software/offline_data/')
+#(freqs, signal) = get_data(my_date, my_time, datafolder = '/home/molecules/software/data/')
 
 
 rb_transitions = calculate_Rb_transitions()
