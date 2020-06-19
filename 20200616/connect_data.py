@@ -9,26 +9,36 @@ ind1 = 98
 ind2 = 120 #105
 
 data = [
-        #{'date':20200616, 'time':140614, 'ind1':ind1, 'ind2':ind2, 'color' : 'k'},
-        #{'date':20200616, 'time':141950, 'ind1':ind1, 'ind2':ind2, 'color' : 'k'},
-        #{'date':20200616, 'time':142554, 'ind1':ind1, 'ind2':ind2, 'color' : 'k'}, # Q line
-        {'date':20200616, 'time':144555, 'ind1':ind1, 'ind2':ind2, 'color' : 'r'},
-        {'date':20200616, 'time':145926, 'ind1':ind1, 'ind2':ind2, 'color' : 'r'},
-        {'date':20200616, 'time':150759, 'ind1':ind1, 'ind2':ind2, 'color' : 'r'},
-        {'date':20200616, 'time':152334, 'ind1':ind1, 'ind2':ind2, 'color' : 'r'},
-        {'date':20200616, 'time':153802, 'ind1':ind1, 'ind2':ind2, 'color' : 'r'},
-        {'date':20200616, 'time':154644, 'ind1':ind1, 'ind2':ind2, 'color' : 'r'},
-        {'date':20200616, 'time':155544, 'ind1':ind1, 'ind2':ind2, 'color' : 'r'},
-        {'date':20200616, 'time':160401, 'ind1':ind1, 'ind2':ind2, 'color' : 'r'},
-        {'date':20200616, 'time':161314, 'ind1':ind1, 'ind2':ind2, 'color' : 'r'},
-        {'date':20200616, 'time':162146, 'ind1':ind1, 'ind2':ind2, 'color' : 'r'},
-        {'date':20200616, 'time':162955, 'ind1':ind1, 'ind2':ind2, 'color' : 'r'},
-        {'date':20200616, 'time':163757, 'ind1':ind1, 'ind2':ind2, 'color' : 'r'},
-        {'date':20200616, 'time':170320, 'ind1':ind1, 'ind2':ind2, 'color' : 'r'},
-        {'date':20200616, 'time':171158, 'ind1':ind1, 'ind2':ind2, 'color' : 'r'},
-        {'date':20200616, 'time':172034, 'ind1':ind1, 'ind2':ind2, 'color' : 'r'},
-        {'date':20200616, 'time':172939, 'ind1':ind1, 'ind2':ind2, 'color' : 'r'},
-        {'date':20200616, 'time':174230, 'ind1':ind1, 'ind2':ind2, 'color' : 'k'},
+        {'date':20200616, 'time':142554, 'ind1':ind1, 'ind2':ind2, 'color' : 'k', 'Jg' : 1, 'Je' : 1, 'iso' : 35, 'skip' : True}, # Q line
+        {'date':20200616, 'time':144555, 'ind1':ind1, 'ind2':ind2, 'color' : 'r', 'Jg' : 0, 'Je' : 1, 'iso' : 35},
+        {'date':20200616, 'time':145926, 'ind1':ind1, 'ind2':ind2, 'color' : 'r', 'Jg' : 0, 'Je' : 1, 'iso' : 37},
+        {'date':20200616, 'time':150759, 'ind1':ind1, 'ind2':ind2, 'color' : 'r', 'Jg' : 1, 'Je' : 2, 'iso' : 35},
+        {'date':20200616, 'time':152334, 'ind1':ind1, 'ind2':ind2, 'color' : 'r', 'Jg' : 1, 'Je' : 2, 'iso' : 37},
+        {'date':20200616, 'time':153802, 'ind1':ind1, 'ind2':ind2, 'color' : 'r', 'Jg' : 2, 'Je' : 3, 'iso' : 35},
+        {'date':20200616, 'time':154644, 'ind1':ind1, 'ind2':ind2, 'color' : 'r', 'Jg' : 2, 'Je' : 3, 'iso' : 37},
+        {'date':20200616, 'time':155544, 'ind1':ind1, 'ind2':ind2, 'color' : 'r', 'Jg' : 3, 'Je' : 4, 'iso' : 35},
+        {'date':20200616, 'time':160401, 'ind1':ind1, 'ind2':ind2, 'color' : 'r', 'Jg' : 3, 'Je' : 4, 'iso' : 37},
+        {'date':20200616, 'time':161314, 'ind1':ind1, 'ind2':ind2, 'color' : 'r', 'Jg' : 4, 'Je' : 5, 'iso' : 35},
+        {'date':20200616, 'time':162146, 'ind1':ind1, 'ind2':ind2, 'color' : 'r', 'Jg' : 4, 'Je' : 5, 'iso' : 37},
+        {'date':20200616, 'time':162955, 'ind1':ind1, 'ind2':ind2, 'color' : 'r', 'Jg' : 5, 'Je' : 6, 'iso' : 35},
+        {'date':20200616, 'time':163757, 'ind1':ind1, 'ind2':ind2, 'color' : 'r', 'Jg' : 5, 'Je' : 6, 'iso' : 37},
+        {'date':20200616, 'time':170320, 'ind1':ind1, 'ind2':ind2, 'color' : 'r', 'Jg' : 6, 'Je' : 7, 'iso' : 35},
+        {'date':20200616, 'time':171158, 'ind1':ind1, 'ind2':ind2, 'color' : 'r', 'Jg' : 6, 'Je' : 7, 'iso' : 37, 'skip' : True},
+        {'date':20200616, 'time':172034, 'ind1':ind1, 'ind2':ind2, 'color' : 'r', 'Jg' : 7, 'Je' : 8, 'iso' : 35, 'skip' : True},
+        {'date':20200616, 'time':172939, 'ind1':ind1, 'ind2':ind2, 'color' : 'r', 'Jg' : 7, 'Je' : 8, 'iso' : 37, 'skip' : True},
+        {'date':20200618, 'time':120857, 'ind1':ind1, 'ind2':ind2, 'color' : 'b', 'Jg' : 2, 'Je' : 1, 'iso' : 35},
+        {'date':20200618, 'time':133509, 'ind1':ind1, 'ind2':ind2, 'color' : 'b', 'Jg' : 3, 'Je' : 2, 'iso' : 37},
+        {'date':20200618, 'time':141057, 'ind1':ind1, 'ind2':ind2, 'color' : 'b', 'Jg' : 3, 'Je' : 2, 'iso' : 35},
+        {'date':20200618, 'time':141959, 'ind1':ind1, 'ind2':ind2, 'color' : 'b', 'Jg' : 4, 'Je' : 3, 'iso' : 37},
+        {'date':20200618, 'time':142824, 'ind1':ind1, 'ind2':ind2, 'color' : 'b', 'Jg' : 4, 'Je' : 3, 'iso' : 35},
+        {'date':20200618, 'time':143538, 'ind1':ind1, 'ind2':ind2, 'color' : 'b', 'Jg' : 5, 'Je' : 4, 'iso' : 37},
+        {'date':20200618, 'time':144338, 'ind1':ind1, 'ind2':ind2, 'color' : 'b', 'Jg' : 5, 'Je' : 4, 'iso' : 35},
+        {'date':20200618, 'time':145042, 'ind1':ind1, 'ind2':ind2, 'color' : 'b', 'Jg' : 6, 'Je' : 5, 'iso' : 37},
+        {'date':20200618, 'time':145759, 'ind1':ind1, 'ind2':ind2, 'color' : 'b', 'Jg' : 6, 'Je' : 5, 'iso' : 35},
+        {'date':20200618, 'time':150527, 'ind1':ind1, 'ind2':ind2, 'color' : 'b', 'Jg' : 7, 'Je' : 6, 'iso' : 37},
+        {'date':20200618, 'time':151343, 'ind1':ind1, 'ind2':ind2, 'color' : 'b', 'Jg' : 7, 'Je' : 6, 'iso' : 35},
+        {'date':20200618, 'time':152045, 'ind1':ind1, 'ind2':ind2, 'color' : 'b', 'Jg' : 8, 'Je' : 7, 'iso' : 37},
+        {'date':20200618, 'time':153043, 'ind1':ind1, 'ind2':ind2, 'color' : 'b', 'Jg' : 8, 'Je' : 7, 'iso' : 35},
         ]
 
 
@@ -87,6 +97,7 @@ cnt_freq = 1146.330906e12
 
 for n in range(len(data)):
     plt.plot((f_arr[n] - cnt_freq)/1e9, sig_arr[n], 'o-', label = data[n]['time'], color = data[n]['color'])
+    plt.text(np.mean((f_arr[n] - cnt_freq)/1e9), np.max(sig_arr[n]), str(n))
 
 #plt.legend()
 
@@ -112,7 +123,7 @@ nus = nus - cnt_freq
 nus = nus/1e9
 
 a = -0.006/4.0 * 0.5
-o = -0.0001
+o = -0.0001*0
 
 plt.plot(nus, a * P35 + o, 'r')
 plt.plot(nus, a * Q35 + o, 'k')
