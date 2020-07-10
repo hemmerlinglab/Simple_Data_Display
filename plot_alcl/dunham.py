@@ -7,8 +7,8 @@ c = 299792458
 def print_params(par, state = 'Yg'):
 
     print("Te   = {0:12.6f} THz / {1:11.5f} 1/cm".format(100*c*par[state + '00'].value/1e12, par[state + '00'].value))
-    print("we   = {0:12.6f} THz / {1:11.5f} 1/cm".format(100*c*par[state + '10'].value/1e12,par[state + '10'].value))
     print()
+    print("we   = {0:12.6f} THz / {1:11.5f} 1/cm".format(100*c*par[state + '10'].value/1e12,par[state + '10'].value))
     print("wexe = {0:12.4f} GHz / {1:11.5f} 1/cm".format(-100*c*par[state + '20'].value/1e9, -par[state + '20'].value))
     print("weye = {0:12.4f} GHz / {1:11.5f} 1/cm".format(100*c*par[state + '30'].value/1e9, par[state + '30'].value))
     print("weze = {0:12.4f} GHz / {1:11.5f} 1/cm".format(100*c*par[state + '40'].value/1e9, par[state + '40'].value))
@@ -119,13 +119,20 @@ print()
 print()
 print("(( v, J) -> ( v', J')) = <prediction>")
 
-eng1 = energy(Ye, 1, 0) - energy(Yg, 0, 0)
+eng1 = energy(Ye, 1, 1) - energy(Yg, 0, 1)
 
-print("(( {0}, 0) -> ( {1}, 0)) = {2:8.2f} = {3:12.6f} THz = {4:12.6f} THz (IR)".format(0, 1, eng1, eng1 * 100.0 * c/1e12, eng1 * 100.0 * c / 3e12))
+print("(( {0}, 1) -> ( {1}, 1)) = {2:8.2f} = {3:12.6f} THz = {4:12.6f} THz (IR)".format(0, 1, eng1, eng1 * 100.0 * c/1e12, eng1 * 100.0 * c / 3e12))
 
-eng2 = energy(Ye, 0, 0) - energy(Yg, 1, 0)
-print("(( {0}, 0) -> ( {1}, 0)) = {2:8.2f} = {3:12.6f} THz = {4:12.6f} THz (IR)".format(1, 0, eng2, eng2 * 100.0 * c/1e12, eng2 * 100.0 * c / 3e12))
+eng2 = energy(Ye, 0, 1) - energy(Yg, 1, 1)
+print("(( {0}, 1) -> ( {1}, 1)) = {2:8.2f} = {3:12.6f} THz = {4:12.6f} THz (IR)".format(1, 0, eng2, eng2 * 100.0 * c/1e12, eng2 * 100.0 * c / 3e12))
 print()
+
+eng2 = energy(Ye, 0, 1) - energy(Yg, 0, 1)
+print("(( {0}, 1) -> ( {1}, 1)) = {2:8.2f} = {3:12.6f} THz = {4:12.6f} THz (IR)".format(0, 0, eng2, eng2 * 100.0 * c/1e12, eng2 * 100.0 * c / 3e12))
+print()
+
+eng2 = energy(Ye, 1, 1) - energy(Yg, 1, 1)
+print("(( {0}, 1) -> ( {1}, 1)) = {2:8.2f} = {3:12.6f} THz = {4:12.6f} THz (IR)".format(1, 1, eng2, eng2 * 100.0 * c/1e12, eng2 * 100.0 * c / 3e12))
 print()
 
 
