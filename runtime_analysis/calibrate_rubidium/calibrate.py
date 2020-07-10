@@ -8,14 +8,13 @@ from helper import *
 from fit_rb import *
 
 
-my_date = '20200521'
+my_date = '20200710'
 #my_time = '145145'
 
 my_time = sys.argv[1]
 
 #(freqs, signal) = get_data(my_date, my_time, datafolder = '/Users/boerge/Software/offline_data/')
-(freqs, signal) = get_data(my_date, my_time, datafolder = '/home/molecules/software/data/')
-
+(freqs, signal, wavemeter_freqs) = get_data(my_date, my_time, datafolder = '/home/molecules/software/data/')
 
 rb_transitions = calculate_Rb_transitions()
 
@@ -32,8 +31,13 @@ print('Wavemeter offset: {0:2.6} MHz'.format(wavemeter_offset/1e6))
 cnt_freq = 384.230484468e12 # S1/2 - P3/2
 myfontsize = 16
 
+x_plot = (freqs - cnt_freq)/1e9
+
 plt.figure(figsize = (20,6))
-plt.plot((freqs - cnt_freq)/1e9, signal[0], 'r-')
+plt.subplot(2,1,1)
+
+plt.plot(x_plot, signal[0], 'r.-')
+plt.plot(x_plot, signal[1], 'g-')
 plt.plot((xfit - cnt_freq)/1e9, yfit, 'k-')
 
 plt.xlabel("Frequency (GHz) - {0:2.6f} THz".format(cnt_freq/1e12), fontsize = myfontsize)
@@ -43,7 +47,6 @@ plt.ylabel('Absorption Signal (a.u)', fontsize = myfontsize)
 plt.tick_params(labelsize=14, direction='in')
 
 
-plt.plot((freqs - cnt_freq)/1e9, signal[1], 'g-')
 
 dv = 1.0/len(rb_transitions)
 for k in range(len(rb_transitions)):
@@ -57,13 +60,28 @@ for k in range(len(rb_transitions)):
 
 plt.text(-2.2, np.min(yfit), 'Wavemeter offset: {0:2.6} MHz'.format(wavemeter_offset/1e6), fontsize = myfontsize)
 
-
+plt.xlim(min(x_plot), max(x_plot))
 
 plt.title('Rb Calibration Scan - ' + my_date + '_' + my_time)
 
 plt.tight_layout()
 
+plt.subplot(2,1,2)
+plt.plot(x_plot, (wavemeter_freqs - freqs)/1e6)
+plt.xlabel("Frequency (GHz) - {0:2.6f} THz".format(cnt_freq/1e12), fontsize = myfontsize)
+plt.ylabel('Set - Act freq (MHz)', fontsize = myfontsize)
+plt.tick_params(labelsize=14, direction='in')
+plt.xlim(min(x_plot), max(x_plot))
+
+plt.tight_layout()
+
 plt.savefig(my_date + '_' + my_time + '_Rb_calibration.png', format = 'png')
+
+
+
+plt.figure()
+
+plt.plot(x_plot, signal[0] - signal[1])
 
 plt.show()
 

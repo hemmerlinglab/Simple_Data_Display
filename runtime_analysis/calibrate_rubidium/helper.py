@@ -71,8 +71,8 @@ def calculate_Rb_transitions():
             'atom' : 'Rb87',
             'S1/2-P3/2' : 384.230484468e12,
             'S1/2' : {
-                '2' : -2.563005e9,
-                '1' : 4.27167e9
+                '2' : -2.563005979e9,
+                '1' : 4.271676631e9
                 },
             'P3/2' : {
                 '3' : +193.7407e6,
@@ -103,21 +103,29 @@ def calculate_Rb_transitions():
     my_lines = []
     my_lines.append(create_transition(Rb87, 'S1/2', 'P3/2', '2', '3'))
     #my_lines.append(create_transition(Rb87, 'S1/2', 'P3/2', '2', '2'))
-    #my_lines.append(create_transition(Rb87, 'S1/2', 'P3/2', '2', '1'))
+    #my_lines.append(create_transition(Rb87, 'S1/2', 'P3/2', '2', '1'))    
+    #my_lines.append(create_transition(Rb87, 'S1/2', 'P3/2', '1', '2'))
     
     #my_lines.append(create_transition(Rb87, 'S1/2', 'P3/2', '2', '1', Fe_co = '2', crossover = True))
     my_lines.append(create_transition(Rb87, 'S1/2', 'P3/2', '2', '2', Fe_co = '3', crossover = True))
     my_lines.append(create_transition(Rb87, 'S1/2', 'P3/2', '2', '1', Fe_co = '3', crossover = True))
     
+    #my_lines.append(create_transition(Rb87, 'S1/2', 'P3/2', '2', '0', Fe_co = '3', crossover = True))
+    #my_lines.append(create_transition(Rb87, 'S1/2', 'P3/2', '2', '1', Fe_co = '3', crossover = True))
+    
     my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '3', '4'))
     #my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '3', '3'))
     #my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '3', '2'))
-    
+       
     #my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '3', '2', Fe_co = '3', crossover = True))
     my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '3', '3', Fe_co = '4', crossover = True))
     my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '3', '2', Fe_co = '4', crossover = True))
 
-
+    #my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '2', '3'))
+    #my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '2', '4', Fe_co = '3', crossover = True))
+    #my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '2', '2', Fe_co = '3', crossover = True))
+    #my_lines.append(create_transition(Rb85, 'S1/2', 'P3/2', '2', '1', Fe_co = '3', crossover = True))
+ 
     return my_lines
 
 
@@ -137,8 +145,10 @@ def get_data(mydate, mytime, datafolder = '/home/molecules/software/data/'):
 
 
     f_freqs = basefilename + time_stamp + '_set_points'
+    wavemeter_freqs = basefilename + time_stamp + '_act_freqs'
     
     freqs = np.genfromtxt(f_freqs, delimiter=",")
+    wavemeter_freqs = np.genfromtxt(wavemeter_freqs, delimiter=",")
    
     # get number of averages
     no_of_avg = int(len(freqs)/len(np.unique(freqs)))
@@ -146,6 +156,7 @@ def get_data(mydate, mytime, datafolder = '/home/molecules/software/data/'):
      
     # average the data sets
     freqs = av(freqs, no_of_avg)
+    wavemeter_freqs = av(wavemeter_freqs, no_of_avg)
     
     ch = [] 
     for k in range(3):
@@ -167,6 +178,7 @@ def get_data(mydate, mytime, datafolder = '/home/molecules/software/data/'):
 
         ch_mean.append(hlp / np.max(hlp)) 
 
+    ch_mean = np.array(ch_mean)
 
     # subtract the offset signal
     # NOT IMPLEMENTED YET
@@ -182,6 +194,13 @@ def get_data(mydate, mytime, datafolder = '/home/molecules/software/data/'):
 
     freqs = freqs * 1e6 + laser_offset * 1e12
 
-    return (freqs, ch_mean)
+    # sort data
+    ind = np.argsort(freqs)
+    freqs = freqs[ind]
+    for k in range(3):
+        ch_mean[k] = ch_mean[k][ind]
+    wavemeter_freqs = wavemeter_freqs[ind]
+
+    return (freqs, ch_mean, wavemeter_freqs * 1e12)
 
 

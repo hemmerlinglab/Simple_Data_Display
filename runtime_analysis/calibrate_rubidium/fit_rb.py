@@ -73,6 +73,11 @@ def fit_rb(x, y, my_lines):
         params.add('a4', value = 0.2,   min = 0.0, max = 1.0, vary = True)
         params.add('a5', value = 0.2,   min = 0.0, max = 1.0, vary = True)
 
+        params.add('a6', value = 0.2,   min = 0.0, max = 1.0, vary = True)
+        params.add('a7', value = 0.2,   min = 0.0, max = 1.0, vary = True)
+        params.add('a8', value = 0.2,   min = 0.0, max = 1.0, vary = True)
+        params.add('a9', value = 0.2,   min = 0.0, max = 1.0, vary = True)
+
         # do fit, here with leastsq model
         minner = Minimizer(fcn2min, params, fcn_args=(x, y, my_lines))
         result = minner.minimize()
@@ -82,7 +87,7 @@ def fit_rb(x, y, my_lines):
         
         (x_plot, model) = fcn2min(result.params, x, y, my_lines, plot_fit = True)
 
-        print(result.params)
+        #:print(result.params)
 
         return (x_plot, model, result)
 
