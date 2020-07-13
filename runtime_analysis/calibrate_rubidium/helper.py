@@ -177,6 +177,7 @@ def get_data(mydate, mytime, datafolder = '/home/molecules/software/data/'):
         hlp = np.mean(ch[k], axis = 1)
 
         ch_mean.append(hlp / np.max(hlp)) 
+        #ch_mean.append(hlp) 
 
     ch_mean = np.array(ch_mean)
 

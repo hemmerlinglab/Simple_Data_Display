@@ -27,12 +27,13 @@ def fcn2min(params, x, data, my_lines, plot_fit = False):
     if plot_fit == False:
         x_fit = x
     else:
-        x_plot = np.linspace(np.min(x), np.max(x), 1000)
+        no_points = 1000
+        x_plot = np.linspace(np.min(x), np.max(x), no_points)
         x_fit = x_plot
 
     model = y_offset
-    model += -a0 * np.exp( -(x_fit - cnt0)**2/(2.0*w0**2) )
-    model += -a1 * np.exp( -(x_fit - cnt1)**2/(2.0*w1**2) )
+    model += -a0 * np.exp( -(x_fit - cnt0 - x_offset)**2/(2.0*w0**2) )
+    model += -a1 * np.exp( -(x_fit - cnt1 - x_offset)**2/(2.0*w1**2) )
     for k in range(len(my_lines)):            
         #model += ampl[k] * np.exp( -(x_fit - freqs[k] - x_offset)**2/(2.0*wlamb**2) )
         model += ampl[k] * wlamb**2 / ( (x_fit - freqs[k] - x_offset)**2 + (wlamb**2) )
@@ -86,8 +87,11 @@ def fit_rb(x, y, my_lines):
         con_report = lmfit.fit_report(result.params)
         
         (x_plot, model) = fcn2min(result.params, x, y, my_lines, plot_fit = True)
+        
+        # get residuals
+        (residuals) = fcn2min(result.params, x, y, my_lines)
 
         #:print(result.params)
 
-        return (x_plot, model, result)
+        return (x_plot, model, result, residuals)
 
