@@ -6,9 +6,12 @@ import glob
 import sys
 from helper import *
 from fit_rb import *
+from scipy.signal import find_peaks
+from fit_lorentz import fit_lorentz
 
 
-my_date = '20200710'
+
+my_date = '20200713'
 #my_time = '145145'
 
 my_time = sys.argv[1]
@@ -19,12 +22,10 @@ my_time = sys.argv[1]
 #my_date = '20200618'
 #my_time = '104630'
 
+folder = '/home/molecules/software/data/'
+#folder = '/Users/boerge/Software/offline_data/'
 
-
-#(freqs, signal) = get_data(my_date, my_time, datafolder = '/Users/boerge/Software/offline_data/')
-#(freqs, signal, wavemeter_freqs) = get_data(my_date, my_time, datafolder = '/home/molecules/software/data/')
-(freqs, signal, wavemeter_freqs) = get_data(my_date, my_time, datafolder = '/Users/boerge/Software/offline_data/')
-
+(freqs, signal, wavemeter_freqs) = get_data(my_date, my_time, datafolder = folder)
 
 #cut1 = 0
 #cut2 = 90
@@ -63,6 +64,7 @@ print('Wavemeter offset: {0:2.6} MHz'.format(wavemeter_offset/1e6))
 
 
 cnt_freq = 384.230484468e12 # S1/2 - P3/2
+cnt_freq = 377.107e12 # S1/2 - P1/2
 myfontsize = 16
 
 x_plot = (freqs - cnt_freq)/1e9
@@ -180,21 +182,24 @@ if True:
 
     diff -= np.min(diff)
 
-    from scipy.signal import find_peaks
-    from fit_lorentz import fit_lorentz
+    #diff = signal[0]
 
-    peaks, _ = find_peaks(diff, width = 4, distance = 10)
+    #peaks, _ = find_peaks(diff, width = 5, distance = 5)
+    #peaks, _ = find_peaks(diff, distance = 15)
     
     plt.plot(x_plot, diff, '.-')
     
-    plt.plot(x_plot[peaks], diff[peaks], "x")
+    #plt.plot(x_plot[peaks], diff[peaks], "x")
     
     plt.xlim(np.min(x_plot), np.max(x_plot))
 
     line_centers = []
     line_centers_true = []
-    for k in range(len(peaks)):
-        (xf, yf, peak_result, res) = fit_lorentz(x_plot, diff, peaks[k], dn = 5)
+    for k in range(len(rb_transitions)):
+
+        peak_ind = np.where( np.abs(x_plot - (rb_transitions[k][0] - cnt_freq + wavemeter_offset)/1e9) < 0.005 )[0][0]
+        
+        (xf, yf, peak_result, res) = fit_lorentz(x_plot, diff, peak_ind, dn = 5)
 
         plt.plot(xf, yf, 'k')
 

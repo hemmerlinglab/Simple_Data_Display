@@ -31,9 +31,11 @@ def fcn2min_lorentz(params, x, data, plot_fit = False):
 
 def fit_lorentz(x_fit, y_fit, cnt, dn = 5):
 
+        min_ind = max(cnt - dn, 0)
+        max_ind = min(cnt + dn, len(x_fit))
 
-        x = x_fit[cnt - dn: cnt + dn]
-        y = y_fit[cnt - dn: cnt + dn]
+        x = x_fit[min_ind: max_ind]
+        y = y_fit[min_ind: max_ind]
 
         params = Parameters()
  
