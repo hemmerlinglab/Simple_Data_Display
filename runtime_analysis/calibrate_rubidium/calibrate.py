@@ -11,7 +11,7 @@ from fit_lorentz import fit_lorentz
 
 
 
-my_date = '20200713'
+my_date = '20200722'
 #my_time = '145145'
 
 my_time = sys.argv[1]
