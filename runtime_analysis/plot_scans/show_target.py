@@ -12,6 +12,8 @@ c = 299792458
 yb_174_freq = 751.52653349 # in THz
 
 
+from scipy.ndimage import *
+
 # hlp is helper variable
 
 
@@ -42,11 +44,11 @@ def av(arr, no_of_avg):
 
 my_today = datetime.datetime.today()
 
-#datafolder = '/Users/boerge/skynet/molecule_computer/'
-datafolder = '/home/molecules/software/data/'
+datafolder = '/Users/boerge/software/offline_data/'
+#datafolder = '/home/molecules/software/data/'
 
 #basefolder = str(my_today.strftime('%Y%m%d')) # 20190618
-basefolder = '20200526'
+basefolder = '20200724'
 
 basefilename = datafolder + basefolder + '/' + basefolder + '_'
 
@@ -101,11 +103,16 @@ for k in range(ch1.shape[0]):
 
     
 
-cut_time1 = 10.5
-cut_time2 = 11.5
+cut_time1 = 10.0
+cut_time2 = 10.5
 
-ch1_start = np.where( np.abs(times - cut_time1) < 0.5 )[0][0]
-ch1_end = np.where( np.abs(times - cut_time2) < 0.5 )[0][0]
+shift = 0.5
+cut_time1 = 10.0+shift
+cut_time2 = 11.5+shift
+
+
+ch1_start = np.where( np.abs(times - cut_time1) < 0.25 )[0][0]
+ch1_end = np.where( np.abs(times - cut_time2) < 0.25 )[0][0]
 
 
 target_img = np.zeros([len(inter_x), len(inter_y)])
@@ -114,17 +121,48 @@ for nx in range(len(inter_x)):
     for ny in range(len(inter_y)):
 
         lin_ind = nx * len(inter_y) + ny
-        target_img[nx, ny] = np.abs(np.mean(ch1[lin_ind, ch1_start:ch1_end]))
+        
+        absorption = np.mean(ch1[lin_ind, ch1_start:ch1_end])
 
+        target_img[nx, ny] = np.abs(absorption)
 
-fig = plt.figure(figsize=(10,6))
+        #plt.plot(times, ch1[lin_ind, :])
+        #plt.axvline(times[ch1_start])
+        #plt.axvline(times[ch1_end])
+        #plt.show()
+        #asd
 
-#plt.subplot(2,1,1)
+fig = plt.figure(figsize=(10,7))
+
+plt.subplot(2,1,1)
+#plt.imshow(np.transpose(target_img), cmap='Blues', interpolation='nearest')
 plt.pcolor(inter_x, inter_y, np.transpose(target_img))
 plt.colorbar()
 
 plt.xlabel('x pos')
 plt.ylabel('y pos')
+
+plt.title('High value = High absorption')
+
+
+plt.gca().invert_yaxis()
+
+filtered_img = uniform_filter(target_img, size=5, mode='constant')
+
+
+#fig = plt.figure(figsize=(10,6))
+
+plt.subplot(2,1,2)
+#plt.imshow(np.transpose(target_img), cmap='Blues', interpolation='nearest')
+plt.pcolor(inter_x, inter_y, np.transpose(filtered_img))
+plt.colorbar()
+
+plt.xlabel('x pos')
+plt.ylabel('y pos')
+
+plt.title('High value = High absorption')
+
+plt.gca().invert_yaxis()
 
 #s_inter_x, s_inter_y = np.meshgrid(inter_x, inter_y) 
 #
@@ -140,10 +178,19 @@ plt.ylabel('y pos')
 #plt.ylabel('y pos')
 
 
+#plt.figure()
+#plt.pcolor(inter_x, inter_y[::3], np.transpose(target_img[:,::3]))
 
+plt.figure()
 
+hlp = np.transpose(target_img)
+y_sum = np.sum(hlp, axis = 1)
+x_sum = np.sum(hlp, axis = 0)
 
-
+plt.subplot(2,1,1)
+plt.plot(x_sum)
+plt.subplot(2,1,2)
+plt.plot(y_sum)
 
 
 plt.show()
