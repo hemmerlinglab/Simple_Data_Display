@@ -7,6 +7,7 @@ import sys
 #from fit_yb import *
 #from fit_mo import *
 from mpl_toolkits.mplot3d import Axes3D
+from configparser import *
 
 c = 299792458
 yb_174_freq = 751.52653349 # in THz
@@ -41,6 +42,27 @@ def av(arr, no_of_avg):
         return hlp/no_of_avg
 
 
+def read_in_config(f):
+    
+    config = ConfigParser()
+    config.read(f)
+
+    sensor_ids = config.sections()
+    # make dictionary out of config
+
+    sensors = {}
+
+    for s in sensor_ids:
+        opts = config.options(s)
+        
+        sensors[s] = {}
+        for o in opts:
+            sensors[s][o] = config.get(s, o)
+
+    return sensors
+
+
+
 
 my_today = datetime.datetime.today()
 
@@ -48,7 +70,11 @@ datafolder = '/Users/boerge/software/offline_data/'
 #datafolder = '/home/molecules/software/data/'
 
 #basefolder = str(my_today.strftime('%Y%m%d')) # 20190618
-basefolder = '20200724'
+basefolder = '20200728'
+time_stamp = '141306'
+
+#basefolder = '20200724'
+#time_stamp = '155526'
 
 basefilename = datafolder + basefolder + '/' + basefolder + '_'
 
@@ -68,26 +94,27 @@ else:
 f_posx = basefilename + time_stamp + '_posx'
 f_posy = basefilename + time_stamp + '_posy'
 f_ch1 = basefilename + time_stamp + '_ch0_arr'
+f_conf = basefilename + time_stamp + '_conf'
 
 
 posx = np.genfromtxt(f_posx, delimiter=",")
 posy = np.genfromtxt(f_posy, delimiter=",")
 ch1 = np.genfromtxt(f_ch1, delimiter=",")
 
+conf = read_in_config(f_conf)
 
 # get number of averages
-no_of_avg = 1 # int(len(posx)/len(np.unique(posx)))
-
+no_of_avg = int(conf['scan_count']['val'])
 print('Found ' + str(no_of_avg) + ' averages.')
 
-posx = av(posx, no_of_avg)
-posy = av(posy, no_of_avg)
+
+#posx = av(posx, no_of_avg)
+#posy = av(posy, no_of_avg)
 ch1 = av(ch1, no_of_avg)
 
 
 inter_x = np.unique(posx)
 inter_y = np.unique(posy)
-
 
 
 delay_in_for_loop = 100e-6
@@ -106,16 +133,25 @@ for k in range(ch1.shape[0]):
 cut_time1 = 10.0
 cut_time2 = 10.5
 
-shift = 0.5
-cut_time1 = 10.0+shift
-cut_time2 = 11.5+shift
+shift = 20.0
+cut_time1_offset = 10.0+shift
+cut_time2_offset = 10.5+shift
 
 
 ch1_start = np.where( np.abs(times - cut_time1) < 0.25 )[0][0]
 ch1_end = np.where( np.abs(times - cut_time2) < 0.25 )[0][0]
 
 
+ch1_start_offset = np.where( np.abs(times - cut_time1_offset) < 0.25 )[0][0]
+ch1_end_offset = np.where( np.abs(times - cut_time2_offset) < 0.25 )[0][0]
+
+
+
 target_img = np.zeros([len(inter_x), len(inter_y)])
+
+bg_img = np.zeros([len(inter_x), len(inter_y)])
+
+
 
 for nx in range(len(inter_x)):
     for ny in range(len(inter_y)):
@@ -123,8 +159,12 @@ for nx in range(len(inter_x)):
         lin_ind = nx * len(inter_y) + ny
         
         absorption = np.mean(ch1[lin_ind, ch1_start:ch1_end])
+        
+        bg_signal = np.mean(ch1[lin_ind, ch1_start_offset:ch1_end_offset])
 
         target_img[nx, ny] = np.abs(absorption)
+        
+        bg_img[nx, ny] = np.abs(bg_signal)
 
         #plt.plot(times, ch1[lin_ind, :])
         #plt.axvline(times[ch1_start])
@@ -132,12 +172,27 @@ for nx in range(len(inter_x)):
         #plt.show()
         #asd
 
+
+
+
+
+color_max = np.max(np.max(target_img))
+
+filtered_img = uniform_filter(target_img, size=5, mode='constant')
+
+
+filtered_img = target_img - bg_img
+
+
+
 fig = plt.figure(figsize=(10,7))
 
-plt.subplot(2,1,1)
+plt.subplot(2,2,1)
 #plt.imshow(np.transpose(target_img), cmap='Blues', interpolation='nearest')
 plt.pcolor(inter_x, inter_y, np.transpose(target_img))
 plt.colorbar()
+
+plt.clim(0, color_max)
 
 plt.xlabel('x pos')
 plt.ylabel('y pos')
@@ -147,15 +202,32 @@ plt.title('High value = High absorption')
 
 plt.gca().invert_yaxis()
 
-filtered_img = uniform_filter(target_img, size=5, mode='constant')
+
+plt.subplot(2,2,2)
+#plt.imshow(np.transpose(bg_img), cmap='Blues', interpolation='nearest')
+plt.pcolor(inter_x, inter_y, np.transpose(bg_img))
+plt.colorbar()
+
+plt.clim(0, color_max)
+
+plt.xlabel('x pos')
+plt.ylabel('y pos')
+
+plt.title('High value = High absorption')
+
+
+plt.gca().invert_yaxis()
+
 
 
 #fig = plt.figure(figsize=(10,6))
 
-plt.subplot(2,1,2)
-#plt.imshow(np.transpose(target_img), cmap='Blues', interpolation='nearest')
+plt.subplot(2,2,3)
+#plt.imshow(np.transpose(filtered_img), cmap='Blues', interpolation='nearest')
 plt.pcolor(inter_x, inter_y, np.transpose(filtered_img))
 plt.colorbar()
+
+plt.clim(0, color_max)
 
 plt.xlabel('x pos')
 plt.ylabel('y pos')
@@ -192,6 +264,30 @@ plt.plot(x_sum)
 plt.subplot(2,1,2)
 plt.plot(y_sum)
 
+fig = plt.figure(figsize=(10,7))
+
+plt.subplot(2,1,1)
+plt.imshow(np.transpose(target_img), cmap='Blues', interpolation='nearest')
+
+plt.subplot(2,1,2)
+plt.imshow(np.transpose(filtered_img), cmap='Blues', interpolation='nearest')
+
+
+
+plt.figure()
+
+y = np.mean(ch1, axis = 0)
+
+
+
+plt.plot(times, y)
+
 
 plt.show()
+
+
+
+
+
+
 
