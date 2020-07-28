@@ -7,280 +7,91 @@ import sys
 #from fit_yb import *
 #from fit_mo import *
 from mpl_toolkits.mplot3d import Axes3D
-from configparser import *
-
-c = 299792458
-yb_174_freq = 751.52653349 # in THz
-
-
 from scipy.ndimage import *
-
-# hlp is helper variable
-
+from helper import *
 
 
-def av(arr, no_of_avg):
-    # for 1D array
-    if len(arr.shape)==1:
-        hlp = np.zeros([int(arr.shape[0]/no_of_avg)])
 
-        for k in range(len(hlp)):
-            for m in range(no_of_avg):
-                hlp[k] += arr[no_of_avg*k + m]
+def integrate_absorption(img, inter_x, inter_y, times, time_cut):
 
-        return hlp/no_of_avg
+    dt = times[1] - times[0]
+    t_start = np.where( np.abs(times - time_cut[0]) < dt )[0][0]
+    t_stop  = np.where( np.abs(times - time_cut[1]) < dt )[0][0]
+   
+    abs_img = np.zeros([len(inter_x), len(inter_y)])
 
-    if len(arr.shape)==2:     
-
-        # for 2D array
-        hlp = np.zeros([int(arr.shape[0]/no_of_avg), arr.shape[1]])
-
-        for k in range(len(hlp)):
-            for m in range(no_of_avg):
-                hlp[k] += arr[no_of_avg*k + m, :]
-
-        return hlp/no_of_avg
-
-
-def read_in_config(f):
+    for nx in range(len(inter_x)):
+        for ny in range(len(inter_y)):
     
-    config = ConfigParser()
-    config.read(f)
+            lin_ind = nx * len(inter_y) + ny
+            
+            absorption = np.mean(img[lin_ind, t_start:t_stop])
+            
+            abs_img[nx, ny] = np.abs(absorption)
 
-    sensor_ids = config.sections()
-    # make dictionary out of config
-
-    sensors = {}
-
-    for s in sensor_ids:
-        opts = config.options(s)
-        
-        sensors[s] = {}
-        for o in opts:
-            sensors[s][o] = config.get(s, o)
-
-    return sensors
+    return np.transpose(abs_img)
 
 
 
+def plot_single_image(inter_x, inter_y, img, color_max = 1.0, factor = 1000.0, title = ''):
 
-my_today = datetime.datetime.today()
+    plt.pcolor(inter_x, inter_y, factor * img)
+    plt.colorbar()
+    plt.clim(0, factor * color_max)
+    
+    plt.xlabel('x pos')
+    plt.ylabel('y pos')
 
-datafolder = '/Users/boerge/software/offline_data/'
-#datafolder = '/home/molecules/software/data/'
+    plt.gca().invert_yaxis()
+    
+    plt.title(title)
 
-#basefolder = str(my_today.strftime('%Y%m%d')) # 20190618
-basefolder = '20200728'
-time_stamp = '141306'
+    #plt.tight_layout()
+
+    return
+
+#################################################################
+# main
+#################################################################
+
+(inter_x, inter_y, times, ch1) = get_data(sys.argv[1], sys.argv[2])
+
 
 #basefolder = '20200724'
 #time_stamp = '155526'
 
-basefilename = datafolder + basefolder + '/' + basefolder + '_'
+# get images for foreground and background
 
-if len(sys.argv)>1:
-    time_stamp = sys.argv[1]
-else:
-    # get latest time stamp
-    all_files = np.sort(glob.glob(basefilename + "*"))
-    #print(all_files)
-    time_stamp = all_files[-1].split('_')[1]
+t1 = 10.0
+t2 = 11.0
 
+t1_bg = 30.0
+t2_bg = 39.0
 
-## molybdenum data
-#time_stamp = ''
+target_img = integrate_absorption(ch1, inter_x, inter_y, times, [t1, t2])
 
-
-f_posx = basefilename + time_stamp + '_posx'
-f_posy = basefilename + time_stamp + '_posy'
-f_ch1 = basefilename + time_stamp + '_ch0_arr'
-f_conf = basefilename + time_stamp + '_conf'
-
-
-posx = np.genfromtxt(f_posx, delimiter=",")
-posy = np.genfromtxt(f_posy, delimiter=",")
-ch1 = np.genfromtxt(f_ch1, delimiter=",")
-
-conf = read_in_config(f_conf)
-
-# get number of averages
-no_of_avg = int(conf['scan_count']['val'])
-print('Found ' + str(no_of_avg) + ' averages.')
-
-
-#posx = av(posx, no_of_avg)
-#posy = av(posy, no_of_avg)
-ch1 = av(ch1, no_of_avg)
-
-
-inter_x = np.unique(posx)
-inter_y = np.unique(posy)
-
-
-delay_in_for_loop = 100e-6
-no_of_time_points = ch1.shape[1]
-times = np.arange(0, no_of_time_points) * (delay_in_for_loop) / 1e-3
-
-
-# subtracting the DC offset
-offset_avg_points = 5
-for k in range(ch1.shape[0]):
-        #ch1[k, :] = ch1[k, :] - np.mean(ch1[k, -offset_avg_points:-1])
-        ch1[k, :] = ch1[k, :] - np.mean(ch1[k, 0:offset_avg_points])
-
-    
-
-cut_time1 = 10.0
-cut_time2 = 10.5
-
-shift = 20.0
-cut_time1_offset = 10.0+shift
-cut_time2_offset = 10.5+shift
-
-
-ch1_start = np.where( np.abs(times - cut_time1) < 0.25 )[0][0]
-ch1_end = np.where( np.abs(times - cut_time2) < 0.25 )[0][0]
-
-
-ch1_start_offset = np.where( np.abs(times - cut_time1_offset) < 0.25 )[0][0]
-ch1_end_offset = np.where( np.abs(times - cut_time2_offset) < 0.25 )[0][0]
-
-
-
-target_img = np.zeros([len(inter_x), len(inter_y)])
-
-bg_img = np.zeros([len(inter_x), len(inter_y)])
-
-
-
-for nx in range(len(inter_x)):
-    for ny in range(len(inter_y)):
-
-        lin_ind = nx * len(inter_y) + ny
-        
-        absorption = np.mean(ch1[lin_ind, ch1_start:ch1_end])
-        
-        bg_signal = np.mean(ch1[lin_ind, ch1_start_offset:ch1_end_offset])
-
-        target_img[nx, ny] = np.abs(absorption)
-        
-        bg_img[nx, ny] = np.abs(bg_signal)
-
-        #plt.plot(times, ch1[lin_ind, :])
-        #plt.axvline(times[ch1_start])
-        #plt.axvline(times[ch1_end])
-        #plt.show()
-        #asd
-
-
+bg_img = integrate_absorption(ch1, inter_x, inter_y, times, [t1_bg, t2_bg])
 
 
 
 color_max = np.max(np.max(target_img))
 
-filtered_img = uniform_filter(target_img, size=5, mode='constant')
-
-
-filtered_img = target_img - bg_img
+filtered_img = uniform_filter(target_img, size=2, mode='constant')
 
 
 
-fig = plt.figure(figsize=(10,7))
-
-plt.subplot(2,2,1)
-#plt.imshow(np.transpose(target_img), cmap='Blues', interpolation='nearest')
-plt.pcolor(inter_x, inter_y, np.transpose(target_img))
-plt.colorbar()
-
-plt.clim(0, color_max)
-
-plt.xlabel('x pos')
-plt.ylabel('y pos')
-
-plt.title('High value = High absorption')
 
 
-plt.gca().invert_yaxis()
-
-
-plt.subplot(2,2,2)
-#plt.imshow(np.transpose(bg_img), cmap='Blues', interpolation='nearest')
-plt.pcolor(inter_x, inter_y, np.transpose(bg_img))
-plt.colorbar()
-
-plt.clim(0, color_max)
-
-plt.xlabel('x pos')
-plt.ylabel('y pos')
-
-plt.title('High value = High absorption')
-
-
-plt.gca().invert_yaxis()
-
-
-
-#fig = plt.figure(figsize=(10,6))
-
-plt.subplot(2,2,3)
-#plt.imshow(np.transpose(filtered_img), cmap='Blues', interpolation='nearest')
-plt.pcolor(inter_x, inter_y, np.transpose(filtered_img))
-plt.colorbar()
-
-plt.clim(0, color_max)
-
-plt.xlabel('x pos')
-plt.ylabel('y pos')
-
-plt.title('High value = High absorption')
-
-plt.gca().invert_yaxis()
-
-#s_inter_x, s_inter_y = np.meshgrid(inter_x, inter_y) 
-#
-#plt.tight_layout()
-#
-#plt.subplot(2,1,2)
-#
-#ax = plt.axes(projection='3d')
-#
-#ax.plot_surface(s_inter_y, s_inter_x, target_img)
-#
-#plt.xlabel('x pos')
-#plt.ylabel('y pos')
-
-
-#plt.figure()
-#plt.pcolor(inter_x, inter_y[::3], np.transpose(target_img[:,::3]))
-
-plt.figure()
-
-hlp = np.transpose(target_img)
-y_sum = np.sum(hlp, axis = 1)
-x_sum = np.sum(hlp, axis = 0)
+fig = plt.figure(figsize=(10,10))
 
 plt.subplot(2,1,1)
-plt.plot(x_sum)
-plt.subplot(2,1,2)
-plt.plot(y_sum)
 
-fig = plt.figure(figsize=(10,7))
-
-plt.subplot(2,1,1)
-plt.imshow(np.transpose(target_img), cmap='Blues', interpolation='nearest')
+plot_single_image(inter_x, inter_y, target_img, color_max = color_max, title = "Target, t = {0:.1f} - {1:.1f} ms".format(t1, t2))
 
 plt.subplot(2,1,2)
-plt.imshow(np.transpose(filtered_img), cmap='Blues', interpolation='nearest')
 
+plot_single_image(inter_x, inter_y, bg_img, color_max = color_max, title = "Background, t = {0:.1f} - {1:.1f} ms".format(t1_bg, t2_bg))
 
-
-plt.figure()
-
-y = np.mean(ch1, axis = 0)
-
-
-
-plt.plot(times, y)
 
 
 plt.show()
