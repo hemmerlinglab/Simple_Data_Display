@@ -152,7 +152,7 @@ def calculate_Rb_transitions():
     return my_lines
 
 
-def get_data(mydate, mytime):
+def get_img_data(mydate, mytime):
 
     folder1 = '/home/molecules/software/data/'
     folder2 = '/Users/boerge/software/offline_data/'
