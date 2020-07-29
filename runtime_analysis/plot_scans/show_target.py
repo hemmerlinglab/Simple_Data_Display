@@ -74,25 +74,48 @@ bg_img = integrate_absorption(ch1, inter_x, inter_y, times, [t1_bg, t2_bg])
 
 
 
-color_max = np.max(np.max(target_img))
+color_max = np.max(np.max(target_img)) * 0.7
 
 filtered_img = uniform_filter(target_img, size=2, mode='constant')
 
 
 
+fig = plt.figure(figsize=(10,3))
 
-
-fig = plt.figure(figsize=(10,10))
-
-plt.subplot(2,1,1)
+plt.subplot(1,2,1)
 
 plot_single_image(inter_x, inter_y, target_img, color_max = color_max, title = "Target, t = {0:.1f} - {1:.1f} ms".format(t1, t2))
 
-plt.subplot(2,1,2)
+x0 = 5.15
+y0 = 4.95
+r = 0.55
+
+tpar = np.pi/180 * np.linspace(40, 320, 100)
+
+x = r * np.cos(tpar) + x0
+y = r * np.sin(tpar) + y0
+
+plt.plot(x, y, 'r--')
+
+plt.subplot(1,2,2)
 
 plot_single_image(inter_x, inter_y, bg_img, color_max = color_max, title = "Background, t = {0:.1f} - {1:.1f} ms".format(t1_bg, t2_bg))
 
 
+
+
+fig = plt.figure(figsize=(15,3))
+
+t_arr = np.linspace(0,4.0,5)
+
+for dt,n in enumerate(t_arr):
+    plt.subplot(1,5,n+1)
+
+    t1 = 10.0
+    t2 = 10.1 + dt
+    target_img = integrate_absorption(ch1, inter_x, inter_y, times, [t1, t2])
+
+    plot_single_image(inter_x, inter_y, target_img, color_max = color_max, title = "Target, t = {0:.1f} - {1:.1f} ms".format(t1, t2))
 
 plt.show()
 
