@@ -54,8 +54,7 @@ def plot_single_image(inter_x, inter_y, img, color_max = 1.0, factor = 1000.0, t
 # main
 #################################################################
 
-(inter_x, inter_y, times, ch1) = get_img_data(sys.argv[1], sys.argv[2])
-
+(inter_x, inter_y, times, ch1, conf) = get_img_data(sys.argv[1], sys.argv[2])
 
 #basefolder = '20200724'
 #time_stamp = '155526'

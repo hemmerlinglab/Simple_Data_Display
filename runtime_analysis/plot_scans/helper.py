@@ -152,6 +152,8 @@ def calculate_Rb_transitions():
     return my_lines
 
 
+
+
 def get_img_data(mydate, mytime):
 
     folder1 = '/home/molecules/software/data/'
@@ -201,6 +203,8 @@ def get_img_data(mydate, mytime):
     inter_x = np.unique(posx)
     inter_y = np.unique(posy)
 
-    return (inter_x, inter_y, times, ch1)
+    return (inter_x, inter_y, times, ch1, conf)
+
+
 
 
