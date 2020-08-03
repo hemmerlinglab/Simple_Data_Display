@@ -158,11 +158,14 @@ def get_img_data(mydate, mytime):
 
     folder1 = '/home/molecules/software/data/'
     folder2 = '/Users/boerge/software/offline_data/'
+    folder3 = '/Users/johnr/Desktop/'
 
     if path.exists(folder1):
         datafolder = folder1
     elif path.exists(folder2):
         datafolder = folder2
+    elif path.exists(folder3):
+        datafolder = folder3
     else:
         print('Data path not found')
         asd

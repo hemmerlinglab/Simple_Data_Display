@@ -50,6 +50,18 @@ def plot_single_image(inter_x, inter_y, img, color_max = 1.0, factor = 1000.0, t
 
     return
 
+
+def get_avg_absorption(coords,super_image):
+	# coords is in index format with coords = [ xmin, xmax, ymin, ymax ]
+	xmin = coords[2]
+	xmax = coords[3]
+	ymin = coords[0]
+	ymax = coords[1]
+	sub_image = target_img[xmin:xmax,ymin:ymax]
+	# print(sub_image.shape)
+	return np.mean(sub_image),sub_image
+
+
 #################################################################
 # main
 #################################################################
@@ -71,9 +83,27 @@ target_img = integrate_absorption(ch1, inter_x, inter_y, times, [t1, t2])
 
 bg_img = integrate_absorption(ch1, inter_x, inter_y, times, [t1_bg, t2_bg])
 
-
-
 color_max = np.max(np.max(target_img)) * 0.7
+
+# print(target_img.shape)
+c1_vals = [2, 10, 10, 24]
+mean1,sub_im1 = get_avg_absorption(c1_vals,target_img)
+c2_vals = [12, 22, 8, 28]
+mean2,sub_im2 = get_avg_absorption(c2_vals,target_img)
+
+if mean1 > mean2:
+	print('Left is {} times greater than Right'.format(str(mean1/mean2)))
+elif mean2 > mean1:
+	print('Right is {} times greater than Left'.format(str(mean2/mean1)))
+else:
+	print('Identical absorption... illogical...')
+# print(inter_y.shape)
+# print('Left: {}, Right: {}'.format(str(mean1),str(mean2)))
+# plt.figure()
+# plt.subplot(1,2,1)
+# plot_single_image(inter_x[c1_vals[0]:c1_vals[1]],inter_y[c1_vals[2]:c1_vals[3]],sub_im1,color_max=color_max,title='Left Target')
+# plt.subplot(1,2,2)
+# plot_single_image(inter_x[c2_vals[0]:c2_vals[1]],inter_y[c2_vals[2]:c2_vals[3]],sub_im2,color_max=color_max,title='Right Target')
 
 filtered_img = uniform_filter(target_img, size=2, mode='constant')
 
@@ -95,7 +125,6 @@ x = r * np.cos(tpar) + x0
 y = r * np.sin(tpar) + y0
 
 plt.plot(x, y, 'r--')
-
 plt.subplot(1,2,2)
 
 plot_single_image(inter_x, inter_y, bg_img, color_max = color_max, title = "Background, t = {0:.1f} - {1:.1f} ms".format(t1_bg, t2_bg))
