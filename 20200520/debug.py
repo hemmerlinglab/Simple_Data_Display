@@ -115,7 +115,7 @@ for i in range(len(LANL_62_f)):#len(LANL_62_f)):
 	plt.axvline(LANL_64_f[i],ymin=0.45,ymax=0.55,color='r')
 
 
-plt.plot((x - cnt_freq)/1e9, y, 'b.-', alpha = 0.2)
+plt.plot((x - cnt_freq)/1e9, y, 'b.-')#, alpha = 0.2)
 
 plt.xlim(np.min((x - cnt_freq)/1e9), np.max((x - cnt_freq)/1e9))
 

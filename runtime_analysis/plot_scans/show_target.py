@@ -91,12 +91,35 @@ mean1,sub_im1 = get_avg_absorption(c1_vals,target_img)
 c2_vals = [12, 22, 8, 28]
 mean2,sub_im2 = get_avg_absorption(c2_vals,target_img)
 
-if mean1 > mean2:
-	print('Left is {} times greater than Right'.format(str(mean1/mean2)))
-elif mean2 > mean1:
-	print('Right is {} times greater than Left'.format(str(mean2/mean1)))
+# Left: 0.05g Al, 0.45g KCl
+# Right: 0.25g AlCl3
+
+# Molar weights:
+Al = 26.982
+K = 39.098
+Cl = 35.45
+
+Al_KCl = np.min((0.05/Al, 0.45/(K + Cl)))/0.5
+AlCl3 = 1/(Al + 3 * Cl)
+
+print('Al+KCl: ',Al_KCl,'mols, AlCl3: ',AlCl3,'mols')
+print('Means: ',mean1,mean2)
+
+
+abs_comp1 = mean1/Al_KCl
+abs_comp2 = mean2/AlCl3
+print('Absorption Factors: ',abs_comp1,abs_comp2)
+abs_comp = np.max((abs_comp1/abs_comp2,abs_comp2/abs_comp1))
+
+if abs_comp1 > abs_comp2:
+	print('Left is {} times greater than Right'.format(str(abs_comp)))
+elif abs_comp2 > abs_comp1:
+	print('Right is {} times greater than Left'.format(str(abs_comp)))
 else:
 	print('Identical absorption... illogical...')
+
+
+
 # print(inter_y.shape)
 # print('Left: {}, Right: {}'.format(str(mean1),str(mean2)))
 # plt.figure()
