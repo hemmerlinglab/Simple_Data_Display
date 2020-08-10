@@ -27,7 +27,7 @@ def integrate_absorption(img, inter_x, inter_y, times, time_cut):
             
             absorption = np.mean(img[lin_ind, t_start:t_stop])
             
-            abs_img[nx, ny] = np.abs(absorption)
+            abs_img[nx, ny] = absorption#np.abs(absorption)
 
     return np.transpose(abs_img)
 
@@ -38,7 +38,7 @@ def plot_single_image(inter_x, inter_y, img, color_max = 1.0, factor = 1000.0, t
     plt.pcolor(inter_x, inter_y, factor * img)
     plt.colorbar()
     plt.clim(0, factor * color_max)
-    # plt.clim(0, 0.25)
+    # plt.clim(0, 0.3)
     
     plt.xlabel('x pos')
     plt.ylabel('y pos')
@@ -81,9 +81,9 @@ t1_bg = 30.0
 t2_bg = 39.0
 
 target_img = integrate_absorption(ch1, inter_x, inter_y, times, [t1, t2])
-
+# print(np.mean(target_img))
 bg_img = integrate_absorption(ch1, inter_x, inter_y, times, [t1_bg, t2_bg])
-
+# print(np.mean(bg_img))
 color_max = np.max(np.max(target_img)) * 0.7
 
 # print(target_img.shape)
