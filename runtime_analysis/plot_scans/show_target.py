@@ -38,6 +38,7 @@ def plot_single_image(inter_x, inter_y, img, color_max = 1.0, factor = 1000.0, t
     plt.pcolor(inter_x, inter_y, factor * img)
     plt.colorbar()
     plt.clim(0, factor * color_max)
+    # plt.clim(0, 0.25)
     
     plt.xlabel('x pos')
     plt.ylabel('y pos')

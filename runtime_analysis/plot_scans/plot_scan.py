@@ -58,7 +58,7 @@ datafolder = '/home/molecules/software/data/'
 
 
 
-basefolder = '20200707'
+basefolder = '20200807'
 
 basefilename = datafolder + basefolder + '/' + basefolder + '_'
 
@@ -103,11 +103,11 @@ times = np.arange(0, no_of_time_points) * (delay_in_for_loop) / 1e-3
 
 
 
-cut_time1 = 10.25
+cut_time1 = 10.00
 cut_time2 = 10.75
 
-ch1_start = np.where( np.abs(times - cut_time1) < 0.5 )[0][0]
-ch1_end = np.where( np.abs(times - cut_time2) < 0.5 )[0][0]
+ch1_start = np.where( np.abs(times - cut_time1) < 0.1 )[0][0]
+ch1_end = np.where( np.abs(times - cut_time2) < 0.1 )[0][0]
 
 # subtracting the DC offset
 offset_avg_points = 5
@@ -167,6 +167,11 @@ plt.xticks(fontsize = myfontsize)
 plt.yticks(fontsize = myfontsize)
 
 plt.tight_layout()
+
+plt.figure()
+
+plt.imshow(np.abs(ch1))
+plt.clim(0,0.001)
 
 plt.show()
 
