@@ -176,7 +176,7 @@ class CentralWidget(QWidget):
         self.spec_plot.axes.set_ylabel('Signal (arb.)')
 
         self.offset = self.get_offset()
-        act_freq = self.offset*3 + (self.freqs[self.f_idx])*1e-6
+        act_freq = (self.offset + (self.freqs[self.f_idx])*1e-6)*3
 
         self.cont.currFreq.setText('{:.6f} THz'.format(act_freq))
         self.cont.currTime.setText('{} - {} ms'.format(str(self.times[self.t_idx]),str(self.times[self.t_avg_idx])))
