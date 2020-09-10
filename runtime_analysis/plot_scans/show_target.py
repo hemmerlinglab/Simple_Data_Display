@@ -27,7 +27,7 @@ def integrate_absorption(img, inter_x, inter_y, times, time_cut):
             
             absorption = np.mean(img[lin_ind, t_start:t_stop])
             
-            abs_img[nx, ny] = absorption#np.abs(absorption)
+            abs_img[nx, ny] = np.abs(absorption)
 
     return np.transpose(abs_img)
 
@@ -139,9 +139,13 @@ plt.subplot(1,2,1)
 
 plot_single_image(inter_x, inter_y, target_img, color_max = color_max, title = "Target, t = {0:.1f} - {1:.1f} ms".format(t1, t2))
 
-x0 = 5.15
-y0 = 4.95
-r = 0.55
+# x0 = 5.15
+# y0 = 4.95
+# r = 0.55
+
+r = 0.75
+x0 = 5.9
+y0 = 5.15
 
 tpar = np.pi/180 * np.linspace(40, 320, 100)
 
