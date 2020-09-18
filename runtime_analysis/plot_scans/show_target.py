@@ -143,8 +143,8 @@ plot_single_image(inter_x, inter_y, target_img, color_max = color_max, title = "
 # y0 = 4.95
 # r = 0.55
 
-r = 0.75
-x0 = 5.9
+r = 0.5
+x0 = 5.0
 y0 = 5.15
 
 tpar = np.pi/180 * np.linspace(40, 320, 100)

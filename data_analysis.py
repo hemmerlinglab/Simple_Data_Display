@@ -224,7 +224,7 @@ class CentralWidget(QWidget):
         return slc_arr.reshape((self.steps_x,self.steps_y))
 
     def get_tar_slc(self):
-        new_arr = np.zeros((self.steps_x,self.steps_y,self.ch0.shape[0]))
+        new_arr = np.zeros((self.steps_x,self.steps_y,self.ch0.shape[1]))
         for i in range(self.steps_x):
             for j in range(self.steps_y):
                 new_arr[i,j,:] = self.ch0[j+i*self.steps_y,:]
