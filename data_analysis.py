@@ -109,36 +109,45 @@ class ControlWidget(QWidget):
         self.getButton = BlinkButton('GET DATA')
         self.getButton.setFont(QFont('arial',fontsize))
         
-        self.currTimeLab = QLabel('Curr Time:')
+        self.currTimeLab = QLabel('Current Time:')
         self.currTimeLab.setFont(QFont('arial',fontsize))
         
         self.currTime = QLabel()
         self.currTime.setFont(QFont('arial',fontsize))
         
-        self.currFreqLab = QLabel('Curr Freq:')
+        self.currFreqLab = QLabel('Current Freq:')
         self.currFreqLab.setFont(QFont('arial',fontsize))
         
         self.currFreq = QLabel()
         self.currFreq.setFont(QFont('arial',fontsize))
+
+        self.multFactLab = QLabel('Frequency Multiple:')
+        self.multFactLab.setFont(QFont('arial',fontsize))
+
+        self.multFact = QLineEdit()
+        self.multFact.setFont(QFont('arial',fontsize))
 
         GridLayout = QGridLayout()
         GridLayout.addWidget(self.baselab,0,0)
         GridLayout.addWidget(self.baseedit,0,1)
         GridLayout.addWidget(self.timelab,1,0)
         GridLayout.addWidget(self.timeedit,1,1)
-        GridLayout.addWidget(self.getButton,2,0,1,2)
-        GridLayout.addWidget(self.currTimeLab,3,0)
-        GridLayout.addWidget(self.currTime,3,1)
-        GridLayout.addWidget(self.currFreqLab,4,0)
-        GridLayout.addWidget(self.currFreq,4,1)
+        GridLayout.addWidget(self.multFactLab,2,0)
+        GridLayout.addWidget(self.multFact,2,1)
+        GridLayout.addWidget(self.getButton,3,0,1,2)
+        GridLayout.addWidget(self.currTimeLab,4,0)
+        GridLayout.addWidget(self.currTime,4,1)
+        GridLayout.addWidget(self.currFreqLab,5,0)
+        GridLayout.addWidget(self.currFreq,5,1)
         self.setLayout(GridLayout)
 
 
 class CentralWidget(QWidget):
     def __init__(self,parent):
         QWidget.__init__(self,parent)
-        self.basefilename = '20200916'
-        self.time_stamp = '112519'
+        self.basefilename = '20201030'
+        self.time_stamp = '151550'
+        self.freq_mult = 1
         self.filepath = '/home/molecules/software/data/'+self.basefilename
         # self.filepath = self.basefilename
         self.f_idx = 10
@@ -158,6 +167,7 @@ class CentralWidget(QWidget):
         self.cont.getButton.clicked.connect(self.buttonClicked)
         self.cont.baseedit.setText(self.basefilename)
         self.cont.timeedit.setText(self.time_stamp)
+        self.cont.multFact.setText(str(self.freq_mult))
 
         self.img_plot.keyPressEvent = self.keyPressEvent
         
@@ -190,7 +200,7 @@ class CentralWidget(QWidget):
             self.hline3 = self.shot_plot.axes.axhline(self.times[self.t_idx],alpha=0.4,color='red')
             self.hline4 = self.shot_plot.axes.axhline(self.times[self.t_avg_idx],alpha=0.4,color='red')
             
-            self.img_plot.axes.set_xlabel('Frequency (MHz from {:.6f})'.format(self.offset))
+            self.img_plot.axes.set_xlabel('Frequency (MHz from {:.6f})'.format(self.offset*self.freq_mult))
             self.img_plot.axes.set_ylabel('Time (ms)')
 
         elif self.filetype == 'target':
@@ -244,10 +254,10 @@ class CentralWidget(QWidget):
         # self.shot_plot.axes.set_xlabel('Frequency (MHz from {:.6f})'.format(self.offset))
             self.spec_plot.axes.set_ylabel('Signal (arb.)')
 
-            act_freq = (self.offset + (self.freqs[self.f_idx])*1e-6)*3
+            act_freq = (self.offset + (self.freqs[self.f_idx])*1e-6)*self.freq_mult
 
             self.cont.currFreq.setText('{:.6f} THz'.format(act_freq))
-            self.cont.currTime.setText('{} - {} ms'.format(str(self.times[self.t_idx]),str(self.times[self.t_avg_idx])))
+            self.cont.currTime.setText('{:.3f} - {:.3f} ms'.format(self.times[self.t_idx],self.times[self.t_avg_idx]))
 
             self.spec_plot.axes.plot(self.freqs,np.mean(self.ch0[:,self.t_idx:self.t_avg_idx],axis=1))
             self.shot_plot.axes.plot(self.ch0[self.f_idx,:],self.times)
@@ -308,8 +318,8 @@ class CentralWidget(QWidget):
             ch0_data = np.genfromtxt(filename,delimiter=',')
         with open('{}/{}_{}_times'.format(self.filepath,self.basefilename,self.time_stamp),'r') as filename:
             times = np.genfromtxt(filename)
-        with open('{}/{}_{}_ch2_arr'.format(self.filepath,self.basefilename,self.time_stamp),'r') as filename:
-            ch2_data = np.genfromtxt(filename,delimiter=',')
+        with open('{}/{}_{}_ch3_arr'.format(self.filepath,self.basefilename,self.time_stamp),'r') as filename:
+            ch3_data = np.genfromtxt(filename,delimiter=',')
 
         if self.filetype == 'target':
             with open('{}/{}_{}_posx'.format(self.filepath,self.basefilename,self.time_stamp),'r') as filename:
@@ -329,7 +339,7 @@ class CentralWidget(QWidget):
         if self.filetype == 'spec':
             with open('{}/{}_{}_freqs'.format(self.filepath,self.basefilename,self.time_stamp),'r') as filename:
                 freqs = np.genfromtxt(filename)
-            self.freqs = np.array(freqs)
+            self.freqs = np.array(freqs)*self.freq_mult
             # print(self.freqs.shape)
         
         self.times = np.array(times)
@@ -337,13 +347,13 @@ class CentralWidget(QWidget):
         # print(ch0_data.shape)
 
         self.ch0 = self.get_avg(np.array(ch0_data),int(len(ch0_data)/self.no_avgs))
-        self.ch2 = self.get_avg(np.array(ch2_data),int(len(ch0_data)/self.no_avgs))
+        self.ch3 = self.get_avg(np.array(ch3_data),int(len(ch0_data)/self.no_avgs))
 
         # print(self.ch0.shape)
 
-        scl_fact = np.mean(self.ch0[:20,:])/np.mean(self.ch2[:20,:])
+        scl_fact = np.mean(self.ch0[:20,:])/np.mean(self.ch3[:20,:])
 
-        self.ch0 -= scl_fact*self.ch2
+        #self.ch0 -= scl_fact*self.ch3
 
         self.ch0 = self.rem_offset(self.ch0)
 
@@ -373,8 +383,11 @@ class CentralWidget(QWidget):
         config = ConfigParser()
         config.read(filename)
         self.no_avgs = int(config.get('scan_count','val'))
+        self.whichlaser = int(config.get('which_scanning_laser','val'))
         try:
             offset = np.float(config.get('offset_laser1','val'))
+            if self.whichlaser == 2:
+                offset = np.float(config.get('offset_laser2','val'))
         except:
             offset = np.float(config.get('cooling_set','val'))
             self.steps_x = int(float(config.get('steps_x','val')))
@@ -402,8 +415,10 @@ class CentralWidget(QWidget):
             self.cont.getButton.setFont(QFont('arial',20))
             new_basefilename = self.cont.baseedit.text()
             new_timestamp = self.cont.timeedit.text()
+            new_freq_mult = int(self.cont.multFact.text())
             self.basefilename = new_basefilename
             self.time_stamp = new_timestamp
+            self.freq_mult = new_freq_mult
             self.filepath = '/home/molecules/software/data/'+new_basefilename
             # self.filepath = new_basefilename
             # self.get_data()
