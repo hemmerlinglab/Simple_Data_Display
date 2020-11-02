@@ -11,6 +11,7 @@ from matplotlib.figure import Figure
 import numpy as np
 from configparser import ConfigParser
 import time
+from datetime import datetime
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -26,10 +27,15 @@ class MainWindow(QMainWindow):
         exit_action = QAction('Quit',self)
         exit_action.triggered.connect(qApp.quit)
 
+        grab_action = QAction('Save JPG',self)
+        grab_action.triggered.connect(self.grab_screen)
+
         menu_bar = self.menuBar()
         menu_bar.setNativeMenuBar(False)
         file_menu = menu_bar.addMenu('File')
+        file_menu.addAction(grab_action)
         file_menu.addAction(exit_action)
+        
         controls_menu = menu_bar.addMenu('Spec Controls')
         controls_menu.addAction(QAction('Up/Down = Move Time Cursors',self))
         controls_menu.addAction(QAction('Left/Right = Move Frequency Cursors',self))
@@ -48,6 +54,14 @@ class MainWindow(QMainWindow):
             event.accept()
         else:
             event.ignore()
+
+    def grab_screen(self):
+        date = datetime.now()
+        nowtime = date.strftime('%Y%m%d_%H%M%S:')
+        filename = 'Screenshots/{}{}_{}_{}_{}_{}.jpg'.format(nowtime,self.central_widget.basefilename,self.central_widget.time_stamp,str(self.central_widget.f_idx),str(self.central_widget.t_idx),str(self.central_widget.t_off))
+        screen = QApplication.primaryScreen()
+        screenshot = screen.grabWindow(self.central_widget.winId())
+        screenshot.save(filename,'jpg')
 
 
 class QuitMessage(QMessageBox):
