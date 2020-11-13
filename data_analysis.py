@@ -168,8 +168,8 @@ class CentralWidget(QWidget):
         self.t_idx = 100
         self.t_off = 20
         self.t_avg_idx = self.t_idx + self.t_off
-        self.offset = self.get_offset()
         self.set_filetype()
+        self.offset = self.get_offset()
         self.setup()
         self.default_button_color = self.palette().color(QPalette.Button)
 
@@ -397,15 +397,17 @@ class CentralWidget(QWidget):
         config = ConfigParser()
         config.read(filename)
         self.no_avgs = int(config.get('scan_count','val'))
-        self.whichlaser = int(config.get('which_scanning_laser','val'))
-        try:
+        if self.filetype == 'spec':
+            self.whichlaser = int(config.get('which_scanning_laser','val'))
             offset = np.float(config.get('offset_laser1','val'))
             if self.whichlaser == 2:
                 offset = np.float(config.get('offset_laser2','val'))
-        except:
+        elif self.filetype == 'target':
             offset = np.float(config.get('cooling_set','val'))
             self.steps_x = int(float(config.get('steps_x','val')))
             self.steps_y = int(float(config.get('steps_y','val')))
+        else:
+            print('AAAAAAAAAAAAAAAAAAAAAAAAAA')
         return offset
 
     def get_avg(self,data,desired_len):
