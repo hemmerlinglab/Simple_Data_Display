@@ -214,7 +214,7 @@ class CentralWidget(QWidget):
             self.hline3 = self.shot_plot.axes.axhline(self.times[self.t_idx],alpha=0.4,color='red')
             self.hline4 = self.shot_plot.axes.axhline(self.times[self.t_avg_idx],alpha=0.4,color='red')
             
-            self.img_plot.axes.set_xlabel('Frequency (MHz from {:.6f})'.format(self.offset*self.freq_mult))
+            self.img_plot.axes.set_xlabel('Frequency (MHz from {:.6f} THz)'.format(self.offset*self.freq_mult))
             self.img_plot.axes.set_ylabel('Time (ms)')
 
         elif self.filetype == 'target':
@@ -268,7 +268,7 @@ class CentralWidget(QWidget):
         # self.shot_plot.axes.set_xlabel('Frequency (MHz from {:.6f})'.format(self.offset))
             self.spec_plot.axes.set_ylabel('Signal (arb.)')
 
-            act_freq = (self.offset + (self.freqs[self.f_idx])*1e-6)*self.freq_mult
+            act_freq = (self.offset*self.freq_mult + (self.freqs[self.f_idx])*1e-6)
 
             self.cont.currFreq.setText('{:.6f} THz'.format(act_freq))
             self.cont.currTime.setText('{:.3f} - {:.3f} ms'.format(self.times[self.t_idx],self.times[self.t_avg_idx]))
@@ -422,7 +422,7 @@ class CentralWidget(QWidget):
         new_data = np.zeros(data.shape)
         try:
             for i in range(new_data.shape[0]):
-                new_data[i,:] = data[i,:] - np.mean(data[i,0:20])
+                new_data[i,:] = data[i,:] - np.mean(np.array([np.mean(data[i,0:20]),np.mean(data[0:-20])]))
         except:
             new_data = data - np.mean(np.array([np.mean(data[0:20]),np.mean(data[0:-20])]))
         return new_data
