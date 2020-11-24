@@ -415,13 +415,16 @@ class CentralWidget(QWidget):
         no_avgs = int(data.shape[0]/desired_len)
         for i in range(desired_len):
             for j in range(no_avgs):
-                new_data[i,:] += data[(no_avgs*i+j),:]
+                new_data[i,:] += self.rem_offset(data[(no_avgs*i+j),:])
         return new_data
 
     def rem_offset(self,data):
         new_data = np.zeros(data.shape)
-        for i in range(new_data.shape[0]):
-            new_data[i,:] = data[i,:] - np.mean(data[i,0:20])
+        try:
+            for i in range(new_data.shape[0]):
+                new_data[i,:] = data[i,:] - np.mean(data[i,0:20])
+        except:
+            new_data = data - np.mean(np.array([np.mean(data[0:20]),np.mean(data[0:-20])]))
         return new_data
 
     def buttonClicked(self):
