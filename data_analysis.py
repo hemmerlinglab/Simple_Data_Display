@@ -359,14 +359,11 @@ class CentralWidget(QWidget):
         self.times = np.array(times)
 
         # print(ch0_data.shape)
-
         self.ch0 = self.get_avg(np.array(ch0_data),int(len(ch0_data)/self.no_avgs))
         self.ch3 = self.get_avg(np.array(ch3_data),int(len(ch0_data)/self.no_avgs))
-
         # print(self.ch0.shape)
 
         scl_fact = np.mean(self.ch0[:20,:])/np.mean(self.ch3[:20,:])
-
         #self.ch0 -= scl_fact*self.ch3
 
         self.ch0 = self.rem_offset(self.ch0)
@@ -415,16 +412,17 @@ class CentralWidget(QWidget):
         no_avgs = int(data.shape[0]/desired_len)
         for i in range(desired_len):
             for j in range(no_avgs):
-                new_data[i,:] += self.rem_offset(data[(no_avgs*i+j),:])
-        return new_data
+                new_data[i,:] += data[(no_avgs*i+j),:]
+        return new_data/self.no_avgs
 
     def rem_offset(self,data):
         new_data = np.zeros(data.shape)
         try:
             for i in range(new_data.shape[0]):
-                new_data[i,:] = data[i,:] - np.mean(np.array([np.mean(data[i,0:20]),np.mean(data[0:-20])]))
+                new_data[i,:] = data[i,:] - np.mean(data[i,0:20])#np.mean(np.array([np.mean(data[i,0:20]),np.mean(data[0:-20])]))
         except:
-            new_data = data - np.mean(np.array([np.mean(data[0:20]),np.mean(data[0:-20])]))
+            new_data = data - np.mean(data[0:20])
+            # new_data = data - np.mean(np.array([np.mean(data[0:20]),np.mean(data[0:-20])]))
         return new_data
 
     def buttonClicked(self):
