@@ -364,7 +364,7 @@ class CentralWidget(QWidget):
         # print(self.ch0.shape)
 
         scl_fact = np.mean(self.ch0[:20,:])/np.mean(self.ch3[:20,:])
-        #self.ch0 -= scl_fact*self.ch3
+        self.ch0 -= scl_fact*self.ch3
 
         self.ch0 = self.rem_offset(self.ch0)
 
