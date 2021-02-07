@@ -11,6 +11,8 @@ from aux_spectrum_functions import get_spectrum
 
 from dunham_fit_functions import fit_dunham_coefficients, get_U_init
 
+import copy
+
 ###############################################
 # Change global font size
 
@@ -40,58 +42,6 @@ def add_shifts(d, line_error = 5.0e6):
     return d
 
 
-def plot_Ue_error(M, avg_err):
-
-    plt.figure(figsize = (10,6))
-
-    err = []
-
-    for k in range(len(M[0])):
-        for l in range(len(M[0][k])):
-
-            hlp = list(map( lambda x : x[k][l], M ))
-
-            err.append([k, l, hlp])
-
-    no_rows = 3
-    no_cols = 3
-
-    for n in range(len(err)):
-       
-        k = err[n][0]
-        l = err[n][1]
-
-        plt.subplot(no_rows, no_cols, k * no_cols + l + 1)
-
-        mean_val = np.mean(err[n][2])
-        err_dist = mean_val - err[n][2]
-
-        my_max = np.max(np.abs(err_dist))
-        
-        scaling = 1
-
-        err_dist /= scaling
-
-        plt.hist( err_dist, bins = np.int(len(M)/3.0) )
-
-
-        plt.xlim(-my_max, my_max)
-    
-        plt.xlabel('U[{0}][{1}] + {2:.4f} (1/cm)'.format(k, l, mean_val))
-
-    #plt.tight_layout()
-
-    plt.subplot(no_rows, no_cols, no_rows * no_cols)
-    plt.hist( avg_err, bins = np.int(len(M)/3.0), color = 'red' )
-
-    plt.xlabel('Avg. Line Error (MHz)')
-
-    plt.tight_layout()
-
-    return
-
-
-
 #####################################################################################
 
 # load fitted data
@@ -100,20 +50,10 @@ fit_all = pickle.load( open( 'fitted_data.pickle', "rb" ) )
 line_data = fit_all['line_data']
 
 #print(fit_all)
-#
-#asd
 
-#shifted_data = [shifted_data[i] for i in [0,1,2,3,5,6]]#,7,8,9,10,11,12]]
 
 
 (Ug_init, Ue_init, Dg_init, De_init) = get_U_init()
-
-#Ue_init = [
-#    [38255.2403528187, 3.735733648830435], #2.3895804164440537e-06],
-#    [1735.1086783255587, -0.15628385798669306],
-#    [37.95514890891632],
-#    [-1.21762341993954],
-#    ]
 
 
 # Do a Monte Carlo simulation
@@ -122,16 +62,21 @@ Ue_results = []
 De_results = []
 avg_err_arr = []
 
-line_error = 2.5e6
+line_error = 10.0e6
 
-for k in range(500):
+
+for k in range(1000):
     
     if k % 50 == 0:
         print(k)
 
     # add random shift to data
-    shifted_data = add_shifts(line_data.copy(), line_error = line_error)
 
+    # a deep copy is required here to REALLY copy the lsit
+    hlp_line_data = copy.deepcopy(line_data)
+
+    shifted_data = add_shifts(hlp_line_data, line_error = line_error)
+    
     (Ug, Ue, Dg, De) = fit_dunham_coefficients(shifted_data, Ug_init, Ue_init, Dg_init, De_init, vary_groundstate = False)
 
     all_result, avg_err = compare_exp_theory(shifted_data, Ug, Ue, Dg, De)
@@ -141,15 +86,15 @@ for k in range(500):
     avg_err_arr.append(avg_err)
 
 
-plot_Ue_error(Ue_results, avg_err_arr)
+#plot_Ue_error(Ue_results, avg_err_arr)
 
-plot_Ue_error(De_results, avg_err_arr)
+#plot_Ue_error(De_results, avg_err_arr)
 
 
 # save simulation results
 
 with open('error_simulation.pickle', 'wb') as f:
-        pickle.dump([Ue_results, De_results, avg_err_arr, line_error], f)
+    pickle.dump({'Ue_results' : Ue_results, 'De_results' : De_results, 'avg_err_arr' : avg_err_arr, 'line_error' : line_error}, f)
 
 
 plt.show()
