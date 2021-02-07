@@ -53,7 +53,7 @@ data = [
         {'date':20200618, 'time':144338, 'frequency_offset' : freq_offset2, 'ind1':ind1, 'ind2':ind2, 'color' : 'b', 'vg' : 0, 've' : 0, 'Jg' : 5, 'Je' : 4, 'iso' : 35},
         {'date':20200618, 'time':145042, 'frequency_offset' : freq_offset2, 'ind1':ind1, 'ind2':ind2, 'color' : 'b', 'vg' : 0, 've' : 0, 'Jg' : 6, 'Je' : 5, 'iso' : 37},
         {'date':20200618, 'time':145759, 'frequency_offset' : freq_offset2, 'ind1':ind1, 'ind2':ind2, 'color' : 'b', 'vg' : 0, 've' : 0, 'Jg' : 6, 'Je' : 5, 'iso' : 35},
-        {'date':20200618, 'time':150527, 'frequency_offset' : freq_offset2, 'ind1':ind1, 'ind2':ind2, 'color' : 'b', 'vg' : 0, 've' : 0, 'Jg' : 7, 'Je' : 6, 'iso' : 37},
+        {'date':20200618, 'time':150527, 'frequency_offset' : freq_offset2, 'ind1':ind1, 'ind2':ind2, 'color' : 'b', 'vg' : 0, 've' : 0, 'Jg' : 7, 'Je' : 6, 'iso' : 37, 'skip' : True},
         {'date':20200618, 'time':151343, 'frequency_offset' : freq_offset2, 'ind1':ind1, 'ind2':ind2, 'color' : 'b', 'vg' : 0, 've' : 0, 'Jg' : 7, 'Je' : 6, 'iso' : 35},
         {'date':20200618, 'time':152045, 'frequency_offset' : freq_offset2, 'ind1':ind1, 'ind2':ind2, 'color' : 'b', 'vg' : 0, 've' : 0, 'Jg' : 8, 'Je' : 7, 'iso' : 37, 'skip' : True},
         {'date':20200618, 'time':153043, 'frequency_offset' : freq_offset2, 'ind1':ind1, 'ind2':ind2, 'color' : 'b', 'vg' : 0, 've' : 0, 'Jg' : 8, 'Je' : 7, 'iso' : 35, 'skip' : True},

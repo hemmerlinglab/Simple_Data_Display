@@ -29,30 +29,60 @@ def get_Ug_Bernath():
         [-4.802e-3]
     ]
 
+    # constrained 
+    Dg = [
+        [0.0, -1.4432, 0.0, 0.0, 0.0],
+        [-1.2238, 0.0, 0.0],
+        [0.0, 0.0, 0.0],
+        [0.0],
+        [0.0]
+    ]
 
-    return Ug
+    return (Ug, Dg)
 
 ###################################################################
 
 def get_U_init():
 
-    Ug = get_Ug_Bernath()
+    (Ug, Dg) = get_Ug_Bernath()
 
     Ue = [
-        [ 38254.3257546237284,3.737453144643228],
-        [ 1752.056686477004, -0.1597],
-        [ -57.894492490862585 ],
-        #[ -0.12632036900968036 ],
+    [ 38257.17501435353,3.7373561499782517 ],
+    [ 1722.3811711416483,-0.16164221289477823 ],
+    [ 0.1 ]
     ]
 
+    De =  [
+    [ 0.0, 0.0 ],
+    [ -1.0, 0.0 ],
+    [ 0.0 ]
+    ]
+
+    ###################
+
     #Ue = [
-    #[ 38255.83148393301,3.7360633495069093,0.00014989689986777725 ],
-    #[ -6187.782325226907,-0.15843232862511214 ],
-    #[ -69.96603776027952 ],
-    ##[ -42.82514664637042 ],
+    #[ 38257.17501435353,3.7373561499782517 ],
+    #[ 1722.3811711416483,-0.16164221289477823 ],
+    #[ 0.1 ]
     #]
 
-    return (Ug, Ue)
+    Ue = [
+    [ 38253.16953987888,3.7370100040152563 ],
+    [ 1766.3041492863101,-0.1609525199616741 ],
+    [ -85.77292247914849 ],
+    ]
+
+    De =  [
+    [ -0.36, 0.0 ],
+    [ 0.0, 0.0 ],
+    [ 0.0 ]
+    ] 
+
+    
+
+    return (Ug, Ue, Dg, De)
+
+
 
 ###################################################################
 
@@ -120,7 +150,10 @@ def make_dunham_from_params(par):
     Ug = populate_Y(par, 'Ug', full_indeces_g)
     Ue = populate_Y(par, 'Ue', full_indeces_e)
 
-    return (Ug, Ue)
+    Dg = populate_Y(par, 'Dg', full_indeces_g)
+    De = populate_Y(par, 'De', full_indeces_e)
+
+    return (Ug, Ue, Dg, De)
 
 ###################################################################
 
@@ -145,12 +178,16 @@ def fcn2min_dunham(params, x, data, get_fit = False):
 
 ###################################################################
 
-def get_params(Ug, Ue, vary_groundstate):
+def get_params(Ug, Ue, Dg, De, vary_groundstate):
 
         # make parameters
         params = Parameters()
 
         if vary_groundstate:
+            
+            print("Don't vary groundstate")
+            asd
+            
             # ground state
             for k in range(len(Ug)):
                 for l in range(len(Ug[k])):
@@ -158,10 +195,15 @@ def get_params(Ug, Ue, vary_groundstate):
                     val = Ug[k][l]
 
                     params.add('Ug' + str(k) + str(l), value = val, vary = True)
-               
+                
+                    # adding Born-Oppenheimer correction
+                    params.add('Dg' + str(k) + str(l), value = 0.0, vary = False)
+
+
         else:
+
             # use Bernath values and don't vary the values
-            Ug = get_Ug_Bernath()
+            Ug, Dg = get_Ug_Bernath()
 
             for k in range(len(Ug)):
                 for l in range(len(Ug[k])):
@@ -169,7 +211,11 @@ def get_params(Ug, Ue, vary_groundstate):
                     val = Ug[k][l]
                     
                     params.add('Ug' + str(k) + str(l), value = val, vary = False)
+    
+                    # adding Born-Oppenheimer correction
+                    val = Dg[k][l]
 
+                    params.add('Dg' + str(k) + str(l), value = val, vary = False)
 
         # excited state
         for k in range(len(Ue)):
@@ -179,16 +225,27 @@ def get_params(Ug, Ue, vary_groundstate):
                 
                 params.add('Ue' + str(k) + str(l), value = val, vary = True)
 
+                # Born-Oppenheimer corrections for excited state
 
+                # Should throw error if Ue and De don't have the same dimensions
+                
+                val = De[k][l]
+
+                # adding Born-Oppenheimer correction
+
+                if not val == 0.0:
+                    params.add('De' + str(k) + str(l), value = val, vary = True)
+                else:
+                    params.add('De' + str(k) + str(l), value = 0.0, vary = False)
 
         return params
 
 ###################################################################
 
-def fit_dunham_coefficients(d, Ug, Ue, vary_groundstate = False):
+def fit_dunham_coefficients(d, Ug, Ue, Dg, De, vary_groundstate = False):
  
         # get the params from reduced mass matrix
-        params = get_params(Ug, Ue, vary_groundstate)
+        params = get_params(Ug, Ue, Dg, De, vary_groundstate)
 
         # do fit, here with leastsq model
         minner = Minimizer(fcn2min_dunham, params, fcn_args=([], d))
@@ -200,8 +257,8 @@ def fit_dunham_coefficients(d, Ug, Ue, vary_groundstate = False):
         #report_fit(result)
 
         # transform params back to Dunham
-        (Ug, Ue) = make_dunham_from_params(result.params)
+        (Ug, Ue, Dg, De) = make_dunham_from_params(result.params)
 
-        return (Ug, Ue)
+        return (Ug, Ue, Dg, De)
 
 

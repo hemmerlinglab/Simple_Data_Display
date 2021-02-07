@@ -17,7 +17,9 @@ ind2 = 120 #105
 
 freq_offset1 = 3.0 * -12.21e6
 
-n_moving_avg = 1
+freq_offset2 = 3.0 * -10.0e6
+
+n_moving_avg = 3#1
 
 data = [
         {'date':20200619, 'time':131806, 'frequency_offset' : freq_offset1, 'ind1':ind1, 'ind2':ind2, 'color' : 'k', 'vg' : 1, 've' : 1, 'Jg' : 1, 'Je' : 1, 'iso' : 35},# 'skip' : True}, # Q line
@@ -35,7 +37,6 @@ data = [
         #{'date':20201211, 'time':142259, 'frequency_offset' : freq_offset1, 'ind1':ind1, 'ind2':ind2, 'color' : 'r', 'vg' : 1, 've' : 1, 'Jg' : 4, 'Je' : 3, 'iso' : 35}, # P-line
         
         #{'date':20201211, 'time':124633, 'frequency_offset' : freq_offset1, 'ind1':ind1, 'ind2':ind2, 'color' : 'r', 'vg' : 1, 've' : 1, 'Jg' : 3, 'Je' : 2, 'iso' : 35}, # P-line
-        {'date':20201211, 'time':110257, 'frequency_offset' : freq_offset1, 'ind1':ind1, 'ind2':ind2, 'color' : 'r', 'vg' : 1, 've' : 1, 'Jg' : 5, 'Je' : 4, 'iso' : 35}, # P-line
         #{'date':20201210, 'time':132837, 'frequency_offset' : freq_offset1, 'ind1':ind1, 'ind2':ind2, 'color' : 'r', 'vg' : 1, 've' : 1, 'Jg' : 4, 'Je' : 3, 'iso' : 35}, # P-line
         #{'date':20200619, 'time':144221, 'ind1':ind1, 'ind2':ind2, 'color' : 'r', 'Jg' : 1, 'Je' : 1, 'iso' : 35, 'skip' : True}, # Q line
         #{'date':20200619, 'time':153050, 'ind1':ind1, 'ind2':ind2, 'color' : 'r', 'Jg' : 6, 'Je' : 7, 'iso' : 35}, 
@@ -43,6 +44,8 @@ data = [
         #{'date':20200619, 'time':155825, 'ind1':ind1, 'ind2':ind2, 'color' : 'b', 'Jg' : 1, 'Je' : 1, 'iso' : 35, 'skip' : True}, # Q line
         #{'date':20200619, 'time':160839, 'ind1':ind1, 'ind2':ind2, 'color' : 'b', 'Jg' : 1, 'Je' : 1, 'iso' : 35, 'skip' : True}, # Q line
         #{'date':20200619, 'time':163351, 'ind1':ind1, 'ind2':ind2, 'color' : 'g', 'Jg' : 1, 'Je' : 1, 'iso' : 35, 'skip' : True}, # Q line
+        {'date':20210129, 'time':110759, 'frequency_offset' : freq_offset2, 'ind1':ind1, 'ind2':ind2, 'color' : 'r', 'vg' : 1, 've' : 1, 'Jg' : 2, 'Je' : 3, 'iso' : 37},
+        {'date':20201211, 'time':110257, 'frequency_offset' : freq_offset1, 'ind1':ind1, 'ind2':ind2, 'color' : 'r', 'vg' : 1, 've' : 1, 'Jg' : 5, 'Je' : 4, 'iso' : 35}, # P-line
         ]
 
 

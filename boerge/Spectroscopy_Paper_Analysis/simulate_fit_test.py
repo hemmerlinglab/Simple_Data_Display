@@ -82,7 +82,7 @@ Ue_init = [
 
 (Ug, Ue) = fit_dunham_coefficients(fit_all['line_data'], Ug_init, Ue_init, vary_groundstate = False)
 
-comparison = make_report(fit_all['line_data'], Ug, Ue)#, latex_dunham_file = 'latex_dunham.tex', latex_prediction_file = 'latex_prediction.tex')
+comparison = make_report(fit_all['line_data'], Ug, Ue)
 
 
 print_dunham(Ue)

@@ -75,6 +75,9 @@ def fit_each_line(spec, plot = False):
         Jg = line_info[k]['Jg']
         Je = line_info[k]['Je']
 
+        hlp_isotope = line_info[k]['iso']
+        hlp_line_type = get_line_type(Jg, Je)
+        
         x = x_arr[k]
         y = y_arr[k]
 
@@ -95,21 +98,22 @@ def fit_each_line(spec, plot = False):
 
 
             # create data matrix to fit Dunham coefficients
-            hlp = [vg, Jg, ve, Je, result.params['p2'].value, line_info[k]['iso']]
+            hlp = [vg, Jg, ve, Je, result.params['p2'].value, hlp_isotope]
 
             if Jg == 1 and Je == 1:
                 # this case is a Q line but with a single Gaussian fit
                 q_result.append(hlp)
 
-                # uncomment these three lines to include the fitting of the Q11-lines
+                ## uncomment these three lines to include the fitting of the Q11-lines
                 #line_type.append(get_line_type(Jg, Je))
                 #height_arr.append(result.params['p1'].value)
                 #data.append(hlp)
 
             else:
-                line_type.append(get_line_type(Jg, Je))
-                height_arr.append(result.params['p1'].value)
-                data.append(hlp)
+                if True: #hlp_isotope == 35:
+                    line_type.append(hlp_line_type)
+                    height_arr.append(result.params['p1'].value)
+                    data.append(hlp)
 
         else:
             if Jg == 1 and Je == 1:
@@ -193,6 +197,7 @@ def plot_spectrum(spec, fits, style = '.-', cnt_freq = 0.0, filename = 'spectrum
 
         plt.plot((x - cnt_freq)/1e9, 2*60*y, style, color = color)
 
+    #  mark the lines that were used in the fitting process
     for k in range(len(line_data)):
         plt.axvline((line_data[k][4] - cnt_freq)/1e9, ymin = 0, ymax = 1, ls = '--', color = 'r')
 
@@ -245,11 +250,11 @@ def plot_prediction(x, y, fac = 1.0, offset = 0.0, style = '-', cnt_freq = 0.0, 
 
 ###############################################
 
-def plot_branches(fit_data, cnt_freq, Ug, Ue, vg = 0, ve = 0):
+def plot_branches(fit_data, cnt_freq, Ug, Ue, Dg, De, vg = 0, ve = 0):
 
     d = fit_data['line_data']
 
-    (Yg35, Ye35, Yg37, Ye37) = get_scaled_dunham(Ug, Ue)
+    (Yg35, Ye35, Yg37, Ye37) = get_scaled_dunham(Ug, Ue, Dg, De)
     
     (l_P35, l_Q35, l_R35) = get_transition_energies(Yg35, Ye35, vg, ve, Jmax = 8)
     (l_P37, l_Q37, l_R37) = get_transition_energies(Yg37, Ye37, vg, ve, Jmax = 8)
@@ -314,51 +319,106 @@ with open('fitted_data.pickle', 'wb') as f:
 
 #do_sequence_fit([fit_pr00, fit_pr11])
 
-(Ug_init, Ue_init) = get_U_init()
+(Ug_init, Ue_init, Dg_init, De_init) = get_U_init()
 
-(Ug, Ue) = fit_dunham_coefficients(fit_all['line_data'], Ug_init, Ue_init, vary_groundstate = False)
+(Ug, Ue, Dg, De) = fit_dunham_coefficients(fit_all['line_data'], Ug_init, Ue_init, Dg_init, De_init, vary_groundstate = False)
 
-comparison = make_report(fit_all['line_data'], Ug, Ue, latex_dunham_file = 'latex_dunham.tex', latex_prediction_file = 'latex_prediction.tex')
+comparison = make_report(fit_all['line_data'], Ug, Ue, Dg, De, latex_dunham_file = 'latex_dunham.tex', latex_prediction_file = 'latex_prediction.tex')
 
 
-# plot branches of P- and R-lines
-plot_branches(fit_pr00, cnt_freq_00, Ug, Ue)
-plot_branches(fit_pr11, cnt_freq_11, Ug, Ue, vg = 1, ve = 1)
+## plot branches of P- and R-lines
+#plot_branches(fit_pr00, cnt_freq_00, Ug, Ue, Dg, De)
+#plot_branches(fit_pr11, cnt_freq_11, Ug, Ue, Dg, De, vg = 1, ve = 1)
 
 
 ##################################
 # Plot errors
 ##################################
 
-plot_errors(comparison)
+plot_errors(comparison, my_max = 200)
 
-###################################
+##################################
 ## Plot spectrum and theory
-###################################
+##################################
 
-(nus_00, y35_00, y37_00) = get_spectrum(Ug, Ue, vg = 0, ve = 0, Jmax = 15, df = 120e9, T = 6)
+(nus_00, y35_00, y37_00) = get_spectrum(Ug, Ue, Dg, De, vg = 0, ve = 0, Jmax = 15, df = 120e9, T = 6)
 
-(nus_11, y35_11, y37_11) = get_spectrum(Ug, Ue, vg = 1, ve = 1, Jmax = 10, df = 120e9, T = 6)
+(nus_11, y35_11, y37_11) = get_spectrum(Ug, Ue, Dg, De, vg = 1, ve = 1, Jmax = 10, df = 120e9, T = 6)
 
+# moving averages for display
 mov_avg = True
 mov_n = 5
 
 plt.figure()
 
 plot_spectrum(v00, fit_pr00, style = '.-', cnt_freq = cnt_freq_00, filename = 'spectrum_00', my_color = ['r'] * 3, do_moving_average = mov_avg, mov_n = mov_n)
-plot_prediction(nus_00, y35_00, fac = 2, offset = 0.0, cnt_freq = cnt_freq_00, color = ['k'] * 3)
-plot_prediction(nus_00, y37_00, fac = 4, offset = 0.0, style = '--', cnt_freq = cnt_freq_00, color = ['k'] * 3)
+plot_prediction(nus_00, y35_00, fac = -2, offset = 0.0, cnt_freq = cnt_freq_00, color = ['k'] * 3)
+plot_prediction(nus_00, y37_00, fac = -4, offset = 0.0, style = '--', cnt_freq = cnt_freq_00, color = ['k'] * 3)
 
 
 plt.figure()
 
 plot_spectrum(v11, fit_pr11, style = '.-', cnt_freq = cnt_freq_11, filename = 'spectrum_11', my_color = ['r'] * 3, do_moving_average = mov_avg, mov_n = mov_n)
-plot_prediction(nus_11, y35_11, fac = 2, offset = 0.0, cnt_freq = cnt_freq_11, color = ['k'] * 3)
-plot_prediction(nus_11, y37_11, fac = 4, offset = 0.0, style = '--', cnt_freq = cnt_freq_11, color = ['k'] * 3)
+plot_prediction(nus_11, y35_11, fac = -2, offset = 0.0, cnt_freq = cnt_freq_11, color = ['k'] * 3)
+plot_prediction(nus_11, y37_11, fac = -4, offset = 0.0, style = '--', cnt_freq = cnt_freq_11, color = ['k'] * 3)
+
+plt.xlim(-65, 106)
+
+
+#plt.show()
 
 
 
-plt.show()
+print("Shift Cl-35: {0:0.3f} 1/cm".format( Ue[0][0] * mass_e/(massCl_35 * amu) * De[0][0] ))
+print("Shift Cl-37: {0:0.3f} 1/cm".format( Ue[0][0] * mass_e/(massCl_37 * amu) * De[0][0] ))
+print("Diff Cl-37: {0:0.3f} 1/cm".format( Ue[0][0] * mass_e*(1/(massCl_37 * amu) - 1/(massCl_35 * amu)) * De[0][0] ))
+
+print()
+
+print("Shift Cl-35: {0:0.3f} 1/cm".format( Ue[1][0] * mass_e/(massCl_35 * amu) * De[1][0] ))
+print("Shift Cl-37: {0:0.3f} 1/cm".format( Ue[1][0] * mass_e/(massCl_37 * amu) * De[1][0] ))
+print("Diff Cl-37: {0:0.3f} 1/cm".format( Ue[1][0] * mass_e*(1/(massCl_37 * amu) - 1/(massCl_35 * amu)) * De[1][0] ))
+
+print()
 
 
+print("Shift Cl-35: {0:0.3f} 1/cm".format( Ue[2][0] * mass_e/(massCl_35 * amu) * De[2][0] ))
+print("Shift Cl-37: {0:0.3f} 1/cm".format( Ue[2][0] * mass_e/(massCl_37 * amu) * De[2][0] ))
+print("Diff Cl-37: {0:0.3f} 1/cm".format( Ue[2][0] * mass_e*(1/(massCl_37 * amu) - 1/(massCl_35 * amu)) * De[2][0] ))
+
+
+
+
+
+
+# to make nice circles and broken axis: 
+
+
+
+
+# from brokenaxes import brokenaxes
+#broken_xlims = []
+#for k in range(len(plot_x)):
+#    
+#    avg_cnt = (plot_x[k][0] + plot_x[k][-1])/2.0
+#    offset = 1.5
+#    hlp = [avg_cnt - offset, avg_cnt + offset]
+#    broken_xlims.append(hlp)
+#
+#broken_xlims.sort(key = lambda x : x[0])
+#
+#
+#
+#line_pos = np.sort(line_pos)
+#
+#my_color = ['r', 'k', 'b', 'g', 'y']
+#
+#bax = brokenaxes(xlims=broken_xlims) #, subplot_spec=sps1)
+#
+#for k in range(len(x_data)):
+#
+#    
+#    bax.scatter(plot_x[k], offset_free_data[k], color = my_color[k], marker = 'o', fc = 'w', lw = 2.0)
+#
+#
 

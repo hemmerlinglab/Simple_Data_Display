@@ -28,17 +28,14 @@ cnt_freq_11 = 1145.330000e12 - 100e9
 
 
 
-def add_shifts(d):
+def add_shifts(d, line_error = 5.0e6):
 
     # this function adds random shifts to each measured frequency
 
     for k in range(len(d)):
         #d[k][4] += (2*np.random.rand() - 1.0)*10e6
         
-        d[k][4] += np.random.normal(loc = 0.0, scale = 1.0e6)
-        #d[k][4] += 0*100e6
-
-        #print(d[k])
+        d[k][4] += np.random.normal(loc = 0.0, scale = line_error)
 
     return d
 
@@ -56,14 +53,13 @@ def plot_Ue_error(M, avg_err):
 
             err.append([k, l, hlp])
 
-    
+    no_rows = 3
+    no_cols = 3
+
     for n in range(len(err)):
        
         k = err[n][0]
         l = err[n][1]
-
-        no_rows = 4
-        no_cols = 3
 
         plt.subplot(no_rows, no_cols, k * no_cols + l + 1)
 
@@ -83,69 +79,90 @@ def plot_Ue_error(M, avg_err):
     
         plt.xlabel('U[{0}][{1}] + {2:.4f} (1/cm)'.format(k, l, mean_val))
 
-    plt.tight_layout()
+    #plt.tight_layout()
 
-    plt.subplot(no_cols, no_rows, no_rows * no_cols)
+    plt.subplot(no_rows, no_cols, no_rows * no_cols)
     plt.hist( avg_err, bins = np.int(len(M)/3.0), color = 'red' )
 
     plt.xlabel('Avg. Line Error (MHz)')
+
+    plt.tight_layout()
+
+    return
+
+
+
+#####################################################################################
 
 # load fitted data
 fit_all = pickle.load( open( 'fitted_data.pickle', "rb" ) )
 
 line_data = fit_all['line_data']
 
-print(fit_all)
-
-asd
+#print(fit_all)
+#
+#asd
 
 #shifted_data = [shifted_data[i] for i in [0,1,2,3,5,6]]#,7,8,9,10,11,12]]
 
 
-(Ug_init, Ue_init) = get_U_init()
+(Ug_init, Ue_init, Dg_init, De_init) = get_U_init()
 
-Ue_init = [
-    [38255.2403528187, 3.735733648830435], #2.3895804164440537e-06],
-    [1735.1086783255587, -0.15628385798669306],
-    [37.95514890891632],
-    [-1.21762341993954],
-    ]
+#Ue_init = [
+#    [38255.2403528187, 3.735733648830435], #2.3895804164440537e-06],
+#    [1735.1086783255587, -0.15628385798669306],
+#    [37.95514890891632],
+#    [-1.21762341993954],
+#    ]
 
 
 # Do a Monte Carlo simulation
 
 Ue_results = []
+De_results = []
 avg_err_arr = []
 
-for k in range(100):
+line_error = 2.5e6
+
+for k in range(500):
     
     if k % 50 == 0:
         print(k)
 
     # add random shift to data
-    shifted_data = add_shifts(line_data.copy())
+    shifted_data = add_shifts(line_data.copy(), line_error = line_error)
 
-    (Ug, Ue) = fit_dunham_coefficients(shifted_data, Ug_init, Ue_init, vary_groundstate = False)
+    (Ug, Ue, Dg, De) = fit_dunham_coefficients(shifted_data, Ug_init, Ue_init, Dg_init, De_init, vary_groundstate = False)
 
-    all_result, avg_err = compare_exp_theory(shifted_data, Ug, Ue)
+    all_result, avg_err = compare_exp_theory(shifted_data, Ug, Ue, Dg, De)
     
     Ue_results.append(Ue)
+    De_results.append(De)
     avg_err_arr.append(avg_err)
 
 
 plot_Ue_error(Ue_results, avg_err_arr)
+
+plot_Ue_error(De_results, avg_err_arr)
+
+
+# save simulation results
+
+with open('error_simulation.pickle', 'wb') as f:
+        pickle.dump([Ue_results, De_results, avg_err_arr, line_error], f)
+
 
 plt.show()
 
 
 
 
-comparison = make_report(line_data, Ug, Ue, latex_dunham_file = 'latex_dunham.tex', latex_prediction_file = 'latex_prediction.tex')
-
-plot_errors(comparison)
-
-
-(Yg35, Ye35, Yg37, Ye37) = get_scaled_dunham(Ug, Ue)
+#comparison = make_report(line_data, Ug, Ue, Dg, De, latex_dunham_file = 'latex_dunham.tex', latex_prediction_file = 'latex_prediction.tex')
+#
+#plot_errors(comparison)
+#
+#
+#(Yg35, Ye35, Yg37, Ye37) = get_scaled_dunham(Ug, Ue, Dg, De)
 
 #print_dunham(Yg35)
 #print_dunham(Yg37)

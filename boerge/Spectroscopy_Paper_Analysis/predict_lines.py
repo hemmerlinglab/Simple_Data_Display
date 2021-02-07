@@ -27,9 +27,9 @@ matplotlib.rc('font', **font)
 
 def predict_lines(save_filename = 'line_predictions.txt', vg = 0, ve = 0, Jmax = 10):
 
-    (Ug, Ue) = load_dunham()
+    (Ug, Ue, Dg, De) = load_dunham()
 
-    (Yg35, Ye35, Yg37, Ye37) = get_scaled_dunham(Ug, Ue)
+    (Yg35, Ye35, Yg37, Ye37) = get_scaled_dunham(Ug, Ue, Dg, De)
     
     d = []
     for Jg in range(0, Jmax):
@@ -118,7 +118,7 @@ def load_dunham(filename = 'dunham_matrices_fit.pickle'):
     
     arr = pickle.load( open( filename, "rb" ) )
 
-    return (arr['Ug'], arr['Ue'])
+    return (arr['Ug'], arr['Ue'], arr['Dg'], arr['De'])
 
 
 ##############################
@@ -127,9 +127,18 @@ def load_dunham(filename = 'dunham_matrices_fit.pickle'):
 
 
 
-predict_lines(save_filename = 'line_predictions.txt', vg = 0, ve = 0, Jmax = 4)
-predict_lines(save_filename = 'line_predictions.txt', vg = 1, ve = 1, Jmax = 4)
-predict_lines(save_filename = 'line_predictions.txt', vg = 2, ve = 2, Jmax = 4)
+predict_lines(save_filename = 'line_predictions.txt', vg = 0, ve = 0, Jmax = 8)
+predict_lines(save_filename = 'line_predictions.txt', vg = 1, ve = 1, Jmax = 8)
+
+predict_lines(save_filename = 'line_predictions.txt', vg = 2, ve = 2, Jmax = 3)
 #predict_lines(save_filename = 'line_predictions.txt', vg = 3, ve = 3, Jmax = 4)
+
+predict_lines(save_filename = 'line_predictions.txt', vg = 1, ve = 0, Jmax = 3)
+
+predict_lines(save_filename = 'line_predictions.txt', vg = 0, ve = 1, Jmax = 3)
+
+predict_lines(save_filename = 'line_predictions.txt', vg = 0, ve = 2, Jmax = 2)
+predict_lines(save_filename = 'line_predictions.txt', vg = 1, ve = 2, Jmax = 2)
+predict_lines(save_filename = 'line_predictions.txt', vg = 1, ve = 3, Jmax = 2)
 
 
