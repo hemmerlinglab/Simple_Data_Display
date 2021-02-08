@@ -168,7 +168,8 @@ def get_data(mydate, mytime, datafolder = '/home/molecules/software/data/'):
 
 
     f_freqs = basefilename + time_stamp + '_set_points'
-    wavemeter_freqs = basefilename + time_stamp + '_act_freqs'
+    #wavemeter_freqs = basefilename + time_stamp + '_act_freqs'
+    wavemeter_freqs = basefilename + time_stamp + '_set_points'
     
     freqs = np.genfromtxt(f_freqs, delimiter=",")
     wavemeter_freqs = np.genfromtxt(wavemeter_freqs, delimiter=",")

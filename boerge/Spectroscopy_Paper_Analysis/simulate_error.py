@@ -65,7 +65,7 @@ avg_err_arr = []
 line_error = 10.0e6
 
 
-for k in range(1000):
+for k in range(5000):
     
     if k % 50 == 0:
         print(k)
@@ -94,7 +94,7 @@ for k in range(1000):
 # save simulation results
 
 with open('error_simulation.pickle', 'wb') as f:
-    pickle.dump({'Ue_results' : Ue_results, 'De_results' : De_results, 'avg_err_arr' : avg_err_arr, 'line_error' : line_error}, f)
+    pickle.dump({'Ue' : Ue, 'Ue_results' : Ue_results, 'De' : De, 'De_results' : De_results, 'avg_err_arr' : avg_err_arr, 'line_error' : line_error}, f)
 
 
 plt.show()

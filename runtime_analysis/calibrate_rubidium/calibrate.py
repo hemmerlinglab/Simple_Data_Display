@@ -11,10 +11,11 @@ from fit_lorentz import fit_lorentz
 
 
 
-my_date = '20201012'
+#my_date = '20201012'
 #my_time = '145145'
 
-my_time = sys.argv[1]
+my_date = sys.argv[1]
+my_time = sys.argv[2]
 
 #my_date = '20200619'
 #my_time = '095302'
@@ -22,8 +23,8 @@ my_time = sys.argv[1]
 #my_date = '20200618'
 #my_time = '104630'
 
-folder = '/home/molecules/software/data/'
-#folder = '/Users/boerge/Software/offline_data/'
+#folder = '/home/molecules/software/data/'
+folder = '/Users/boerge/Software/offline_data/'
 
 (freqs, signal, wavemeter_freqs) = get_data(my_date, my_time, datafolder = folder)
 
