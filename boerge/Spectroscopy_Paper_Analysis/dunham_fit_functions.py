@@ -42,7 +42,7 @@ def get_Ug_Bernath():
 
 ###################################################################
 
-def get_U_init():
+def get_U_init(set_bob_zero = False):
 
     (Ug, Dg) = get_Ug_Bernath()
 
@@ -78,7 +78,12 @@ def get_U_init():
     [ 0.0 ]
     ] 
 
-    
+    if set_bob_zero:
+        De = [
+          [ 0.0, 0.0 ],
+          [ 0.0, 0.0 ],
+          [ 0.0 ]
+          ]
 
     return (Ug, Ue, Dg, De)
 

@@ -23,6 +23,14 @@ font = {#'family' : 'normal',
 matplotlib.rc('font', **font)
 ###############################################
 
+
+
+# General flags
+
+INCLUDE_Q_LINES = True
+FIT_WHICH_ISOTOPES = 35 # can be 35, 37 or 0 (both)
+SET_BOB_ZERO = True
+
 def get_spectra(folder):
 
     # read in data file
@@ -104,13 +112,16 @@ def fit_each_line(spec, plot = False):
                 # this case is a Q line but with a single Gaussian fit
                 q_result.append(hlp)
 
-                ## uncomment these three lines to include the fitting of the Q11-lines
-                #line_type.append(get_line_type(Jg, Je))
-                #height_arr.append(result.params['p1'].value)
-                #data.append(hlp)
+                # uncomment these three lines to include the fitting of the Q11-lines
+                if INCLUDE_Q_LINES:
+                    
+                    if True: #(hlp_isotope == FIT_WHICH_ISOTOPES or FIT_WHICH_ISOTOPES == 0):
+                        line_type.append(get_line_type(Jg, Je))
+                        height_arr.append(result.params['p1'].value)
+                        data.append(hlp)
 
             else:
-                if True: #hlp_isotope == 35:
+                if (hlp_isotope == FIT_WHICH_ISOTOPES or FIT_WHICH_ISOTOPES == 0):
                     line_type.append(hlp_line_type)
                     height_arr.append(result.params['p1'].value)
                     data.append(hlp)
@@ -319,11 +330,14 @@ with open('fitted_data.pickle', 'wb') as f:
 
 #do_sequence_fit([fit_pr00, fit_pr11])
 
-(Ug_init, Ue_init, Dg_init, De_init) = get_U_init()
+(Ug_init, Ue_init, Dg_init, De_init) = get_U_init(set_bob_zero = SET_BOB_ZERO)
 
 (Ug, Ue, Dg, De) = fit_dunham_coefficients(fit_all['line_data'], Ug_init, Ue_init, Dg_init, De_init, vary_groundstate = False)
 
-comparison = make_report(fit_all['line_data'], Ug, Ue, Dg, De, latex_dunham_file = 'latex_dunham.tex', latex_prediction_file = 'latex_prediction.tex')
+
+my_ext = str(FIT_WHICH_ISOTOPES)
+comparison = make_report(fit_all['line_data'], Ug, Ue, Dg, De, latex_dunham_file = 'latex_dunham' + my_ext, latex_prediction_file = 'latex_prediction' + my_ext)
+
 
 
 ## plot branches of P- and R-lines
@@ -343,7 +357,11 @@ plot_errors(comparison, my_max = 200)
 
 (nus_00, y35_00, y37_00) = get_spectrum(Ug, Ue, Dg, De, vg = 0, ve = 0, Jmax = 15, df = 120e9, T = 6)
 
-(nus_11, y35_11, y37_11) = get_spectrum(Ug, Ue, Dg, De, vg = 1, ve = 1, Jmax = 10, df = 120e9, T = 6)
+(nus_11, y35_11, y37_11) = get_spectrum(Ug, Ue, Dg, De, vg = 1, ve = 1, Jmax = 15, df = 120e9, T = 6)
+
+#nus_11 = nus_00
+#y35_11 = y35_00
+#y37_11 = y37_00
 
 # moving averages for display
 mov_avg = True
@@ -362,10 +380,10 @@ plot_spectrum(v11, fit_pr11, style = '.-', cnt_freq = cnt_freq_11, filename = 's
 plot_prediction(nus_11, y35_11, fac = -2, offset = 0.0, cnt_freq = cnt_freq_11, color = ['k'] * 3)
 plot_prediction(nus_11, y37_11, fac = -4, offset = 0.0, style = '--', cnt_freq = cnt_freq_11, color = ['k'] * 3)
 
-plt.xlim(-65, 106)
+#plt.xlim(-65, 106)
 
 
-#plt.show()
+plt.show()
 
 
 
