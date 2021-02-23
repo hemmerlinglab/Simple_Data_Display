@@ -159,8 +159,8 @@ class ControlWidget(QWidget):
 class CentralWidget(QWidget):
     def __init__(self,parent):
         QWidget.__init__(self,parent)
-        self.basefilename = '20201030'
-        self.time_stamp = '151550'
+        self.basefilename = '20210212'
+        self.time_stamp = '142438'
         self.freq_mult = 1
         self.filepath = '/home/molecules/software/data/'+self.basefilename
         # self.filepath = self.basefilename
@@ -490,10 +490,10 @@ class CentralWidget(QWidget):
 
         elif event.key() == Qt.Key_Right:
             if self.filetype == 'spec':
-                if self.f_idx < self.ch0.shape[0]-1:
+                if self.f_idx < self.ch0.shape[0]-2:
                     self.f_idx += 1
             elif self.filetype == 'target':
-                if self.x_idx < self.steps_x-1:
+                if self.x_idx < self.steps_x-2:
                     self.x_idx += 1
             else:
                 pass

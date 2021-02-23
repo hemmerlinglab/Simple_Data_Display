@@ -74,8 +74,8 @@ def get_avg_absorption(coords,super_image):
 
 # get images for foreground and background
 
-t1 = 10.0
-t2 = 11.0
+t1 = 15.0 #10.0
+t2 = 17.0 #11.0
 
 t1_bg = 30.0
 t2_bg = 39.0
@@ -144,8 +144,8 @@ plot_single_image(inter_x, inter_y, target_img, color_max = color_max, title = "
 # r = 0.55
 
 r = 0.5
-x0 = 5.0
-y0 = 5.15
+x0 = 5.6
+y0 = 4.75
 
 tpar = np.pi/180 * np.linspace(40, 320, 100)
 
