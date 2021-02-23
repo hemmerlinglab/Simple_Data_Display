@@ -27,9 +27,9 @@ matplotlib.rc('font', **font)
 
 # General flags
 
-INCLUDE_Q_LINES = True
-FIT_WHICH_ISOTOPES = 35 # can be 35, 37 or 0 (both)
-SET_BOB_ZERO = True
+INCLUDE_Q_LINES = False
+FIT_WHICH_ISOTOPES = 0 # can be 35, 37 or 0 (both)
+SET_BOB_ZERO = False
 
 def get_spectra(folder):
 

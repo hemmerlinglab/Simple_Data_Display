@@ -54,10 +54,20 @@ sig_arr = []
 sig_fit_arr = []
 hlp_arr = []
 
+# error analysis
+err_set_freqs_arr = []
+err_act_freqs_arr = []
+err_act_avg_freqs_arr = []
+
+
 for n in range(len(data)):
 
     # read in data
-    (times, freqs, ch_arr, laser_offset) = read_in_data(data[n], moving_avg_no = 0)
+    (times, freqs, act_freqs, act_avg_freqs, ch_arr, laser_offset) = read_in_data(data[n], moving_avg_no = 0)
+
+    err_set_freqs_arr.append(freqs)
+    err_act_freqs_arr.append(act_freqs)
+    err_act_avg_freqs_arr.append(act_avg_freqs)
 
     #sig = np.mean(ch_arr[0], axis = 0)
     ## plot time traces
@@ -88,6 +98,10 @@ for n in range(len(data)):
 
 f_arr = np.array(f_arr)
 sig_arr = np.array(sig_arr)
+
+err_set_freqs_arr = np.array(err_set_freqs_arr)
+err_act_freqs_arr = np.array(err_act_freqs_arr)
+err_act_avg_freqs_arr = np.array(err_act_avg_freqs_arr)
 
 
 
@@ -172,6 +186,14 @@ import pickle
 
 with open('data.pickle', 'wb') as f:
     pickle.dump({'f_arr' : f_arr, 'sig_arr' : sig_arr, 'data' : data}, f)
+
+
+with open('error.pickle', 'wb') as f:
+    pickle.dump({'set_f' : err_set_freqs_arr, 'act_f' : err_act_freqs_arr, 'act_avg_f' : err_act_avg_freqs_arr}, f)
+
+
+
+
 
 
 

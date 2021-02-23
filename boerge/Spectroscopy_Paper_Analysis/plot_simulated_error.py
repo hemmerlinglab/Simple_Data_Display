@@ -67,8 +67,8 @@ def plot_Ue_error(M, avg_err, my_str = 'U'):
 
         if not my_max == 0.0:
             plt.xlim(-my_max, my_max)
-    
-        plt.xlabel(my_str + '[{0}][{1}] + {2:.4f} (1/cm)'.format(k, l, mean_val))
+  
+        plt.xlabel(my_str + '[{0}][{1}] + ({2:.4f} +/- {3:.4f}) (1/cm)'.format(k, l, mean_val, M_err[k][l]))
 
     #plt.tight_layout()
 
@@ -122,7 +122,7 @@ def plot_Ue_vs_avg_error(M, avg_err, my_str = 'U'):
         if not my_max == 0.0:
             plt.xlim(-my_max, my_max)
     
-        plt.xlabel(my_str + '[{0}][{1}] + {2:.4f} (1/cm)'.format(k, l, mean_val))
+        plt.xlabel(my_str + '[{0}][{1}] + {2:.4f} +/- {3:.4f} (1/cm)'.format(k, l, M[k][l], M_err[k][l]))
 
         #print(avg_err, err_dist)
 
@@ -140,11 +140,15 @@ def show_matrix(M, M_err, txt = 'U'):
 
     return
 
-############################################################################
 
+
+
+
+############################################################################
 
 # load error simulation
 arr = pickle.load( open( 'error_simulation.pickle', "rb" ) )
+#arr = pickle.load( open( 'error_simulation_john.pickle', "rb" ) )
 
 
 Ue_err = plot_Ue_error(arr['Ue_results'], arr['avg_err_arr'], my_str = 'U')

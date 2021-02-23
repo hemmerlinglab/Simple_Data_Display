@@ -15,8 +15,12 @@ matplotlib.rc('font', **font)
 
 data = [
         {'date':20210113, 'time':151505},
-            {'date':20210128, 'time':163125},
-                ]
+        {'date':20210128, 'time':163125},
+        {'date':20210203, 'time':172431},
+        {'date':20210212, 'time':141519},
+        {'date':20210212, 'time':141708},
+        {'date':20210218, 'time':114636},
+       ]
 
 options = { 'offset_avg_points' : 5, 'moving_avg_no' : 0, 'subtract_dc_offset' : False }
 

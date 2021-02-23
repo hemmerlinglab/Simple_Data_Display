@@ -9,7 +9,7 @@ from constants import *
 from data_functions import *
 from aux_spectrum_functions import get_spectrum
 
-from dunham_fit_functions import fit_dunham_coefficients, get_U_init
+from dunham_fit_functions import fit_dunham_coefficients, get_U_init, get_U_John
 
 import copy
 
@@ -62,10 +62,10 @@ Ue_results = []
 De_results = []
 avg_err_arr = []
 
-line_error = 10.0e6
+line_error = 15.0e6
 
 
-for k in range(5000):
+for k in range(250):
     
     if k % 50 == 0:
         print(k)
@@ -86,18 +86,18 @@ for k in range(5000):
     avg_err_arr.append(avg_err)
 
 
-#plot_Ue_error(Ue_results, avg_err_arr)
-
-#plot_Ue_error(De_results, avg_err_arr)
 
 
 # save simulation results
 
 with open('error_simulation.pickle', 'wb') as f:
-    pickle.dump({'Ue' : Ue, 'Ue_results' : Ue_results, 'De' : De, 'De_results' : De_results, 'avg_err_arr' : avg_err_arr, 'line_error' : line_error}, f)
+#with open('error_simulation_john.pickle', 'wb') as f:
+    pickle.dump({'Ue' : Ue_init, 'Ue_results' : Ue_results, 'De' : De_init, 'De_results' : De_results, 'avg_err_arr' : avg_err_arr, 'line_error' : line_error}, f)
 
 
-plt.show()
+
+
+#plt.show()
 
 
 
@@ -118,5 +118,7 @@ plt.show()
 #print(avg_err)
 
 
-plt.show()
+#plt.show()
+
+
 

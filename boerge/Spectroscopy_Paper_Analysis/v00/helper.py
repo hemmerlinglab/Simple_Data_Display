@@ -332,6 +332,7 @@ def read_in_data(data, offset_avg = 10, datafolder = '/Users/boerge/Software/off
     basefilename = datafolder + basefolder + '/' + basefolder + '_'
 
     f_freqs = basefilename + str(data['time']) + '_set_points'
+    f_act_freqs = basefilename + str(data['time']) + '_act_freqs'
     f_ch0   = basefilename + str(data['time']) + '_ch0_arr'
     f_ch1   = basefilename + str(data['time']) + '_ch1_arr'
     f_ch2   = basefilename + str(data['time']) + '_ch2_arr'
@@ -344,6 +345,7 @@ def read_in_data(data, offset_avg = 10, datafolder = '/Users/boerge/Software/off
     print('Analyzing file ... ' + f_freqs)
     
     freqs = np.genfromtxt(f_freqs, delimiter=",")
+    act_freqs = np.genfromtxt(f_act_freqs, delimiter=",")
     ch0 = np.genfromtxt(f_ch0, delimiter=",")
     ch1 = np.genfromtxt(f_ch1, delimiter=",")
     ch2 = np.genfromtxt(f_ch2, delimiter=",")
@@ -356,6 +358,7 @@ def read_in_data(data, offset_avg = 10, datafolder = '/Users/boerge/Software/off
 
     # take the averages
     freqs = av(freqs, no_of_avg)
+    act_avg_freqs = av(act_freqs, no_of_avg)
     ch0 = av(ch0, no_of_avg)
     ch1 = av(ch1, no_of_avg)
     ch2 = av(ch2, no_of_avg)
@@ -372,6 +375,8 @@ def read_in_data(data, offset_avg = 10, datafolder = '/Users/boerge/Software/off
     # get frequency scan interval in terms of absolute frequencies
     laser_offset = 3.0 * np.float(conf['offset_laser1']['val']) * 1e12
 
+    act_freqs = 3.0 * act_freqs * 1e12
+    act_avg_freqs = 3.0 * act_avg_freqs * 1e12
     freqs = 3.0 * freqs * 1e6
  
     # UV frequency = 3x IR frequency
@@ -401,11 +406,11 @@ def read_in_data(data, offset_avg = 10, datafolder = '/Users/boerge/Software/off
             ch2_avg[k, :] = moving_average(ch0[k, :], n = moving_avg_no)
             ch3_avg[k, :] = moving_average(ch0[k, :], n = moving_avg_no)
 
-        return (times, freqs, [ch0_avg, ch1_avg, ch2_avg, ch3_avg], laser_offset)
+        return (times, freqs, act_freqs, act_avg_freqs, [ch0_avg, ch1_avg, ch2_avg, ch3_avg], laser_offset)
 
     else:
         
-        return (times, freqs, [ch0, ch1, ch2, ch3], laser_offset)
+        return (times, freqs, act_freqs, act_avg_freqs, [ch0, ch1, ch2, ch3], laser_offset)
 
 
 
