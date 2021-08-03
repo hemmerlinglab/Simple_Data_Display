@@ -141,6 +141,15 @@ class ControlWidget(QWidget):
         self.multFact = QLineEdit()
         self.multFact.setFont(QFont('arial',fontsize))
 
+        self.radioGroup = QGroupBox()
+        grouplayout = QHBoxLayout()
+        self.radio1 = QRadioButton('PD')
+        self.radio1.setChecked(True)
+        self.radio2 = QRadioButton('PMT')
+        grouplayout.addWidget(self.radio1)
+        grouplayout.addWidget(self.radio2)
+        self.radioGroup.setLayout(grouplayout)
+
         GridLayout = QGridLayout()
         GridLayout.addWidget(self.baselab,0,0)
         GridLayout.addWidget(self.baseedit,0,1)
@@ -148,11 +157,12 @@ class ControlWidget(QWidget):
         GridLayout.addWidget(self.timeedit,1,1)
         GridLayout.addWidget(self.multFactLab,2,0)
         GridLayout.addWidget(self.multFact,2,1)
-        GridLayout.addWidget(self.getButton,3,0,1,2)
-        GridLayout.addWidget(self.currTimeLab,4,0)
-        GridLayout.addWidget(self.currTime,4,1)
-        GridLayout.addWidget(self.currFreqLab,5,0)
-        GridLayout.addWidget(self.currFreq,5,1)
+        GridLayout.addWidget(self.radioGroup,3,0,1,2)
+        GridLayout.addWidget(self.getButton,4,0,1,2)
+        GridLayout.addWidget(self.currTimeLab,5,0)
+        GridLayout.addWidget(self.currTime,5,1)
+        GridLayout.addWidget(self.currFreqLab,6,0)
+        GridLayout.addWidget(self.currFreq,6,1)
         self.setLayout(GridLayout)
 
 
@@ -328,11 +338,18 @@ class CentralWidget(QWidget):
         self.offset = self.get_offset()
         #data_path = self.basefilename
         #time_stamp = self.time_stamp
-        with open('{}/{}_{}_ch0_arr'.format(self.filepath,self.basefilename,self.time_stamp),'r') as filename:
-            ch0_data = np.genfromtxt(filename,delimiter=',')
+        if self.cont.radio1.isChecked():
+            with open('{}/{}_{}_ch0_arr'.format(self.filepath,self.basefilename,self.time_stamp),'r') as filename:
+                ch0_data = np.genfromtxt(filename,delimiter=',')
+        elif self.cont.radio2.isChecked():
+            with open('{}/{}_{}_ch2_arr'.format(self.filepath,self.basefilename,self.time_stamp),'r') as filename:
+                ch0_data = np.genfromtxt(filename,delimiter=',')
+        else:
+            print('OH MY GOD, IT\'S A BUG!')
+
         with open('{}/{}_{}_times'.format(self.filepath,self.basefilename,self.time_stamp),'r') as filename:
             times = np.genfromtxt(filename)
-        with open('{}/{}_{}_ch3_arr'.format(self.filepath,self.basefilename,self.time_stamp),'r') as filename:
+        with open('{}/{}_{}_ch4_arr'.format(self.filepath,self.basefilename,self.time_stamp),'r') as filename:
             ch3_data = np.genfromtxt(filename,delimiter=',')
 
         if self.filetype == 'target':
@@ -360,6 +377,7 @@ class CentralWidget(QWidget):
 
         # print(ch0_data.shape)
         self.ch0 = self.get_avg(np.array(ch0_data),int(len(ch0_data)/self.no_avgs))
+        # self.ch2 = self.get_avg(np.array(ch0_data),int(len(ch2_data)/self.no_avgs))
         self.ch3 = self.get_avg(np.array(ch3_data),int(len(ch0_data)/self.no_avgs))
         # print(self.ch0.shape)
 
