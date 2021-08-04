@@ -169,13 +169,13 @@ class ControlWidget(QWidget):
 class CentralWidget(QWidget):
     def __init__(self,parent):
         QWidget.__init__(self,parent)
-        self.basefilename = '20210212'
-        self.time_stamp = '142438'
-        self.freq_mult = 1
+        self.basefilename = '20210803'
+        self.time_stamp = '162247'
+        self.freq_mult = 2
         self.filepath = '/home/molecules/software/data/'+self.basefilename
         # self.filepath = self.basefilename
         self.f_idx = 10
-        self.t_idx = 100
+        self.t_idx = 200
         self.t_off = 20
         self.t_avg_idx = self.t_idx + self.t_off
         self.set_filetype()
@@ -209,8 +209,12 @@ class CentralWidget(QWidget):
         # plot_min = np.abs(self.ch0[0,0])
         self.img_plot.axes.cla()
 
+        # if self.cont.radio1.isChecked():
         self.shot_min = np.min(self.ch0)
         self.shot_max = np.max(self.ch0[:,10])
+        # else:
+            # self.shot_max = np.max(self.ch0)
+            # self.shot_min = 0.0
 
         if self.filetype == 'spec':
             X,Y = np.meshgrid(self.freqs,self.times)
@@ -381,8 +385,23 @@ class CentralWidget(QWidget):
         self.ch3 = self.get_avg(np.array(ch3_data),int(len(ch0_data)/self.no_avgs))
         # print(self.ch0.shape)
 
-        scl_fact = np.mean(self.ch0[:20,:])/np.mean(self.ch3[:20,:])
-        self.ch0 -= scl_fact*self.ch3
+        if self.cont.radio1.isChecked():
+            scl_fact = np.mean(self.ch0[:20,:])/np.mean(self.ch3[:20,:])
+            self.ch0 -= scl_fact*self.ch3
+        elif self.cont.radio2.isChecked():
+            # scl_fact = np.mean(self.ch0[:20,:])/np.mean(self.ch3[:20,:])
+            # self.ch0 -= scl_fact*self.ch3
+            # self.ch0 = np.log(self.ch0)
+            max_idx = np.where(self.ch0==np.max(self.ch0))[1][0]
+            # print(max_idx)
+            # asd
+            # print(self.ch0.shape)
+            # if np.mean(self.ch0[max_idx,:]) > 10*np.mean(self.ch0[:20,:]):
+            self.ch0[:,max_idx] = self.ch0[:,0]
+            # self.ch0 = -np.log(self.ch0)
+            # self.ch0 *= -1.0
+        else:
+            print('BUGGGGGGG')
 
         self.ch0 = self.rem_offset(self.ch0)
 
