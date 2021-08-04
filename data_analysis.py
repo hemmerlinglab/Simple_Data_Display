@@ -169,8 +169,8 @@ class ControlWidget(QWidget):
 class CentralWidget(QWidget):
     def __init__(self,parent):
         QWidget.__init__(self,parent)
-        self.basefilename = '20210803'
-        self.time_stamp = '162247'
+        self.basefilename = '20210804'
+        self.time_stamp = '153110'
         self.freq_mult = 2
         self.filepath = '/home/molecules/software/data/'+self.basefilename
         # self.filepath = self.basefilename
@@ -209,12 +209,12 @@ class CentralWidget(QWidget):
         # plot_min = np.abs(self.ch0[0,0])
         self.img_plot.axes.cla()
 
-        # if self.cont.radio1.isChecked():
-        self.shot_min = np.min(self.ch0)
-        self.shot_max = np.max(self.ch0[:,10])
-        # else:
-            # self.shot_max = np.max(self.ch0)
-            # self.shot_min = 0.0
+        if self.cont.radio1.isChecked():
+            self.shot_min = np.min(self.ch0)
+            self.shot_max = np.max(self.ch0[:,10])
+        else:
+            self.shot_max = np.max(self.ch0)
+            self.shot_min = 0#np.min(self.ch0)
 
         if self.filetype == 'spec':
             X,Y = np.meshgrid(self.freqs,self.times)
@@ -228,6 +228,9 @@ class CentralWidget(QWidget):
             self.hline3 = self.shot_plot.axes.axhline(self.times[self.t_idx],alpha=0.4,color='red')
             self.hline4 = self.shot_plot.axes.axhline(self.times[self.t_avg_idx],alpha=0.4,color='red')
             
+            self.yagline2 = self.img_plot.axes.axhline(self.firetime,alpha=0.8,color='green')
+            self.yagline = self.shot_plot.axes.axhline(self.firetime,alpha=0.8,color='green')
+
             self.img_plot.axes.set_xlabel('Frequency (MHz from {:.6f} THz)'.format(self.offset*self.freq_mult))
             self.img_plot.axes.set_ylabel('Time (ms)')
 
@@ -242,6 +245,8 @@ class CentralWidget(QWidget):
             self.hline2 =  self.img_plot.axes.axhline(self.ypos[self.y_idx+1,0],alpha=0.4,color='red')
             self.hline3 = self.shot_plot.axes.axhline(self.times[self.t_idx],alpha=0.4,color='red')
             self.hline4 = self.shot_plot.axes.axhline(self.times[self.t_avg_idx],alpha=0.4,color='red')
+
+            self.yagline = self.shot_plot.axes.axhline(self.firetime,alpha=0.8,color='green')
 
             self.img_plot.axes.invert_yaxis()
 
@@ -299,6 +304,7 @@ class CentralWidget(QWidget):
             self.hline2.remove()
             self.hline3.remove()
             self.hline4.remove()
+            self.yagline.remove()
 
             self.vline = self.img_plot.axes.axvline(self.freqs[self.f_idx],alpha=0.4,color='red')
             self.vline2 = self.spec_plot.axes.axvline(self.freqs[self.f_idx],alpha=0.4,color='red')
@@ -306,7 +312,7 @@ class CentralWidget(QWidget):
             self.hline2 = self.img_plot.axes.axhline(self.times[self.t_avg_idx],alpha=0.4,color='red')
             self.hline3 = self.shot_plot.axes.axhline(self.times[self.t_idx],alpha=0.4,color='red')
             self.hline4 = self.shot_plot.axes.axhline(self.times[self.t_avg_idx],alpha=0.4,color='red')
-        
+            self.yagline = self.shot_plot.axes.axhline(self.firetime,alpha=0.8,color='green')
             self.spec_plot.fig.canvas.draw()
 
         elif self.filetype == 'target':
@@ -353,8 +359,15 @@ class CentralWidget(QWidget):
 
         with open('{}/{}_{}_times'.format(self.filepath,self.basefilename,self.time_stamp),'r') as filename:
             times = np.genfromtxt(filename)
-        with open('{}/{}_{}_ch4_arr'.format(self.filepath,self.basefilename,self.time_stamp),'r') as filename:
-            ch3_data = np.genfromtxt(filename,delimiter=',')
+
+        if self.whichlaser == 1:
+            with open('{}/{}_{}_ch3_arr'.format(self.filepath,self.basefilename,self.time_stamp),'r') as filename:
+                ch3_data = np.genfromtxt(filename,delimiter=',')
+        elif self.whichlaser == 2:
+            with open('{}/{}_{}_ch4_arr'.format(self.filepath,self.basefilename,self.time_stamp),'r') as filename:
+                ch3_data = np.genfromtxt(filename,delimiter=',')
+        else:
+            print('Oh Look, another bug...')
 
         if self.filetype == 'target':
             with open('{}/{}_{}_posx'.format(self.filepath,self.basefilename,self.time_stamp),'r') as filename:
@@ -389,8 +402,8 @@ class CentralWidget(QWidget):
             scl_fact = np.mean(self.ch0[:20,:])/np.mean(self.ch3[:20,:])
             self.ch0 -= scl_fact*self.ch3
         elif self.cont.radio2.isChecked():
-            # scl_fact = np.mean(self.ch0[:20,:])/np.mean(self.ch3[:20,:])
-            # self.ch0 -= scl_fact*self.ch3
+            scl_fact = np.mean(self.ch0[:20,:])/np.mean(self.ch3[:20,:])
+            self.ch0 -= scl_fact*self.ch3
             # self.ch0 = np.log(self.ch0)
             max_idx = np.where(self.ch0==np.max(self.ch0))[1][0]
             # print(max_idx)
@@ -398,7 +411,12 @@ class CentralWidget(QWidget):
             # print(self.ch0.shape)
             # if np.mean(self.ch0[max_idx,:]) > 10*np.mean(self.ch0[:20,:]):
             self.ch0[:,max_idx] = self.ch0[:,0]
-            # self.ch0 = -np.log(self.ch0)
+            num_mov_avg = 1
+            for i in range(num_mov_avg,self.ch0.shape[0]-num_mov_avg):
+                self.ch0[i,:] = np.mean(self.ch0[i- num_mov_avg:i+ num_mov_avg,:],axis=0)
+            for i in range(num_mov_avg,self.ch0.shape[1]-num_mov_avg):
+                self.ch0[:,i] = np.mean(self.ch0[:,i- num_mov_avg:i+ num_mov_avg],axis=1)
+            self.ch0 = np.exp(self.ch0)
             # self.ch0 *= -1.0
         else:
             print('BUGGGGGGG')
@@ -437,11 +455,17 @@ class CentralWidget(QWidget):
             if self.whichlaser == 2:
                 offset = np.float(config.get('offset_laser2','val'))
         elif self.filetype == 'target':
+            self.whichlaser = 1
             offset = np.float(config.get('cooling_set','val'))
             self.steps_x = int(float(config.get('steps_x','val')))
             self.steps_y = int(float(config.get('steps_y','val')))
         else:
             print('AAAAAAAAAAAAAAAAAAAAAAAAAA')
+
+        try:
+            self.firetime = int(float(config.get('fire_time','val'))) # ms
+        except:
+            self.firetime = 10 # ms
         return offset
 
     def get_avg(self,data,desired_len):
