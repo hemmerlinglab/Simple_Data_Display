@@ -463,7 +463,7 @@ class CentralWidget(QWidget):
             print('AAAAAAAAAAAAAAAAAAAAAAAAAA')
 
         try:
-            self.firetime = int(float(config.get('fire_time','val'))) # ms
+            self.firetime = int(float(config.get('yag_fire_time','val'))) # ms
         except:
             self.firetime = 10 # ms
         return offset
